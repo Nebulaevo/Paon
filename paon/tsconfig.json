@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "NodeNext", 
+        "lib": ["ES2022"],
+        "outDir": "dist",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "moduleResolution": "NodeNext",
+        "rootDir": "src",
+        "paths": {
+            "&internal-interface/*": [ 
+                "./src/_internal-interface/*.ts", 
+                "./src/_internal-interface/*" 
+            ],
+
+            "#paon/*": [ 
+                "./src/*", 
+                "./src/*.ts", 
+                "./src/*.js" 
+            ],
+        }
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+}

@@ -1,0 +1,15 @@
+import type { appProps_T } from '&internal-interface/app-props'
+
+import './assets/css/index.css'
+import './assets/css/fonts.css'
+import './App.scss'
+
+import PaonDefaultPage from '@components/paon-default-page/v1/component'
+
+function App(
+    { url, pageContext }: appProps_T 
+) {
+    return <PaonDefaultPage url={url} pageContext={pageContext} />
+}
+
+export default App

@@ -1,0 +1,50 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "useDefineForClassFields": true,
+        "lib": ["ES2020", "DOM", "DOM.Iterable", "WebWorker"],
+        "module": "ESNext",
+        "skipLibCheck": true,
+
+        /* Bundler mode */
+        "moduleResolution": "Bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+
+        /* Linting */
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+
+        /* My additionnal settings */
+        "paths": {
+            "&internal-interface/*": [ 
+                "./src/_internal-interface/*.ts", 
+                "./src/_internal-interface/*" 
+            ],
+
+            "@components/*": [
+                "./src/components/*.tsx", 
+                "./src/components/*.ts",
+                "./src/components/*" 
+            ],
+            "@assets/*": [ "./src/assets/*" ],
+            "@sites/*": [
+                "./src/sites/*.tsx", 
+                "./src/sites/*.ts",
+                "./src/sites/*"
+            ],
+            "@utils/*": [
+                "./src/utils/*.ts", 
+                "./src/utils/*"
+            ]
+        }
+    },
+    "include": ["src"],
+    "exclude": ["paon"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}
