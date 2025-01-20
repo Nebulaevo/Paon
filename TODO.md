@@ -4,6 +4,12 @@
 - Revérifier les trucs que j'ai modifié dans l'autre projet (configs etc..) pour les re modifier ici (en éspérant que ça casse rien)
 
 
+## Sniffly
+les checks communs ont été extrait vers sniffly, il faut maintenant supprimer les fichiers
+- paon/src/utils/checks.ts
+- paon/src/utils/types.ts
+et remplacer les références à leur function par les équivalents sniffly
+
 ## création des scripts
 écrire un script js qui automatise les build / dev / preview par projet
 
