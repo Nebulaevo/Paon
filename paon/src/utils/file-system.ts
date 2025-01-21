@@ -4,9 +4,10 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import type { Dirent } from 'node:fs'
 
+import { iterHasItems } from 'sniffly'
+
 import { consoleErrorMessage } from '#paon/utils/message-logging'
 import { getDotPathSegmentPattern } from '#paon/utils/string-patterns'
-import { iterIsNotEmpty } from '#paon/utils/checks'
 
 type direntIdentifier_T = RegExp | string
 
@@ -147,7 +148,7 @@ function _filterPathDottedSegments( relativePath:string ) {
 
     return path.join( 
         ...pathSegments.filter( 
-            segment => iterIsNotEmpty(segment) && !segment.match( dotPathSegmentPattern ) 
+            segment => iterHasItems(segment) && !segment.match( dotPathSegmentPattern ) 
         ) 
     )
 }

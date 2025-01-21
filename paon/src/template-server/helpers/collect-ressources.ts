@@ -4,9 +4,10 @@ import type { ViteDevServer } from 'vite'
 
 import { getSiteIndexHtmlPath, getSiteSsrManifestPath, getSiteEntryServerPath } from '#paon/utils/file-system'
 import { consoleErrorMessage, consoleMessage } from '#paon/utils/message-logging'
-import type { Dict_T } from '#paon/utils/types'
 import type { siteRessources_T, serverExectutionMode_T } from '#paon/template-server/helpers/types'
-import { isNonEmptyString } from '#paon/utils/checks'
+
+import type { Dict_T } from 'sniffly'
+import { isString } from 'sniffly'
 
 type collectRessourcesKwargs_T = {
     siteNames: string[],
@@ -65,7 +66,7 @@ async function collectSiteRessources(
         
         let [ templateFile, ssrManifestFile ] = await Promise.all([ getTemplateTask, getSsrManifestTask ])
 
-        if ( vite && isNonEmptyString(pageUrl) ) {
+        if ( vite && isString(pageUrl, {nonEmpty:true}) ) {
             // vite is only set if the server is in 'DEV' execution mode
 
             // - Hack to make dev server work -

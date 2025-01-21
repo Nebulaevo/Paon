@@ -4,8 +4,9 @@ import type { appProps_T } from "&internal-interface/app-props"
 // escaping javascript
 import serialize from 'serialize-javascript'
 
-import { isBool, isObject, isObjectWithKeys, isNonEmptyString } from '#paon/utils/checks'
-import type { Dict_T } from '#paon/utils/types'
+import { isBool, isString, isDict } from "sniffly"
+import type { Dict_T } from "sniffly"
+
 
 
 type renderingOptions_T = {
@@ -124,9 +125,9 @@ class RequestData {
     #checkValidity( rawRequestData: unknown ): rawRequestData is RequestPostData_T{
         // verifies that the data received have the required format
 
-        if ( isObjectWithKeys(rawRequestData, ['url', 'pageContext']) ) {
+        if ( isDict(rawRequestData, {keys:['url', 'pageContext']}) ) {
             const { url, pageContext } = rawRequestData
-            return isNonEmptyString(url) && isObject(pageContext)
+            return isString(url, {nonEmpty:true}) && isDict(pageContext)
         }
         return false
     }

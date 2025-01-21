@@ -1,5 +1,6 @@
-import type { Dict_T } from '#paon/utils/types'
-import { isNonEmptyString } from '#paon/utils/checks'
+import type { Dict_T } from 'sniffly'
+import { isString } from "sniffly"
+
 import { consoleErrorMessage, consoleMessage } from '#paon/utils/message-logging'
 
 type extractScriptArgsOptions_T = {
@@ -85,7 +86,7 @@ function extractProcessArgs(
                 process.exit(1)
             }
 
-            argsDict[name] = isNonEmptyString(value) ? value : undefined
+            argsDict[name] = isString(value, {nonEmpty:true}) ? value : undefined
 
         } else { /* handling non-keyword arguments */
             
@@ -103,7 +104,7 @@ function extractProcessArgs(
 
     // ensure that arguments marked as required are provided
     for ( const requiredArg of requiredArgs ) {
-        const defined = isNonEmptyString( argsDict[requiredArg] )
+        const defined = isString( argsDict[requiredArg], {nonEmpty:true} )
         if ( !defined ) {
             consoleErrorMessage(`'${requiredArg}' arg is required to run ${scriptName}`)
             consoleMessage( forMoreInfoText )

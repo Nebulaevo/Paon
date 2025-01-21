@@ -3,9 +3,9 @@
 import fs from 'node:fs/promises'
 
 import { consoleWarnMessage } from '#paon/utils/message-logging'
-import { isPositiveNumber, isBool } from '#paon/utils/checks'
 
-import type { Dict_T } from "#paon/utils/types"
+import type { Dict_T } from "sniffly"
+import { isBool, isNumber } from "sniffly"
 
 
 type invalidKeyWarningMessageOptions_T = {
@@ -62,7 +62,7 @@ class ServerConfig {
 
             /* port
             determines the port of the server */
-            if ( config.port && isPositiveNumber( config.port ) ) {
+            if ( config.port && isNumber(config.port, {positive:true}) ) {
                 this.port = config.port
             } else {
                 this.#invalidKeyWarningMessage({

@@ -3,7 +3,7 @@ import type { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyRepl
 
 import { collectRessources, collectSiteRessources } from "#paon/template-server/helpers/collect-ressources"
 import { RequestData } from '#paon/template-server/data-models/request-data'
-import type { Dict_T } from '#paon/utils/types'
+import type { Dict_T } from 'sniffly'
 import type { siteRessources_T, serverExectutionMode_T } from '#paon/template-server/helpers/types'
 import type { ViteDevServer } from 'vite'
 
