@@ -9,7 +9,7 @@ const COMMAND_DOCUMENTATION = `
 -------------------------
 
 >>> npm run ${SCRIPT_NAME}
-Triggers the build:site command for every site in the src/sites/ folder
+Triggers the site:build command for every site in the src/sites/ folder
 
 >>> npm run ${SCRIPT_NAME} ${HELP_COMMAND}
 displays command documentation

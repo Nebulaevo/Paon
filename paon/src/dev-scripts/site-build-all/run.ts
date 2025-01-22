@@ -29,7 +29,7 @@ async function run() {
         .filter( dirent => dirent.isDirectory() )
         .map( dir => dir.name )
 
-    // recursively calling 'npm run build:site' for each site
+    // recursively calling 'npm run site:build' for each site
     // IMPORTANT one by one
     // (so that 'index.html' has time to be renamed for each site)
     let index = 0
