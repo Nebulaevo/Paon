@@ -1,7 +1,7 @@
 import { HELP_COMMAND, getForMoreInfoText } from '#paon/dev-scripts/helpers/help-command'
 
 /** name triggering that script in package.json 'scripts' */
-const SCRIPT_NAME = 'site:build:all'
+const SCRIPT_NAME = 'site:build-all'
 
 /** documentation of the command */
 const COMMAND_DOCUMENTATION = `

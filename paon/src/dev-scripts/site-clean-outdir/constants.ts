@@ -1,7 +1,7 @@
 import { HELP_COMMAND, getForMoreInfoText } from '#paon/dev-scripts/helpers/help-command'
 
 /** name triggering that script in package.json 'scripts' */
-const SCRIPT_NAME = 'site:clean:outdir'
+const SCRIPT_NAME = 'site:clean-outdir'
 
 /** path to the folder the command deletes the content of */
 const FOLDER_REL_PATH = './dist'

@@ -19,12 +19,12 @@
         "server:dev": "cross-env NODE_ENV=DEV node ./paon/dist/template-server/run.js",
         "server:preview": "cross-env NODE_ENV=PREVIEW node ./paon/dist/template-server/run.js",
         "core:build": "tsc --project ./paon/tsconfig.json",
-        "core:clean:outdir": "node ./paon/dist/dev-scripts/core-clean-outdir/run.js",
+        "core:clean-outdir": "node ./paon/dist/dev-scripts/core-clean-outdir/run.js",
         "core:test": "vitest",
         "site:add": "node ./paon/dist/dev-scripts/site-add/run.js",
         "site:build": "node ./paon/dist/dev-scripts/site-build/run.js",
-        "site:build:all": "node ./paon/dist/dev-scripts/site-build-all/run.js",
-        "site:clean:outdir": "node ./paon/dist/dev-scripts/site-clean-outdir/run.js"
+        "site:build-all": "node ./paon/dist/dev-scripts/site-build-all/run.js",
+        "site:clean-outdir": "node ./paon/dist/dev-scripts/site-clean-outdir/run.js"
     },
     "dependencies": {
         "@braintree/sanitize-url": "^7.1.0",
