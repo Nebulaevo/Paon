@@ -45,6 +45,7 @@
         "@types/serialize-javascript": "^5.0.4",
         "@vitejs/plugin-react": "^4.3.2",
         "cross-env": "^7.0.3",
+        "memfs": "^4.17.0",
         "sass-embedded": "^1.80.1",
         "typescript": "^5.6.3",
         "vite": "^5.4.8",
