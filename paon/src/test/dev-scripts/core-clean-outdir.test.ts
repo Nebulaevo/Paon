@@ -32,7 +32,7 @@ beforeEach(async () => {
     vol.reset()
     vol.fromJSON({
         './paon/dist/file1.js': 'compiled js file 1',
-        './paon/dist/file2.js': 'compiled js file 2',
+        './paon/dist/folder/file2.js': 'compiled js file 2',
     }, getRootPath() ) // Simulate existing files in /paon/dist/
 })
 
