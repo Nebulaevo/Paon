@@ -69,8 +69,8 @@ describe('#clean-outdir dev scripts', () => {
         expect( exists ).toBe(true)
 
         // check if it had been emptied 
-        const files = await virtualFs.promises.readdir(distAbsPath) // Check the directory
-        expect(files).toEqual([])
+        const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
+        expect(dirContent).toEqual([])
 
         // if process have been called, we check that it exited with code '0'
         const processExit = process.exit as MockedFunction<typeof process.exit>
@@ -93,8 +93,8 @@ describe('#clean-outdir dev scripts', () => {
         expect( exists ).toBe(true)
 
         // check if it had been emptied 
-        const files = await virtualFs.promises.readdir(distAbsPath) // Check the directory
-        expect(files).toEqual([])
+        const dirContent = await virtualFs.promises.readdir(distAbsPath)
+        expect(dirContent).toEqual([])
 
         // if process have been called, we check that it exited with code '0'
         const processExit = process.exit as MockedFunction<typeof process.exit>
