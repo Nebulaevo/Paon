@@ -1,12 +1,13 @@
 /** Testing dev scripts "core-clean-outdir" and "site-clean-outdir" */
 
 import { vol, fs as virtualFs } from "memfs"
-import { vi, describe, expect, beforeEach, it, MockedFunction } from "vitest"
+import { vi, describe, expect, beforeEach, it, type MockedFunction } from "vitest"
 
 import { getRootPath, getAbsolutePath } from "#paon/utils/file-system"
 import coreCleanOutdir from '#paon/dev-scripts/core-clean-outdir/script'
 import siteCleanOutdir from '#paon/dev-scripts/site-clean-outdir/script'
 
+import { processExitMockImplementation, asyncProcessExitCatcher } from '../testing-helpers/process-mocks'
 
 vi.mock("node:fs/promises")
 vi.mock("#paon/utils/message-logging")
@@ -30,11 +31,16 @@ vi.mock("node:readline/promises", () => {
 })
 
 // prevent process.exit from killing process while testing 
-vi.spyOn(process, "exit").mockImplementation( (code) => {throw 'process.exit'} )
+vi.spyOn(process, "exit").mockImplementation( processExitMockImplementation )
 
 
 
 beforeEach(async () => {
+
+    // reset process.exit spy
+    vi.clearAllMocks()
+
+    // reset virtual file system
     vol.reset()
     vol.fromJSON({
         // for core-clean-outdir tests
@@ -51,16 +57,8 @@ describe('#clean-outdir dev scripts', () => {
     
     it('core-clean-outdir should delete the content of /paon/dist directory', async () => {
         
-        try {
-            await coreCleanOutdir() // cleaning core dist folder
-
-        } catch(e) { 
-            // handling mocked 'process.exit'
-            // if any other exception is thrown, we throw it back
-            if (e !== 'process.exit') throw e
-
-            console.log("CAUGHT")
-        }
+        // wrap tested function to catches eventual "process.exit" error
+        await asyncProcessExitCatcher( coreCleanOutdir )
         
         const distAbsPath = getAbsolutePath('/paon/dist')
 
@@ -83,16 +81,8 @@ describe('#clean-outdir dev scripts', () => {
 
     it('site-clean-outdir should delete the content of /dist directory', async () => {
 
-        try {
-            await siteCleanOutdir() // cleaning site dist folder
-
-        } catch(e) { 
-            // handling mocked 'process.exit'
-            // if any other exception is thrown, we throw it back
-            if (e !== 'process.exit') throw e
-
-            console.log("CAUGHT")
-        }
+        // wrap tested function to catches eventual "process.exit" error
+        await asyncProcessExitCatcher( siteCleanOutdir )
 
         const distAbsPath = getAbsolutePath('/dist')
 
