@@ -1,6 +1,6 @@
+/** mock helpers for process */
 
-
-// process.exit mock helpers
+// ------------------- process.exit -------------------
 
 /** string thrown as error to emulate behavior of 'process.exit' */
 const PROCESS_EXIT_ERROR = 'process.exit'
@@ -40,8 +40,53 @@ async function asyncProcessExitCatcher<F extends () => Promise<any>>(
 }
 
 
+// ------------------- process.argv -------------------
+
+type processWithMockedArgv = typeof process & {
+    _originalArgv?: string[]
+}
+
+/** Mocks value of `process.argv`
+ * (replaces by given value)
+ * 
+ * Have to be "unmocked" by calling unMockProcessArgv()
+ * 
+ * @param argv (string[]) - value we want to give to process.argv
+ * 
+ * @example
+ * mockProcessArgv( ['_', '_', 'arg1', 'arg2'] )
+ * // ... Do tests ...
+ * unMockProcessArgv()
+ * // process is back to normal
+ */
+function mockProcessArgv( argv: string[] ) {
+    const p = process as processWithMockedArgv
+    p._originalArgv = process.argv
+    p.argv = argv
+}
+
+/** Unmocks `process.argv` value 
+ * modified by mockProcessArgv
+ * 
+ * @example
+ * mockProcessArgv( ['_', '_', 'arg1', 'arg2'] )
+ * // ... Do tests ...
+ * unMockProcessArgv()
+ * // process is back to normal
+ */
+function unMockProcessArgv() {
+    const p = process as processWithMockedArgv
+    if ( p && p._originalArgv ) {
+        process.argv = p._originalArgv
+        p._originalArgv = undefined
+    }
+}
+
 
 export {
     processExitMockImplementation,
-    asyncProcessExitCatcher
+    asyncProcessExitCatcher,
+
+    mockProcessArgv,
+    unMockProcessArgv
 }
