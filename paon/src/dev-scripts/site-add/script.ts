@@ -58,7 +58,7 @@ async function script() {
         )
         throw e
     }
-    consoleSucessMessage( 'Created basic folder structure', {iconName:'folder'} )
+    consoleSucessMessage( 'Created base folder structure', {iconName:'folder'} )
     
     // create starter files
     try {

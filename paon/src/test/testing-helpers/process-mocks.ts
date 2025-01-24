@@ -49,14 +49,14 @@ type processWithMockedArgv = typeof process & {
 /** Mocks value of `process.argv`
  * (replaces by given value)
  * 
- * Have to be "unmocked" by calling unMockProcessArgv()
+ * Have to be "unmocked" by calling unmockProcessArgv()
  * 
  * @param argv (string[]) - value we want to give to process.argv
  * 
  * @example
  * mockProcessArgv( ['_', '_', 'arg1', 'arg2'] )
  * // ... Do tests ...
- * unMockProcessArgv()
+ * unmockProcessArgv()
  * // process is back to normal
  */
 function mockProcessArgv( argv: string[] ) {
@@ -71,10 +71,10 @@ function mockProcessArgv( argv: string[] ) {
  * @example
  * mockProcessArgv( ['_', '_', 'arg1', 'arg2'] )
  * // ... Do tests ...
- * unMockProcessArgv()
+ * unmockProcessArgv()
  * // process is back to normal
  */
-function unMockProcessArgv() {
+function unmockProcessArgv() {
     const p = process as processWithMockedArgv
     if ( p && p._originalArgv ) {
         process.argv = p._originalArgv
@@ -88,5 +88,5 @@ export {
     asyncProcessExitCatcher,
 
     mockProcessArgv,
-    unMockProcessArgv
+    unmockProcessArgv
 }
