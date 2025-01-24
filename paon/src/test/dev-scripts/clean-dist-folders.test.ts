@@ -42,20 +42,32 @@ beforeEach(async () => {
 
     // reset virtual file system
     vol.reset()
-    vol.fromJSON({
+    vol.fromNestedJSON({
         // for core-clean-outdir tests
-        './paon/dist/file1.js': 'PAON compiled js file 1',
-        './paon/dist/folder/file2.js': 'PAON compiled js file 2',
+        './paon': {
+            'dist': {
+                'file1.js': 'PAON compiled js file 1',
+                'folder': {
+                    'file2.js': 'PAON compiled js file 2',
+                },
+            }
+        },
 
         // for site-clean-outdir tests
-        './dist/file1.js': 'SITE compiled js file 1',
-        './dist/folder/file2.js': 'SITE compiled js file 2',
+        './dist': {
+            'file1.js': 'SITE compiled js file 1',
+            'folder': {
+                'file2.js': 'SITE compiled js file 2',
+            },
+        }
     }, getRootPath() ) // Simulate existing files in /paon/dist/
 })
 
-describe('#clean-outdir dev scripts', () => {
+
+
+describe('#core:clean-outdir (dev-script)', () => {
     
-    it('core-clean-outdir should delete the content of /paon/dist directory', async () => {
+    it('should delete the content of /paon/dist directory', async () => {
         
         // wrap tested function to catches eventual "process.exit" error
         await asyncProcessExitCatcher( coreCleanOutdir )
@@ -78,8 +90,11 @@ describe('#clean-outdir dev scripts', () => {
             expect( process.exit ).toHaveBeenCalledWith(0)
         }
     })
+})
 
-    it('site-clean-outdir should delete the content of /dist directory', async () => {
+describe('#site:clean-outdir (dev-script)', () => {
+    
+    it('should delete the content of /dist directory', async () => {
 
         // wrap tested function to catches eventual "process.exit" error
         await asyncProcessExitCatcher( siteCleanOutdir )
