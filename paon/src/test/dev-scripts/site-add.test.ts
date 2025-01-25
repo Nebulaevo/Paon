@@ -5,6 +5,7 @@ import { vi, describe, expect, beforeEach, it, type MockedFunction } from "vites
 
 import { getRootPath, getAbsolutePath } from "#paon/utils/file-system"
 import siteAdd from '#paon/dev-scripts/site-add/script'
+import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 
 import { 
     processExitMockImplementation, 
@@ -71,7 +72,7 @@ describe('#site:add (dev-script)', () => {
         // mock process argv
         mockProcessArgv([ '_', '_', NEW_SITE_NAME  ])
 
-        // wrap tested function to catches eventual "process.exit" error
+        // wrap tested function to catch eventual "process.exit" error
         await asyncProcessExitCatcher( siteAdd )
 
         // unmock process argv
@@ -102,7 +103,7 @@ describe('#site:add (dev-script)', () => {
         // mock process argv
         mockProcessArgv([ '_', '_', 'existing-site'  ])
 
-        // wrap tested function to catches eventual "process.exit" error
+        // wrap tested function to catch eventual "process.exit" error
         await asyncProcessExitCatcher( siteAdd )
 
         // unmock process argv
@@ -124,7 +125,7 @@ describe('#site:add (dev-script)', () => {
             // mock process argv
             mockProcessArgv([ '_', '_', invalidSiteName  ])
 
-            // wrap tested function to catches eventual "process.exit" error
+            // wrap tested function to catch eventual "process.exit" error
             await asyncProcessExitCatcher( siteAdd )
 
             // unmock process argv
@@ -141,5 +142,26 @@ describe('#site:add (dev-script)', () => {
             expect( process.exit ).toHaveBeenCalledWith(1)
         }
 
+    })
+
+    it('should not run script if called with help command', async () => {
+        
+        // mock process argv
+        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
+
+        // wrap tested function to catch eventual "process.exit" error
+        await asyncProcessExitCatcher( siteAdd )
+
+        // unmock process argv
+        unmockProcessArgv()
+
+        const sitesFolderAbsPath = getAbsolutePath(`/src/sites`)
+
+        // check that no new folders were created
+        const dirContent = await virtualFs.promises.readdir(sitesFolderAbsPath) // Check the directory
+        expect(dirContent.length).toBe(1) // the one test "existing-site" folder
+
+        // check that process was exited without errors
+        expect( process.exit ).toHaveBeenCalledWith(0)
     })
 })

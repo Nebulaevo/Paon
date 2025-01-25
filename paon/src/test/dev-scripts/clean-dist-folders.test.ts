@@ -6,8 +6,14 @@ import { vi, describe, expect, beforeEach, it, type MockedFunction } from "vites
 import { getRootPath, getAbsolutePath } from "#paon/utils/file-system"
 import coreCleanOutdir from '#paon/dev-scripts/core-clean-outdir/script'
 import siteCleanOutdir from '#paon/dev-scripts/site-clean-outdir/script'
+import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 
-import { processExitMockImplementation, asyncProcessExitCatcher } from '../testing-helpers/process-mocks'
+import { 
+    processExitMockImplementation, 
+    asyncProcessExitCatcher,
+    mockProcessArgv,
+    unmockProcessArgv
+} from '../testing-helpers/process-mocks'
 
 vi.mock("node:fs/promises")
 vi.mock("#paon/utils/message-logging")
@@ -69,7 +75,7 @@ describe('#core:clean-outdir (dev-script)', () => {
     
     it('should delete the content of /paon/dist directory', async () => {
         
-        // wrap tested function to catches eventual "process.exit" error
+        // wrap tested function to catch eventual "process.exit" error
         await asyncProcessExitCatcher( coreCleanOutdir )
         
         const distAbsPath = getAbsolutePath('/paon/dist')
@@ -90,13 +96,40 @@ describe('#core:clean-outdir (dev-script)', () => {
             expect( process.exit ).toHaveBeenCalledWith(0)
         }
     })
+
+    it('should not run script if called with help command', async () => {
+
+        // mock process argv
+        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
+
+        // wrap tested function to catch eventual "process.exit" error
+        await asyncProcessExitCatcher( coreCleanOutdir )
+
+        // unmock process argv
+        unmockProcessArgv()
+
+        const distAbsPath = getAbsolutePath('/paon/dist')
+
+        // check if dist dir still exists
+        const exists = await virtualFs.promises.access( distAbsPath )
+            .then( () => true )
+            .catch( () => false )
+        expect( exists ).toBe(true)
+
+        // check that it wasn't emptied
+        const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
+        expect(dirContent.length).toBeGreaterThan(0)
+
+        // check that process was exited without errors
+        expect( process.exit ).toHaveBeenCalledWith(0)
+    })
 })
 
 describe('#site:clean-outdir (dev-script)', () => {
     
     it('should delete the content of /dist directory', async () => {
 
-        // wrap tested function to catches eventual "process.exit" error
+        // wrap tested function to catch eventual "process.exit" error
         await asyncProcessExitCatcher( siteCleanOutdir )
 
         const distAbsPath = getAbsolutePath('/dist')
@@ -116,5 +149,32 @@ describe('#site:clean-outdir (dev-script)', () => {
         if ( processExit.mock.calls.length > 0 ) {
             expect( process.exit ).toHaveBeenCalledWith(0)
         }
+    })
+
+    it('should not run script if called with help command', async () => {
+        
+        // mock process argv
+        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
+
+        // wrap tested function to catch eventual "process.exit" error
+        await asyncProcessExitCatcher( siteCleanOutdir )
+
+        // unmock process argv
+        unmockProcessArgv()
+
+        const distAbsPath = getAbsolutePath('/dist')
+
+        // check if dist dir still exists
+        const exists = await virtualFs.promises.access( distAbsPath )
+            .then( () => true )
+            .catch( () => false )
+        expect( exists ).toBe(true)
+
+        // check that it wasn't emptied
+        const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
+        expect(dirContent.length).toBeGreaterThan(0)
+
+        // check that process was exited without errors
+        expect( process.exit ).toHaveBeenCalledWith(0)
     })
 })
