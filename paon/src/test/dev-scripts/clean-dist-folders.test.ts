@@ -15,6 +15,9 @@ import {
     unmockProcessArgv
 } from '../testing-helpers/process-mocks'
 
+
+// ---------------------------- MOCKS ---------------------------- 
+
 vi.mock("node:fs/promises")
 vi.mock("#paon/utils/message-logging")
 
@@ -39,7 +42,24 @@ vi.mock("node:readline/promises", () => {
 // prevent process.exit from killing process while testing 
 vi.spyOn(process, "exit").mockImplementation( processExitMockImplementation )
 
+// ---------------------------- CONSTANTS ---------------------------- 
 
+const DIST_FOLDER_TEST_CONTENT = {
+    'file-1.js': 'compiled js file 1',
+    'folder': {
+        'file-2.js': 'compiled js file 2',
+    },
+    'other-folder': {
+        'deep-folder': {
+            'file-3.js': 'compiled js file 3',
+        }
+    }
+}
+
+const ELEM_COUNT_IN_DIST_ROOT = Object.keys( DIST_FOLDER_TEST_CONTENT ).length
+
+
+// ---------------------------- RESETTING ---------------------------- 
 
 beforeEach(async () => {
 
@@ -51,25 +71,15 @@ beforeEach(async () => {
     vol.fromNestedJSON({
         // for core-clean-outdir tests
         './paon': {
-            'dist': {
-                'file1.js': 'PAON compiled js file 1',
-                'folder': {
-                    'file2.js': 'PAON compiled js file 2',
-                },
-            }
+            'dist': DIST_FOLDER_TEST_CONTENT
         },
-
         // for site-clean-outdir tests
-        './dist': {
-            'file1.js': 'SITE compiled js file 1',
-            'folder': {
-                'file2.js': 'SITE compiled js file 2',
-            },
-        }
+        './dist': DIST_FOLDER_TEST_CONTENT
     }, getRootPath() ) // Simulate existing files in /paon/dist/
 })
 
 
+// ---------------------------- TESTS: CORE-CLEAN-OUTDIR ---------------------------- 
 
 describe('#core:clean-outdir (dev-script)', () => {
     
@@ -118,12 +128,15 @@ describe('#core:clean-outdir (dev-script)', () => {
 
         // check that it wasn't emptied
         const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
-        expect(dirContent.length).toBeGreaterThan(0)
+        expect(dirContent.length).toEqual(ELEM_COUNT_IN_DIST_ROOT)
 
         // check that process was exited without errors
         expect( process.exit ).toHaveBeenCalledWith(0)
     })
 })
+
+
+// ---------------------------- TESTS: SITE-CLEAN-OUTDIR ---------------------------- 
 
 describe('#site:clean-outdir (dev-script)', () => {
     
@@ -172,7 +185,7 @@ describe('#site:clean-outdir (dev-script)', () => {
 
         // check that it wasn't emptied
         const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
-        expect(dirContent.length).toBeGreaterThan(0)
+        expect(dirContent.length).toEqual(ELEM_COUNT_IN_DIST_ROOT)
 
         // check that process was exited without errors
         expect( process.exit ).toHaveBeenCalledWith(0)

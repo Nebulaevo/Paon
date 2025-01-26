@@ -16,6 +16,18 @@ import {
 
 import { virtualizeFolder } from '../testing-helpers/virtualize-folder-content'
 
+
+// ---------------------------- MOCKS ---------------------------- 
+
+vi.mock("node:fs/promises")
+vi.mock("#paon/utils/message-logging")
+
+// prevent process.exit from killing process while testing 
+vi.spyOn(process, "exit").mockImplementation( processExitMockImplementation )
+
+
+// ---------------------------- CONSTANTS ---------------------------- 
+
 // cached json copy of /paon/ressources folder
 let PAON_RESSOURCES_FOLDER_JSON: NestedDirectoryJSON | undefined = undefined
 
@@ -31,12 +43,7 @@ const INVALID_SITE_NAMES = [ // (only kebab-case, lowercase, alphanumerical acce
 ]
 
 
-vi.mock("node:fs/promises")
-vi.mock("#paon/utils/message-logging")
-
-// prevent process.exit from killing process while testing 
-vi.spyOn(process, "exit").mockImplementation( processExitMockImplementation )
-
+// ---------------------------- RESETTING ---------------------------- 
 
 beforeEach(async () => {
     
@@ -64,6 +71,9 @@ beforeEach(async () => {
         './dist': {}
     }, getRootPath())
 })
+
+
+// ---------------------------- TESTS: SITE-ADD ---------------------------- 
 
 describe('#site:add (dev-script)', () => {
 
@@ -98,7 +108,7 @@ describe('#site:add (dev-script)', () => {
         }
     })
 
-    it("fails if sitename already exists", async () => {
+    it("fails if folder with that name already exists", async () => {
 
         // mock process argv
         mockProcessArgv([ '_', '_', 'existing-site'  ])
@@ -143,7 +153,7 @@ describe('#site:add (dev-script)', () => {
         }
 
     })
-
+    
     it('should not run script if called with help command', async () => {
         
         // mock process argv
