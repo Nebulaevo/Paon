@@ -8,7 +8,7 @@ import { getAbsolutePath, getSiteIndexHtmlPath } from '#paon/utils/file-system'
 
 import extractSiteNameArg from '#paon/dev-scripts/helpers/extract-site-name-arg'
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
-import { getBuildClientCommand, getBuildServerCommand } from '#paon/dev-scripts/site-build/command-templates'
+import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/sub-process'
 import { 
     SCRIPT_NAME,
     COMMAND_DOCUMENTATION,
@@ -35,11 +35,10 @@ async function script() {
     consoleBlueMessage( `${siteName} website`, {iconName:'globe'} )
     consoleBlueMessage( `Vite building...`, {iconName:'lightning'} )
 
-    const buildClientCommand = getBuildClientCommand( siteName )
-    const buildServerCommand = getBuildServerCommand( siteName )
+    const buildSiteCommand = getSiteBuildCommand( siteName )
 
     const buildingProcess = childProcess.spawn(
-        `${buildClientCommand} && ${buildServerCommand}`,
+        buildSiteCommand,
         [], { shell: true }
     )
     buildingProcess.stderr.pipe( process.stderr )
@@ -48,8 +47,7 @@ async function script() {
     buildingProcess.on( 'close', async (code) => {
 
         if ( code !== null && code > 0 ) {
-            consoleErrorMessage( buildClientCommand )
-            consoleErrorMessage( buildServerCommand )
+            consoleErrorMessage( buildSiteCommand )
             consoleErrorMessage( 'build commands failed' )
             process.exit(1)
         }
