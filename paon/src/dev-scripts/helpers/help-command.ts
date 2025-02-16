@@ -1,4 +1,4 @@
-
+import { consoleMessage } from "#paon/utils/message-logging"
 
 /** Constant representing the argument for which we display the command documentation */
 const HELP_COMMAND = 'help'
@@ -10,16 +10,16 @@ function isAskingForHelp(): boolean {
     return args.includes( HELP_COMMAND )
 }
 
-/** Function returning a formatted text indicating how to display the command documentation */
-function getForMoreInfoText( scriptName:string ) {
-    return `
+/** Function displaying a message in the console to inform user how to display the doc */
+function informUserOfHelpCommand(scriptName: string) {
+    consoleMessage(`
 For more information run:
 >>> npm run ${scriptName} ${HELP_COMMAND}
-    `
+    `)
 }
 
 export {
     HELP_COMMAND,
     isAskingForHelp,
-    getForMoreInfoText
+    informUserOfHelpCommand
 }

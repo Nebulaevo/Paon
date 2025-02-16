@@ -1,8 +1,18 @@
-/* file auto-running corresponding script (core:clean-outdir) */
+/* file auto-running corresponding script (site:add) */
+import { informUserOfHelpCommand } from "#paon/dev-scripts/helpers/help-command"
+
+import { SCRIPT_NAME } from './constants.js'
 import script from "./script.js"
 
+
 async function run() {
-    return script()
+    try {
+        script()
+    } catch (e) {
+        informUserOfHelpCommand( SCRIPT_NAME )
+        throw e
+    }
 }
+    
 
 await run()

@@ -1,4 +1,4 @@
-import { HELP_COMMAND, getForMoreInfoText } from '#paon/dev-scripts/helpers/help-command'
+import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 
 /** name triggering that script in package.json 'scripts' */
 const SCRIPT_NAME = 'site:build-all'
@@ -15,12 +15,9 @@ Triggers the site:build command for every site in the src/sites/ folder
 displays command documentation
 `
 
-/** text explaining how to display the command documentation (used after some errors) */
-const FOR_MORE_INFORMATION_TEXT = getForMoreInfoText(SCRIPT_NAME)
 
 
 export {
     SCRIPT_NAME,
-    COMMAND_DOCUMENTATION,
-    FOR_MORE_INFORMATION_TEXT
+    COMMAND_DOCUMENTATION
 }

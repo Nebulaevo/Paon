@@ -1,4 +1,4 @@
-import { HELP_COMMAND, getForMoreInfoText } from '#paon/dev-scripts/helpers/help-command'
+import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 
 /** name triggering that script in package.json 'scripts' */
 const SCRIPT_NAME = 'site:add'
@@ -21,9 +21,6 @@ scaffolds a site folder in the ./src/sites directory.
 >>> npm run ${SCRIPT_NAME} ${HELP_COMMAND}
 displays command documentation
 `
-
-/** text explaining how to display the command documentation (used after some errors) */
-const FOR_MORE_INFORMATION_TEXT = getForMoreInfoText(SCRIPT_NAME)
 
 /** folders to create when scaffoling a new site 
  * 
@@ -89,7 +86,6 @@ const STARTER_FILES: { path: string, outputPath:string }[] = [
 export {
     SCRIPT_NAME,
     COMMAND_DOCUMENTATION,
-    FOR_MORE_INFORMATION_TEXT,
     FOLDER_STRUCTURE,
     STARTER_FILES,
 }
