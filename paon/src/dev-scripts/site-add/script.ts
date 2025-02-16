@@ -6,12 +6,11 @@ import path from 'node:path'
 import { consoleErrorMessage, consoleBlueMessage, consoleSucessMessage, consoleMessage } from '#paon/utils/message-logging'
 import { getAbsolutePath } from '#paon/utils/file-system'
 
-import extractSiteNameArg from '#paon/dev-scripts/helpers/extract-site-name-arg'
+import getSiteName from '#paon/dev-scripts/helpers/get-site-name'
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
 import { 
     SCRIPT_NAME, 
-    COMMAND_DOCUMENTATION, 
-    FOR_MORE_INFORMATION_TEXT, 
+    COMMAND_DOCUMENTATION,
     FOLDER_STRUCTURE, 
     STARTER_FILES 
 } from './constants.js'
@@ -26,11 +25,12 @@ async function script() {
     }
 
     // extract site name and check validity
-    const siteName = await extractSiteNameArg({
-        scriptName: SCRIPT_NAME, 
-        forMoreInfoText: FOR_MORE_INFORMATION_TEXT,
-        expectedSiteStatus: 'NON_EXISTANT'
-    })
+    const siteName = await getSiteName({expectedSiteState: 'NON_EXISTANT'})
+    // const siteName = await extractSiteNameArg({
+    //     scriptName: SCRIPT_NAME, 
+    //     forMoreInfoText: FOR_MORE_INFORMATION_TEXT,
+    //     expectedSiteStatus: 'NON_EXISTANT'
+    // })
 
     consoleBlueMessage( `Scaffolding ${siteName} site folder`, {iconName:'building'} )
 
