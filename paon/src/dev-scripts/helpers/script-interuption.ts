@@ -8,18 +8,36 @@ class ScriptExecError extends Error {
     }
 }
 
-function isCustomExecError( err:unknown ): boolean {
+class ScriptClosureRequest extends Error {
+    constructor() {
+        super( '' )
+        this.name = "ScriptClosureRequest"
+    }
+}
+
+function isScriptExecError( err:unknown ): boolean {
     return err instanceof ScriptExecError
 }
 
-function interuptScript( message?:string ): never {
-    message = message ? message : 'Forced script interuption'
-    throw new ScriptExecError( message )
+function isScriptClosureRequest( err:unknown ): boolean {
+    return err instanceof ScriptClosureRequest
+}
+
+function interuptScript( kwargs: { message?:string, isError?:boolean }): never {
+    const { message, isError=false } = kwargs
+
+    if ( isError ){
+        throw new ScriptExecError( message ? message : 'Forced script interuption' )
+    } else {
+        throw new ScriptClosureRequest()
+    }
 }
 
 
 export {
     ScriptExecError,
-    isCustomExecError,
+    ScriptClosureRequest,
+    isScriptExecError,
+    isScriptClosureRequest,
     interuptScript
 }

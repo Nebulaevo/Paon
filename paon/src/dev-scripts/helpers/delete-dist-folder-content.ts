@@ -1,9 +1,11 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import promptUser from '#paon/dev-scripts/helpers/prompt-user'
 import { consoleBlueMessage, consoleErrorMessage, consoleMessage, consoleSucessMessage } from '#paon/utils/message-logging'
 import { getAbsolutePath } from '#paon/utils/file-system'
+
+import promptUser from '#paon/dev-scripts/helpers/prompt-user'
+import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
 
 async function deleteDistFolderContent( relPath:string ) {
 
@@ -12,8 +14,10 @@ async function deleteDistFolderContent( relPath:string ) {
     const splittedPath = relPath.split( path.sep )
     const isDistFolder = splittedPath.length > 0 && splittedPath[ splittedPath.length-1 ] === 'dist'
     if (!isDistFolder) {
-        consoleErrorMessage( `path '${relPath}' doesn't point to a dist folder, operation cancelled` )
-        process.exit(1)
+        interuptScript({
+            message: `path '${relPath}' doesn't point to a dist folder, operation cancelled`, 
+            isError: true
+        })
     }
 
     // we display an "are you sure" prompt to user
@@ -24,7 +28,7 @@ async function deleteDistFolderContent( relPath:string ) {
     // if answer is not 'y' we cancel the action
     if ( userResponse !== 'y' ) {
         consoleMessage( 'Action cancelled' )
-        process.exit(0)
+        interuptScript({isError: false})
     }
 
     // reseting the 'dist' folder

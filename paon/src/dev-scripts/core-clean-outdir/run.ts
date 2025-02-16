@@ -1,5 +1,6 @@
 /* file auto-running corresponding script (core:clean-outdir) */
 import { informUserOfHelpCommand } from "#paon/dev-scripts/helpers/help-command"
+import { isScriptClosureRequest } from '#paon/dev-scripts/helpers/script-interuption'
 
 import { SCRIPT_NAME } from './constants.js'
 import script from "./script.js"
@@ -9,8 +10,10 @@ async function run() {
     try {
         script()
     } catch (e) {
-        informUserOfHelpCommand( SCRIPT_NAME )
-        throw e
+        if ( !isScriptClosureRequest(e) ) {
+            informUserOfHelpCommand( SCRIPT_NAME )
+            throw e
+        }
     }
 }
     

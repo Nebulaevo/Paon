@@ -3,7 +3,7 @@ import { findInFolder } from '#paon/utils/file-system'
 
 import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 import promptUser from "#paon/dev-scripts/helpers/prompt-user"
-import { interuptScript } from '#paon/dev-scripts/helpers/errors'
+import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
 
 
 
@@ -50,7 +50,10 @@ async function getSiteName(kwargs: extractionKwargs_T): Promise<string> {
             } else { // ifMultipleScriptArgs == 'ERROR'
                 // by default we consider that script only takes one arg, 
                 // and that if more were provided it is probably a mistake
-                interuptScript( `Script was called with ${processArgs.length} arguments (0 or 1 expected)` )
+                interuptScript({ 
+                    message: `Script was called with ${processArgs.length} arguments (0 or 1 expected)`,
+                    isError: true
+                })
             }
     }
 
@@ -70,20 +73,32 @@ async function _validateSiteName(kwargs: siteNameValidationKwargs_T): Promise<vo
     
     const validateSiteName = new RegExp( getSiteNamePattern() )
     if ( !siteName.match( validateSiteName ) ) {
-        interuptScript( `Given site name "${siteName}" doesn't fit expected name pattern (kebab-case with only alphanumerical characters)` )
+        interuptScript({ 
+            message: `Given site name "${siteName}" doesn't fit expected name pattern (kebab-case with only alphanumerical characters)`,
+            isError: true
+        })
 
     } else if ( siteName === HELP_COMMAND ) {
-        interuptScript( `Site Name cannot have same value as help command` )
+        interuptScript({ 
+            message: `Site Name cannot have same value as help command`,
+            isError: true
+        })
     }
 
     const folder = await findInFolder( 'src/sites', { folderPattern: siteName } )
     const siteExists = folder !== undefined
 
     if (expectedSiteState == 'EXISTANT' && !siteExists) {
-        interuptScript( `No site folder with that name was found` )
+        interuptScript({ 
+            message: `No site folder with that name was found`, 
+            isError: true
+        })
 
     } else if (expectedSiteState == 'NON_EXISTANT' && siteExists) {
-        interuptScript( `Site with that name already exists` )
+        interuptScript({ 
+            message: `Site with that name already exists`,
+            isError: true
+        })
     }
 }
 
