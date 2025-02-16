@@ -1,7 +1,7 @@
-import readLine from 'node:readline/promises'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
+import promptUser from '#paon/dev-scripts/helpers/prompt-user'
 import { consoleBlueMessage, consoleErrorMessage, consoleMessage, consoleSucessMessage } from '#paon/utils/message-logging'
 import { getAbsolutePath } from '#paon/utils/file-system'
 
@@ -17,15 +17,12 @@ async function deleteDistFolderContent( relPath:string ) {
     }
 
     // we display an "are you sure" prompt to user
-    const rl = readLine.createInterface({ 
-        input: process.stdin, 
-        output: process.stdout 
-    })
-    const answer = await rl.question( `This action is gonna delete the content inside of ${relPath}, are you sure ? (y/n) ` )
-    rl.close()
+    const userResponse = await promptUser( 
+        `This action is gonna delete the content inside of ${relPath}, are you sure ? (y/n)` 
+    )
 
     // if answer is not 'y' we cancel the action
-    if ( answer !== 'y' ) {
+    if ( userResponse !== 'y' ) {
         consoleMessage( 'Action cancelled' )
         process.exit(0)
     }
