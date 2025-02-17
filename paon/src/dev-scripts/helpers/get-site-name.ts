@@ -45,9 +45,9 @@ async function getSiteName(kwargs: extractionKwargs_T): Promise<string> {
             break
         
         default: // more than 1
-            if (ifMultipleScriptArgs == 'TAKE_FIRST') {
+            if (ifMultipleScriptArgs === 'TAKE_FIRST') {
                 siteName = processArgs[0]
-            } else { // ifMultipleScriptArgs == 'ERROR'
+            } else { // ifMultipleScriptArgs === 'ERROR'
                 // by default we consider that script only takes one arg, 
                 // and that if more were provided it is probably a mistake
                 interuptScript({ 
@@ -88,13 +88,13 @@ async function _validateSiteName(kwargs: siteNameValidationKwargs_T): Promise<vo
     const folder = await findInFolder( 'src/sites', { folderPattern: siteName } )
     const siteExists = folder !== undefined
 
-    if (expectedSiteState == 'EXISTANT' && !siteExists) {
+    if (expectedSiteState === 'EXISTANT' && !siteExists) {
         interuptScript({ 
             message: `No site folder with that name was found`, 
             isError: true
         })
 
-    } else if (expectedSiteState == 'NON_EXISTANT' && siteExists) {
+    } else if (expectedSiteState === 'NON_EXISTANT' && siteExists) {
         interuptScript({ 
             message: `Site with that name already exists`,
             isError: true
