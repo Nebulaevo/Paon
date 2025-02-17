@@ -15,7 +15,7 @@ function runBuildSiteCommand( siteName: string ) {
         buildingProcess.stdout.pipe( process.stdout )
         buildingProcess.stderr.pipe( process.stderr )
 
-        buildingProcess.on( 'close', async (code) => {
+        buildingProcess.on( 'close', (code) => {
             if (code === 0) {
                 resolve()
             } else {
