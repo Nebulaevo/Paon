@@ -59,7 +59,7 @@ async function getSiteName(kwargs: extractionKwargs_T): Promise<string> {
 
     siteName = siteName.toLowerCase()
 
-    _validateSiteName({siteName, expectedSiteState})
+    await _validateSiteName({siteName, expectedSiteState})
 
     return siteName
 }
