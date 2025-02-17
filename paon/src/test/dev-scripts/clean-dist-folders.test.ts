@@ -1,19 +1,18 @@
 /** Testing dev scripts "core-clean-outdir" and "site-clean-outdir" */
 
 import { vol, fs as virtualFs } from "memfs"
-import { vi, describe, expect, beforeEach, it, type MockedFunction } from "vitest"
+import { vi, describe, expect, beforeEach, it } from "vitest"
 
 import { getRootPath, getAbsolutePath } from "#paon/utils/file-system"
 import coreCleanOutdir from '#paon/dev-scripts/core-clean-outdir/script'
 import siteCleanOutdir from '#paon/dev-scripts/site-clean-outdir/script'
-import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 
-import { 
-    processExitMockImplementation, 
-    asyncProcessExitCatcher,
-    mockProcessArgv,
-    unmockProcessArgv
-} from '../testing-helpers/process-mocks'
+import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
+import { ScriptClosureRequest } from "#paon/dev-scripts/helpers/script-interuption"
+
+import { mockProcessArgv, unmockProcessArgv } from '../testing-helpers/process-mocks'
+import { interceptInteruptionErrors } from '../testing-helpers/catch-script-interuption'
+
 
 
 // ---------------------------- MOCKS ---------------------------- 
@@ -21,26 +20,13 @@ import {
 vi.mock("node:fs/promises")
 vi.mock("#paon/utils/message-logging")
 
-// the "readline" mock is made to fit this script
-// (returns "y" to question and closes)
-// so we do not make that mock global
-vi.mock("node:readline/promises", () => {
-    const mockModule = {
-        createInterface: () => {
-            return {
-                question: vi.fn().mockResolvedValue('y'),
-                close: () => {}
-            }
-        }
-    }
+vi.mock("#paon/dev-scripts/helpers/prompt-user", () => {
+    const mockedPromptUser = vi.fn().mockResolvedValue('y')
     return {
-        default: mockModule,
-        ...mockModule
+        default: mockedPromptUser,
+        promptUser: mockedPromptUser
     }
 })
-
-// prevent process.exit from killing process while testing 
-vi.spyOn(process, "exit").mockImplementation( processExitMockImplementation )
 
 // ---------------------------- CONSTANTS ---------------------------- 
 
@@ -85,8 +71,9 @@ describe('#core:clean-outdir (dev-script)', () => {
     
     it('should delete the content of /paon/dist directory', async () => {
         
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( coreCleanOutdir )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( coreCleanOutdir )
         
         const distAbsPath = getAbsolutePath('/paon/dist')
 
@@ -100,11 +87,8 @@ describe('#core:clean-outdir (dev-script)', () => {
         const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
         expect(dirContent).toEqual([])
 
-        // if process have been called, we check that it exited with code '0'
-        const processExit = process.exit as MockedFunction<typeof process.exit>
-        if ( processExit.mock.calls.length > 0 ) {
-            expect( process.exit ).toHaveBeenCalledWith(0)
-        }
+        // script shouldn run to the end
+        expect(raisedInterutionError).toEqual(undefined)
     })
 
     it('should not run script if called with help command', async () => {
@@ -112,8 +96,9 @@ describe('#core:clean-outdir (dev-script)', () => {
         // mock process argv
         mockProcessArgv([ '_', '_', HELP_COMMAND  ])
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( coreCleanOutdir )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( coreCleanOutdir )
 
         // unmock process argv
         unmockProcessArgv()
@@ -130,8 +115,9 @@ describe('#core:clean-outdir (dev-script)', () => {
         const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
         expect(dirContent.length).toEqual(ELEM_COUNT_IN_DIST_ROOT)
 
-        // check that process was exited without errors
-        expect( process.exit ).toHaveBeenCalledWith(0)
+        // script should be stoped before the end
+        // by throwing a ScriptClosureRequest
+        expect(raisedInterutionError).toBeInstanceOf(ScriptClosureRequest)
     })
 })
 
@@ -142,8 +128,9 @@ describe('#site:clean-outdir (dev-script)', () => {
     
     it('should delete the content of /dist directory', async () => {
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteCleanOutdir )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteCleanOutdir )
 
         const distAbsPath = getAbsolutePath('/dist')
 
@@ -157,11 +144,8 @@ describe('#site:clean-outdir (dev-script)', () => {
         const dirContent = await virtualFs.promises.readdir(distAbsPath)
         expect(dirContent).toEqual([])
 
-        // if process have been called, we check that it exited with code '0'
-        const processExit = process.exit as MockedFunction<typeof process.exit>
-        if ( processExit.mock.calls.length > 0 ) {
-            expect( process.exit ).toHaveBeenCalledWith(0)
-        }
+        // script shouldn run to the end
+        expect(raisedInterutionError).toEqual(undefined)
     })
 
     it('should not run script if called with help command', async () => {
@@ -169,8 +153,9 @@ describe('#site:clean-outdir (dev-script)', () => {
         // mock process argv
         mockProcessArgv([ '_', '_', HELP_COMMAND  ])
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteCleanOutdir )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteCleanOutdir )
 
         // unmock process argv
         unmockProcessArgv()
@@ -187,7 +172,8 @@ describe('#site:clean-outdir (dev-script)', () => {
         const dirContent = await virtualFs.promises.readdir(distAbsPath) // Check the directory
         expect(dirContent.length).toEqual(ELEM_COUNT_IN_DIST_ROOT)
 
-        // check that process was exited without errors
-        expect( process.exit ).toHaveBeenCalledWith(0)
+        // script should be stoped before the end
+        // by throwing a ScriptClosureRequest
+        expect(raisedInterutionError).toBeInstanceOf(ScriptClosureRequest)
     })
 })

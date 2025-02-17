@@ -6,19 +6,15 @@ import childProcess from "node:child_process"
 
 import { getRootPath } from "#paon/utils/file-system"
 import siteBuild from '#paon/dev-scripts/site-build/script'
-import { SCRIPT_NAME as BUILD_SITE_COMMAND } from '#paon/dev-scripts/site-build/constants'
 import siteBuildAll from '#paon/dev-scripts/site-build-all/script'
 import { runBuildSiteCommand } from "#paon/dev-scripts/site-build-all/sub-process"
 import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/sub-process'
 
 import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
+import { ScriptClosureRequest, ScriptExecError } from "#paon/dev-scripts/helpers/script-interuption"
 
-import { 
-    processExitMockImplementation, 
-    asyncProcessExitCatcher,
-    mockProcessArgv,
-    unmockProcessArgv
-} from '../testing-helpers/process-mocks'
+import { mockProcessArgv, unmockProcessArgv } from '../testing-helpers/process-mocks'
+import { interceptInteruptionErrors } from '../testing-helpers/catch-script-interuption'
 
 
 // ---------------------------- MOCKS ---------------------------- 
@@ -28,10 +24,26 @@ vi.mock("node:fs/promises")
 vi.mock("#paon/utils/message-logging")
 vi.mock( "#paon/dev-scripts/site-build-all/sub-process" )
 
-// prevent process.exit from killing process while testing 
-vi.spyOn(process, "exit").mockImplementation( processExitMockImplementation )
+// ---------------------------- DYNAMIC MOCKS ---------------------------- 
 
+// we create a hoisted value containing a vi.fn object
+// that we will be modifying the return value 
+// depending on the test case
+const dynamicMocks = vi.hoisted(() => {
+    return {
+        promptUser: vi.fn()
+    }
+})
 
+// we attach that object to the mocked module
+// this way every time we modify "dynamicMocks.promptUser"
+// the behavior of that module changes
+vi.mock("#paon/dev-scripts/helpers/prompt-user", () => {
+    return {
+        default: dynamicMocks.promptUser,
+        promptUser: dynamicMocks.promptUser
+    }
+})
 
 // ---------------------------- CONSTANTS ---------------------------- 
 
@@ -80,16 +92,19 @@ beforeEach(async () => {
 
 describe('#site:build (dev-script)', () => {
 
-    it("spawns a process to build the corresponding site", async () => {
+
+    // SPAWN A PROCESS TO BUILD THE CORRESPONDING SITE
+
+    it("spawns a process to build the corresponding site (with process arg siteName)", async () => {
         // mock process argv
         mockProcessArgv([ '_', '_', EXISTING_VALID_SITE_1 ])
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteBuild )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
 
         // unmock process argv
         unmockProcessArgv()
-
 
         // checks that script tried to spawn a child process
         // with building command for given site
@@ -98,19 +113,46 @@ describe('#site:build (dev-script)', () => {
             buildSiteCommand, [], { shell:true }
         )
 
-        // if process.exit have been called, we check that it exited with code '0'
-        const processExit = process.exit as MockedFunction<typeof process.exit>
-        if ( processExit.mock.calls.length > 0 ) {
-            expect( process.exit ).toHaveBeenCalledWith(0)
-        }
+        // script shouldn run to the end
+        expect(raisedInterutionError).toEqual(undefined)
     })
 
-    it("fails if folder with that name doesn't exist", async () => {
+    it("spawns a process to build the corresponding site (with user prompt siteName)", async () => {
+        
+        // modifying the return value of "promptUser" for this test case
+        dynamicMocks.promptUser.mockResolvedValue( EXISTING_VALID_SITE_1 )
+
+        // mock process argv
+        mockProcessArgv([ '_', '_' ])
+
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
+
+        // unmock process argv
+        unmockProcessArgv()
+
+        // checks that script tried to spawn a child process
+        // with building command for given site
+        const buildSiteCommand = getSiteBuildCommand( EXISTING_VALID_SITE_1 )
+        expect( childProcess.spawn ).toHaveBeenCalledWith( 
+            buildSiteCommand, [], { shell:true }
+        )
+
+        // script shouldn run to the end
+        expect(raisedInterutionError).toEqual(undefined)
+    })
+
+
+    // FAILS IF FOLDER WITH THAT NAME DOESN'T EXIST
+
+    it("fails if folder with that name doesn't exist (with process arg siteName)", async () => {
         // mock process argv
         mockProcessArgv([ '_', '_', NON_EXISTING_SITE  ])
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteBuild )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
 
         // unmock process argv
         unmockProcessArgv()
@@ -119,16 +161,43 @@ describe('#site:build (dev-script)', () => {
         // with building command for invalid site
         expect( childProcess.spawn ).not.toHaveBeenCalled()
 
-        // checks that process was closed with error
-        expect( process.exit ).toHaveBeenCalledWith(1)
+        // script should fail with a ScriptExecError
+        expect(raisedInterutionError).toBeInstanceOf(ScriptExecError)
     })
 
-    it('fails if sitename is invalid (even if folder exists)', async () => {
+    it("fails if folder with that name doesn't exist (with user prompt siteName)", async () => {
+        
+        // modifying the return value of "promptUser" for this test case
+        dynamicMocks.promptUser.mockResolvedValue( NON_EXISTING_SITE )
+
+        // mock process argv
+        mockProcessArgv([ '_', '_' ])
+
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
+
+        // unmock process argv
+        unmockProcessArgv()
+
+        // checks that the script didn't try to spawn a child process
+        // with building command for invalid site
+        expect( childProcess.spawn ).not.toHaveBeenCalled()
+
+        // script should fail with a ScriptExecError
+        expect(raisedInterutionError).toBeInstanceOf(ScriptExecError)
+    })
+
+
+    // FAILS IF SITENAME IS INVALID, EVEN IF FOLDER EXISTS
+
+    it('fails if sitename is invalid, even if folder exists (with process arg siteName)', async () => {
         // mock process argv
         mockProcessArgv([ '_', '_', EXISTING_INVALID_SITE  ])
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteBuild )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
 
         // unmock process argv
         unmockProcessArgv()
@@ -137,16 +206,43 @@ describe('#site:build (dev-script)', () => {
         // with building command for invalid site
         expect( childProcess.spawn ).not.toHaveBeenCalled()
 
-        // checks that process was closed with error
-        expect( process.exit ).toHaveBeenCalledWith(1)
+        // script should fail with a ScriptExecError
+        expect(raisedInterutionError).toBeInstanceOf(ScriptExecError)
+    })
+
+    it('fails if sitename is invalid, even if folder exists (with user prompt siteName)', async () => {
+        
+        // modifying the return value of "promptUser" for this test case
+        dynamicMocks.promptUser.mockResolvedValue( EXISTING_INVALID_SITE )
+
+        // mock process argv
+        mockProcessArgv([ '_', '_' ])
+
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
+
+        // unmock process argv
+        unmockProcessArgv()
+
+        // checks that the script didn't try to spawn a child process
+        // with building command for invalid site
+        expect( childProcess.spawn ).not.toHaveBeenCalled()
+
+        // script should fail with a ScriptExecError
+        expect(raisedInterutionError).toBeInstanceOf(ScriptExecError)
     })
     
-    it('should not run script if called with help command', async () => {
+
+    // HELP COMMAND
+
+    it('does not run script if is called with help command in proces args', async () => {
         // mock process argv
         mockProcessArgv([ '_', '_', HELP_COMMAND  ])
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteBuild )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
 
         // unmock process argv
         unmockProcessArgv()
@@ -155,8 +251,32 @@ describe('#site:build (dev-script)', () => {
         // with building command for invalid site
         expect( childProcess.spawn ).not.toHaveBeenCalled()
 
-        // checks that process was closed without error
-        expect( process.exit ).toHaveBeenCalledWith(0)
+        // script should be stoped before the end
+        // by throwing a ScriptClosureRequest
+        expect(raisedInterutionError).toBeInstanceOf(ScriptClosureRequest)
+    })
+
+    it('fails if trying to use help command as site name (through user prompt)', async () => {
+
+        // modifying the return value of "promptUser" for this test case
+        dynamicMocks.promptUser.mockResolvedValue( HELP_COMMAND )
+
+        // mock process argv
+        mockProcessArgv([ '_', '_' ])
+
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
+
+        // unmock process argv
+        unmockProcessArgv()
+
+        // checks that the script didn't try to spawn a child process
+        // with building command for invalid site
+        expect( childProcess.spawn ).not.toHaveBeenCalled()
+
+        // script should fail with a ScriptExecError
+        expect(raisedInterutionError).toBeInstanceOf(ScriptExecError)
     })
 })
 
@@ -167,8 +287,9 @@ describe('#site:build:all (dev-script)', () => {
 
     it('calls site:build script for every folder in src/sites', async () => {
         
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteBuildAll )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuildAll )
 
         // fonction generating sub-process should have been called for
         // every site names in the src/sites folder (valid or not)
@@ -176,19 +297,17 @@ describe('#site:build:all (dev-script)', () => {
             expect( runBuildSiteCommand ).toHaveBeenCalledWith( siteName )
         }
 
-        // if process.exit have been called, we check that it exited with code '0'
-        const processExit = process.exit as MockedFunction<typeof process.exit>
-        if ( processExit.mock.calls.length > 0 ) {
-            expect( process.exit ).toHaveBeenCalledWith(0)
-        }
+        // script shouldn run to the end
+        expect(raisedInterutionError).toEqual(undefined)
     })
 
     it('should not run script if called with help command', async () => {
         // mock process argv
         mockProcessArgv([ '_', '_', HELP_COMMAND  ])
 
-        // wrap tested function to catch eventual "process.exit" error
-        await asyncProcessExitCatcher( siteBuildAll )
+        // Wraps tested function to catch and return any eventual script interuption errors
+        // to know how the script was closed
+        const raisedInterutionError = await interceptInteruptionErrors( siteBuildAll )
 
         // unmock process argv
         unmockProcessArgv()
@@ -197,7 +316,8 @@ describe('#site:build:all (dev-script)', () => {
         // with building command for invalid site
         expect( runBuildSiteCommand ).not.toHaveBeenCalled()
 
-        // checks that process was closed without error
-        expect( process.exit ).toHaveBeenCalledWith(0)
+        // script should be stoped before the end
+        // by throwing a ScriptClosureRequest
+        expect(raisedInterutionError).toBeInstanceOf(ScriptClosureRequest)
     })
 })
