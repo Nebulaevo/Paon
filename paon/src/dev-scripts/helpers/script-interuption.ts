@@ -15,11 +15,11 @@ class ScriptClosureRequest extends Error {
     }
 }
 
-function isScriptExecError( err:unknown ): boolean {
+function isScriptExecError( err:unknown ): err is ScriptExecError {
     return err instanceof ScriptExecError
 }
 
-function isScriptClosureRequest( err:unknown ): boolean {
+function isScriptClosureRequest( err:unknown ): err is ScriptClosureRequest {
     return err instanceof ScriptClosureRequest
 }
 
