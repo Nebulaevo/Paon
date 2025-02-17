@@ -1,8 +1,8 @@
 import fastify from "fastify"
 
 import ServerConfig from '#paon/template-server/data-models/server-config'
-import { consoleMessage, consoleErrorMessage } from "#paon/utils/message-logging"
-import { getAbsolutePath, getRootPath } from "#paon/utils/file-system"
+import { consoleMessage } from "#paon/utils/message-logging"
+import { getAbsolutePath } from "#paon/utils/file-system"
 
 import listAvailableSites from "#paon/template-server/helpers/list-available-sites"
 
@@ -65,14 +65,8 @@ async function server( executionMode: serverExectutionMode_T ) {
         vite: vite
     }))
     
-    try {
-        await app.listen({ port:port, host:host })
-        console.log(`Fastify server running listening on ${host} at :${port}`)
-    } catch (e) {
-        consoleErrorMessage( 'Fastify server raised an error:' )
-        consoleMessage( e as string )
-        process.exit(1)
-    }
+    await app.listen({ port:port, host:host })
+    consoleMessage(`Fastify server running listening on ${host} at :${port}`)
 }
 
 

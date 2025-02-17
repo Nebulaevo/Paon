@@ -9,8 +9,8 @@ import { getAbsolutePath, getSiteIndexHtmlPath } from '#paon/utils/file-system'
 import getSiteName from '#paon/dev-scripts/helpers/get-site-name'
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
 import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/sub-process'
-import { 
-    SCRIPT_NAME,
+import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
+import {
     COMMAND_DOCUMENTATION
 } from './constants.js'
 
@@ -20,16 +20,11 @@ async function script() {
     // display help ?
     if ( isAskingForHelp() ) {
         consoleMessage(COMMAND_DOCUMENTATION)
-        process.exit(0)
+        interuptScript({isError: false})
     }
 
     // extract site name and check validity
     const siteName = await getSiteName({expectedSiteState: 'EXISTANT'})
-    // const siteName = await extractSiteNameArg({
-    //     scriptName: SCRIPT_NAME, 
-    //     forMoreInfoText: FOR_MORE_INFORMATION_TEXT,
-    //     expectedSiteStatus: 'EXISTANT'
-    // })
 
     // running site building commands in a child process
     consoleBlueMessage( `${siteName} website`, {iconName:'globe'} )
@@ -47,9 +42,10 @@ async function script() {
     buildingProcess.on( 'close', async (code) => {
 
         if ( code !== null && code > 0 ) {
-            consoleErrorMessage( buildSiteCommand )
-            consoleErrorMessage( 'build commands failed' )
-            process.exit(1)
+            interuptScript({
+                message: `"${buildSiteCommand}"\nBuild commands failed`,
+                isError: true
+            })
         }
         consoleSucessMessage( `built successfully`, {iconName:'parcel'} )
 

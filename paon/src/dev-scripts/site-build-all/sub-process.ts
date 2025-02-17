@@ -19,10 +19,10 @@ function runBuildSiteCommand( siteName: string ) {
             if (code === 0) {
                 resolve()
             } else {
-                consoleErrorMessage( `${command} command failed` )
+                consoleErrorMessage( `command "${command}" failed` )
                 reject()
             }
-        }) 
+        })
     })
 }
 

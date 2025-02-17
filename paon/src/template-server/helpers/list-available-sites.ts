@@ -2,7 +2,6 @@ import fs from 'node:fs/promises'
 
 import { getAbsolutePath } from '#paon/utils/file-system'
 import { getSiteNamePattern } from '#paon/utils/string-patterns'
-import { consoleErrorMessage, consoleMessage } from '#paon/utils/message-logging'
 
 
 /** Function listing the site folders in 'folderPath' */
@@ -23,9 +22,7 @@ async function listAvailableSites( folderPath:string ): Promise<string[]> {
     const validateSiteNamePattern = new RegExp( getSiteNamePattern() )
     for (const siteName of siteNames ) {
         if ( !siteName.match( validateSiteNamePattern ) ) {
-            consoleErrorMessage( `found website named '${siteName}' in dist/server, this name doesn't match the expected site name pattern` )
-            consoleMessage( "site name should be, lowercase, alpha-numerical, kebab-case, shoudn't start or end with a hyphen '-' ")
-            process.exit(1)
+            throw new Error( `Given site name "${siteName}" doesn't fit expected name pattern (kebab-case with only alphanumerical characters)` )
         }
     }
 

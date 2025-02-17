@@ -8,8 +8,8 @@ import { getAbsolutePath } from '#paon/utils/file-system'
 
 import getSiteName from '#paon/dev-scripts/helpers/get-site-name'
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
+import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
 import { 
-    SCRIPT_NAME, 
     COMMAND_DOCUMENTATION,
     FOLDER_STRUCTURE, 
     STARTER_FILES 
@@ -21,16 +21,11 @@ async function script() {
     // display help ?
     if ( isAskingForHelp() ) {
         consoleMessage(COMMAND_DOCUMENTATION)
-        process.exit(0)
+        interuptScript({isError: false})
     }
 
     // extract site name and check validity
     const siteName = await getSiteName({expectedSiteState: 'NON_EXISTANT'})
-    // const siteName = await extractSiteNameArg({
-    //     scriptName: SCRIPT_NAME, 
-    //     forMoreInfoText: FOR_MORE_INFORMATION_TEXT,
-    //     expectedSiteStatus: 'NON_EXISTANT'
-    // })
 
     consoleBlueMessage( `Scaffolding ${siteName} site folder`, {iconName:'building'} )
 

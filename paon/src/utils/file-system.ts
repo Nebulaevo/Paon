@@ -133,7 +133,7 @@ function _findRootPath(): string {
             {iconName: 'error'} 
         )
         /* if the root can't be found the program needs to crash */
-        process.exit(1)
+        throw new Error('Failed to locate project root')
     }
 
     const rootPath = path.dirname(currentPath)

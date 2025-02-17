@@ -4,6 +4,7 @@ import { getAbsolutePath } from '#paon/utils/file-system'
 import { consoleMessage } from '#paon/utils/message-logging'
 
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
+import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
 import { 
     COMMAND_DOCUMENTATION,
 } from './constants.js'
@@ -17,7 +18,7 @@ async function script() {
     // display help ?
     if ( isAskingForHelp() ) {
         consoleMessage(COMMAND_DOCUMENTATION)
-        process.exit(0)
+        interuptScript({isError: false})
     }
 
     // listing site folders in src/sites 
@@ -35,7 +36,10 @@ async function script() {
         try {
             await runBuildSiteCommand( siteName )
         } catch(e) {
-            process.exit(1)
+            interuptScript({
+                message: `Build command for "${siteName}" website failed`,
+                isError: true
+            })
         }
     }
 }
