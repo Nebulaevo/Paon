@@ -8,7 +8,7 @@ const FOLDER_REL_PATH = './dist'
 
 /** documentation of the command */
 const COMMAND_DOCUMENTATION = `
-📄 npm run ${SCRIPT_NAME} (help)
+📄 ${SCRIPT_NAME} (doc)
 -------------------------
 
 >>> npm run ${SCRIPT_NAME}

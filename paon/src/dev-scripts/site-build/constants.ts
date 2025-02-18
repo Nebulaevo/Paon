@@ -5,9 +5,11 @@ const SCRIPT_NAME = 'site:build'
 
 /** documentation of the command */
 const COMMAND_DOCUMENTATION = `
-📄 npm run ${SCRIPT_NAME} (help)
+📄 ${SCRIPT_NAME} (doc)
 -------------------------
 
+>>> npm run ${SCRIPT_NAME}
+ OR
 >>> npm run ${SCRIPT_NAME} <SITE-NAME>
 triggers the build process for a site
 - site name have to be an existing site folder in ./src/sites/

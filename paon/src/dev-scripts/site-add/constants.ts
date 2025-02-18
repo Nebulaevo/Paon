@@ -5,9 +5,11 @@ const SCRIPT_NAME = 'site:add'
 
 /** documentation of the command */
 const COMMAND_DOCUMENTATION = `
-📄 npm run ${SCRIPT_NAME} (help)
+📄 ${SCRIPT_NAME} (doc)
 -------------------------
 
+>>> npm run ${SCRIPT_NAME}
+ OR
 >>> npm run ${SCRIPT_NAME} <SITE-NAME>
 scaffolds a site folder in the ./src/sites directory.
 - site name cannot point to a folder already existing in the ./src/sites folder
