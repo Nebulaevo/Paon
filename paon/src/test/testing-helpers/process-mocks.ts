@@ -1,7 +1,24 @@
 /** mock helpers for process */
 
-type processWithMockedArgv = typeof process & {
+type processWithMockedArgv_T = typeof process & {
     _originalArgv?: string[]
+}
+
+type asyncFunc_T = () => Promise<void>
+
+
+/** Executes async function with custom value for 'process.argv' */
+function withMockedProcessArgv(kwargs: {asyncFunc: asyncFunc_T, argv:string[] }): asyncFunc_T {
+    return async () => {
+        try {
+            _mockProcessArgv( kwargs.argv )
+            await kwargs.asyncFunc()
+        } catch (e) {
+            _unmockProcessArgv()
+            throw e
+        }
+        _unmockProcessArgv()
+    }
 }
 
 /** Mocks value of `process.argv`
@@ -17,8 +34,8 @@ type processWithMockedArgv = typeof process & {
  * unmockProcessArgv()
  * // process is back to normal
  */
-function mockProcessArgv( argv: string[] ) {
-    const p = process as processWithMockedArgv
+function _mockProcessArgv( argv: string[] ) {
+    const p = process as processWithMockedArgv_T
     p._originalArgv = process.argv
     p.argv = argv
 }
@@ -32,16 +49,14 @@ function mockProcessArgv( argv: string[] ) {
  * unmockProcessArgv()
  * // process is back to normal
  */
-function unmockProcessArgv() {
-    const p = process as processWithMockedArgv
+function _unmockProcessArgv() {
+    const p = process as processWithMockedArgv_T
     if ( p && p._originalArgv ) {
         process.argv = p._originalArgv
         p._originalArgv = undefined
     }
 }
 
-
 export {
-    mockProcessArgv,
-    unmockProcessArgv
+    withMockedProcessArgv
 }

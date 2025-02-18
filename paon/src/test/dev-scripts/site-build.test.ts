@@ -13,7 +13,7 @@ import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/sub-process'
 import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 import { ScriptClosureRequest, ScriptExecError } from "#paon/dev-scripts/helpers/script-interuption"
 
-import { mockProcessArgv, unmockProcessArgv } from '../testing-helpers/process-mocks'
+import { withMockedProcessArgv } from '../testing-helpers/process-mocks'
 import { interceptInteruptionErrors } from '../testing-helpers/catch-script-interuption'
 
 
@@ -74,7 +74,7 @@ const SITE_FOLDER_NAMES = Object.keys(SITES_FOLDER_JSON)
 
 beforeEach(async () => {
     
-    // reset process.exit spy
+    // reset mocks
     vi.clearAllMocks()
 
     // reset virtual file system
@@ -96,15 +96,16 @@ describe('#site:build (dev-script)', () => {
     // SPAWN A PROCESS TO BUILD THE CORRESPONDING SITE
 
     it("spawns a process to build the corresponding site (with process arg siteName)", async () => {
-        // mock process argv
-        mockProcessArgv([ '_', '_', EXISTING_VALID_SITE_1 ])
-
+        
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_', EXISTING_VALID_SITE_1 ] 
+            })
+        )
 
         // checks that script tried to spawn a child process
         // with building command for given site
@@ -122,15 +123,15 @@ describe('#site:build (dev-script)', () => {
         // modifying the return value of "promptUser" for this test case
         dynamicMocks.promptUser.mockResolvedValue( EXISTING_VALID_SITE_1 )
 
-        // mock process argv
-        mockProcessArgv([ '_', '_' ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_' ] 
+            })
+        )
 
         // checks that script tried to spawn a child process
         // with building command for given site
@@ -147,15 +148,16 @@ describe('#site:build (dev-script)', () => {
     // FAILS IF FOLDER WITH THAT NAME DOESN'T EXIST
 
     it("fails if folder with that name doesn't exist (with process arg siteName)", async () => {
-        // mock process argv
-        mockProcessArgv([ '_', '_', NON_EXISTING_SITE  ])
-
+        
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_', NON_EXISTING_SITE ] 
+            })
+        )
 
         // checks that the script didn't try to spawn a child process
         // with building command for invalid site
@@ -170,15 +172,15 @@ describe('#site:build (dev-script)', () => {
         // modifying the return value of "promptUser" for this test case
         dynamicMocks.promptUser.mockResolvedValue( NON_EXISTING_SITE )
 
-        // mock process argv
-        mockProcessArgv([ '_', '_' ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_' ] 
+            })
+        )
 
         // checks that the script didn't try to spawn a child process
         // with building command for invalid site
@@ -192,15 +194,16 @@ describe('#site:build (dev-script)', () => {
     // FAILS IF SITENAME IS INVALID, EVEN IF FOLDER EXISTS
 
     it('fails if sitename is invalid, even if folder exists (with process arg siteName)', async () => {
-        // mock process argv
-        mockProcessArgv([ '_', '_', EXISTING_INVALID_SITE  ])
-
+        
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_', EXISTING_INVALID_SITE ] 
+            })
+        )
 
         // checks that the script didn't try to spawn a child process
         // with building command for invalid site
@@ -215,15 +218,15 @@ describe('#site:build (dev-script)', () => {
         // modifying the return value of "promptUser" for this test case
         dynamicMocks.promptUser.mockResolvedValue( EXISTING_INVALID_SITE )
 
-        // mock process argv
-        mockProcessArgv([ '_', '_' ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_' ] 
+            })
+        )
 
         // checks that the script didn't try to spawn a child process
         // with building command for invalid site
@@ -237,15 +240,16 @@ describe('#site:build (dev-script)', () => {
     // HELP COMMAND
 
     it('does not run script if is called with help command in proces args', async () => {
-        // mock process argv
-        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
-
+        
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_', HELP_COMMAND ] 
+            })
+        )
 
         // checks that the script didn't try to spawn a child process
         // with building command for invalid site
@@ -261,15 +265,15 @@ describe('#site:build (dev-script)', () => {
         // modifying the return value of "promptUser" for this test case
         dynamicMocks.promptUser.mockResolvedValue( HELP_COMMAND )
 
-        // mock process argv
-        mockProcessArgv([ '_', '_' ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuild )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuild, 
+                argv: [ '_', '_' ] 
+            })
+        )
 
         // checks that the script didn't try to spawn a child process
         // with building command for invalid site
@@ -302,15 +306,16 @@ describe('#site:build:all (dev-script)', () => {
     })
 
     it('should not run script if called with help command', async () => {
-        // mock process argv
-        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
-
+        
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteBuildAll )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteBuildAll, 
+                argv: [ '_', '_', HELP_COMMAND ] 
+            })
+        )
 
         // checks that the script didn't try to spawn a child process
         // with building command for invalid site

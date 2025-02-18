@@ -10,7 +10,7 @@ import siteCleanOutdir from '#paon/dev-scripts/site-clean-outdir/script'
 import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 import { ScriptClosureRequest } from "#paon/dev-scripts/helpers/script-interuption"
 
-import { mockProcessArgv, unmockProcessArgv } from '../testing-helpers/process-mocks'
+import { withMockedProcessArgv } from '../testing-helpers/process-mocks'
 import { interceptInteruptionErrors } from '../testing-helpers/catch-script-interuption'
 
 
@@ -49,7 +49,7 @@ const ELEM_COUNT_IN_DIST_ROOT = Object.keys( DIST_FOLDER_TEST_CONTENT ).length
 
 beforeEach(async () => {
 
-    // reset process.exit spy
+    // reset mocks
     vi.clearAllMocks()
 
     // reset virtual file system
@@ -93,15 +93,15 @@ describe('#core:clean-outdir (dev-script)', () => {
 
     it('should not run script if called with help command', async () => {
 
-        // mock process argv
-        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( coreCleanOutdir )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors( 
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: coreCleanOutdir, 
+                argv: [ '_', '_', HELP_COMMAND ] 
+            })
+        )
 
         const distAbsPath = getAbsolutePath('/paon/dist')
 
@@ -127,11 +127,11 @@ describe('#core:clean-outdir (dev-script)', () => {
 describe('#site:clean-outdir (dev-script)', () => {
     
     it('should delete the content of /dist directory', async () => {
-
+        
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
         const raisedInterutionError = await interceptInteruptionErrors( siteCleanOutdir )
-
+        
         const distAbsPath = getAbsolutePath('/dist')
 
         // check if dist dir still exists
@@ -150,15 +150,15 @@ describe('#site:clean-outdir (dev-script)', () => {
 
     it('should not run script if called with help command', async () => {
         
-        // mock process argv
-        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteCleanOutdir )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors( 
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteCleanOutdir, 
+                argv: [ '_', '_', HELP_COMMAND ] 
+            })
+        )
 
         const distAbsPath = getAbsolutePath('/dist')
 

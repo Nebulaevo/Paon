@@ -9,7 +9,7 @@ import siteAdd from '#paon/dev-scripts/site-add/script'
 import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 import { ScriptClosureRequest, ScriptExecError } from "#paon/dev-scripts/helpers/script-interuption"
 
-import { mockProcessArgv, unmockProcessArgv } from '../testing-helpers/process-mocks'
+import { withMockedProcessArgv } from '../testing-helpers/process-mocks'
 import { interceptInteruptionErrors } from '../testing-helpers/catch-script-interuption'
 import { virtualizeFolder } from '../testing-helpers/virtualize-folder-content'
 
@@ -65,7 +65,7 @@ beforeEach(async () => {
         PAON_RESSOURCES_FOLDER_JSON = await virtualizeFolder({absPath:getAbsolutePath('paon/ressources')})
     }
 
-    // reset process.exit spy
+    // reset mocks
     vi.clearAllMocks()
 
     // reset virtual file system
@@ -95,15 +95,15 @@ describe('#site:add (dev-script)', () => {
 
     it("scaffolds a new site folder (with process arg siteName)", async () => {
 
-        // mock process argv
-        mockProcessArgv([ '_', '_', NEW_SITE_NAME  ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteAdd, 
+                argv: [ '_', '_', NEW_SITE_NAME ] 
+            })
+        )
 
         const siteFolderAbsPath = getAbsolutePath(`/src/sites/${NEW_SITE_NAME}`)
 
@@ -127,15 +127,15 @@ describe('#site:add (dev-script)', () => {
         // modifying the return value of "promptUser" for this test case
         dynamicMocks.promptUser.mockResolvedValue( NEW_SITE_NAME )
 
-        // mock process argv
-        mockProcessArgv([ '_', '_'  ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteAdd, 
+                argv: [ '_', '_' ] 
+            })
+        )
 
         const siteFolderAbsPath = getAbsolutePath(`/src/sites/${NEW_SITE_NAME}`)
 
@@ -159,15 +159,15 @@ describe('#site:add (dev-script)', () => {
 
     it("fails if folder with that name already exists (with process arg siteName)", async () => {
 
-        // mock process argv
-        mockProcessArgv([ '_', '_', EXISTING_SITE_NAME  ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteAdd, 
+                argv: [ '_', '_', EXISTING_SITE_NAME ] 
+            })
+        )
 
         // check if site folder still exists
         const siteFolderAbsPath = getAbsolutePath(`/src/sites/${EXISTING_SITE_NAME}`)
@@ -183,15 +183,15 @@ describe('#site:add (dev-script)', () => {
         // modifying the return value of "promptUser" for this test case
         dynamicMocks.promptUser.mockResolvedValue( EXISTING_SITE_NAME )
 
-        // mock process argv
-        mockProcessArgv([ '_', '_' ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteAdd, 
+                argv: [ '_', '_' ] 
+            })
+        )
 
         // check if site folder still exists
         const siteFolderAbsPath = getAbsolutePath(`/src/sites/${EXISTING_SITE_NAME}`)
@@ -209,15 +209,15 @@ describe('#site:add (dev-script)', () => {
 
         for ( const invalidSiteName of INVALID_SITE_NAMES ) {
             
-            // mock process argv
-            mockProcessArgv([ '_', '_', invalidSiteName  ])
-
             // Wraps tested function to catch and return any eventual script interuption errors
             // to know how the script was closed
-            const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-            // unmock process argv
-            unmockProcessArgv()
+            const raisedInterutionError = await interceptInteruptionErrors(
+                // Mocking given process argv
+                withMockedProcessArgv({
+                    asyncFunc: siteAdd, 
+                    argv: [ '_', '_', invalidSiteName ] 
+                })
+            )
             
             // check if new site folder exists
             const siteFolderAbsPath = getAbsolutePath(`/src/sites/${invalidSiteName}`)
@@ -238,15 +238,15 @@ describe('#site:add (dev-script)', () => {
             // modifying the return value of "promptUser" for this test case
             dynamicMocks.promptUser.mockResolvedValue( invalidSiteName )
 
-            // mock process argv    
-            mockProcessArgv([ '_', '_' ])
-
             // Wraps tested function to catch and return any eventual script interuption errors
             // to know how the script was closed
-            const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-            // unmock process argv
-            unmockProcessArgv()
+            const raisedInterutionError = await interceptInteruptionErrors(
+                // Mocking given process argv
+                withMockedProcessArgv({
+                    asyncFunc: siteAdd, 
+                    argv: [ '_', '_' ] 
+                })
+            )
             
             // check if new site folder exists
             const siteFolderAbsPath = getAbsolutePath(`/src/sites/${invalidSiteName}`)
@@ -264,16 +264,16 @@ describe('#site:add (dev-script)', () => {
     // HELP COMMAND
     
     it('does not run script if is called with help command in proces args', async () => {
-        
-        // mock process argv
-        mockProcessArgv([ '_', '_', HELP_COMMAND  ])
 
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteAdd, 
+                argv: [ '_', '_', HELP_COMMAND ] 
+            })
+        )
 
         const sitesFolderAbsPath = getAbsolutePath(`/src/sites`)
 
@@ -291,15 +291,15 @@ describe('#site:add (dev-script)', () => {
         // modifying the return value of "promptUser" for this test case
         dynamicMocks.promptUser.mockResolvedValue( HELP_COMMAND )
 
-        // mock process argv
-        mockProcessArgv([ '_', '_' ])
-
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
-        const raisedInterutionError = await interceptInteruptionErrors( siteAdd )
-
-        // unmock process argv
-        unmockProcessArgv()
+        const raisedInterutionError = await interceptInteruptionErrors(
+            // Mocking given process argv
+            withMockedProcessArgv({
+                asyncFunc: siteAdd, 
+                argv: [ '_', '_' ] 
+            })
+        )
 
         // check if new site folder exists
         const siteFolderAbsPath = getAbsolutePath(`/src/sites/${HELP_COMMAND}`)
