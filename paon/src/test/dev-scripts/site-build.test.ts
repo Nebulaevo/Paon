@@ -50,7 +50,7 @@ vi.mock("#paon/dev-scripts/helpers/prompt-user", () => {
 const NON_EXISTING_SITE = 'the-missing-site'
 const EXISTING_VALID_SITE_1 = 'existing-site-1'
 const EXISTING_VALID_SITE_2 = 'other-site'
-const EXISTING_INVALID_SITE = '-INVALID-SITE-NAME-'
+const EXISTING_INVALID_SITE = '-invalid-site-name-'
 
 const SITES_FOLDER_JSON = {
     [EXISTING_VALID_SITE_1]: {

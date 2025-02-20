@@ -1,7 +1,7 @@
 /** Testing dev script "site-add" */
 
 import { vol, fs as virtualFs, type NestedDirectoryJSON } from "memfs"
-import { vi, describe, expect, beforeEach, it, type MockedFunction } from "vitest"
+import { vi, describe, expect, beforeEach, it, type MockedFunction, beforeAll } from "vitest"
 
 import { getRootPath, getAbsolutePath } from "#paon/utils/file-system"
 import siteAdd from '#paon/dev-scripts/site-add/script'
@@ -43,7 +43,7 @@ vi.mock("#paon/dev-scripts/helpers/prompt-user", () => {
 // ---------------------------- CONSTANTS ---------------------------- 
 
 // cached json copy of /paon/ressources folder
-let PAON_RESSOURCES_FOLDER_JSON: NestedDirectoryJSON | undefined = undefined
+let PAON_RESSOURCES_FOLDER_JSON: NestedDirectoryJSON
 
 // site name samples
 const NEW_SITE_NAME = 'new-site-0' // valid kebab-case, lowercase, alphanumerical
@@ -56,14 +56,16 @@ const INVALID_SITE_NAMES = [ // (only kebab-case, lowercase, alphanumerical acce
 ]
 
 
+// ---------------------------- SET UP ---------------------------- 
+
+beforeAll(async () => {
+    PAON_RESSOURCES_FOLDER_JSON = await virtualizeFolder({absPath:getAbsolutePath('paon/ressources')})
+})
+
+
 // ---------------------------- RESETTING ---------------------------- 
 
 beforeEach(async () => {
-    
-    // compute and cache copy of /paon/ressources folder
-    if ( !PAON_RESSOURCES_FOLDER_JSON ) {
-        PAON_RESSOURCES_FOLDER_JSON = await virtualizeFolder({absPath:getAbsolutePath('paon/ressources')})
-    }
 
     // reset mocks
     vi.clearAllMocks()
