@@ -36,6 +36,9 @@ async function server( executionMode: serverExectutionMode_T ) {
     // we allow the server to serve static assets
     let vite: ViteDevServer | undefined
     if ( isDev ) {
+        // if server is running in 'DEV' mode
+        // we serve static assets from /src/ with 
+        // the vite dev server.
         const { createServer } = await import('vite')
         const { fastifyExpress } = await import('@fastify/express')
 
@@ -49,6 +52,9 @@ async function server( executionMode: serverExectutionMode_T ) {
         app.use(vite.middlewares)
 
     } else if ( isPreview ) {
+        // if server is running in 'PREVIEW' mode
+        // we serve bundled/built assets from /dist/ with
+        // fastify/static
         const { fastifyStatic } = await import("@fastify/static")
 
         app.register(fastifyStatic, {
