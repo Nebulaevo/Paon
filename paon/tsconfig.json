@@ -10,9 +10,9 @@
         "moduleResolution": "NodeNext",
         "rootDir": "src",
         "paths": {
-            "&internal-interface/*": [ 
-                "./src/_internal-interface/*.ts", 
-                "./src/_internal-interface/*" 
+            "&interop-types/*": [ 
+                "../paon-interop-types/dist/*.ts", 
+                "../paon-interop-types/dist/*" 
             ],
 
             "#paon/*": [ 
@@ -23,5 +23,8 @@
         }
     },
     "include": ["src"],
-    "exclude": ["node_modules", "src/test", "__mocks__"]
+    "exclude": [ "node_modules", "src/test", "__mocks__" ],
+    "references": [
+        { "path": "../paon-interop-types/tsconfig.json" }
+    ]
 }

@@ -4,8 +4,6 @@ import { dirname, resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// import { registerSites } from './server/src/site-registration/register-sites.ts'
-// const sites = await registerSites()
 
 const rootPath = dirname( fileURLToPath( import.meta.url ) )
 
@@ -19,10 +17,17 @@ export default defineConfig({
         alias: {
             "&internal-interface": resolve(rootPath, "./src/_internal-interface/"),
 
-            "@components": resolve(rootPath, "./src/components/"),
-            "@assets": resolve(rootPath, "./src/assets/"),
-            "@sites": resolve(rootPath, "./src/sites/"),
-            "@utils": resolve(rootPath, "./src/utils/"),
+            "@core:components": resolve(rootPath, "./src/core/components/"),
+            "@core:hooks": resolve(rootPath, "./src/core/hooks/"),
+            "@core:utils": resolve(rootPath, "./src/core/utils/"),
+            "@core:assets": resolve(rootPath, "./src/core/assets/"),
+
+            "@components": resolve(rootPath, "./src/shared/components/"),
+            "@hooks": resolve(rootPath, "./src/shared/hooks/"),
+            "@utils": resolve(rootPath, "./src/shared/utils/"),
+            "@assets": resolve(rootPath, "./src/shared/assets/"),
+
+            "@sites": resolve(rootPath, "./src/shared/sites/"),
         },
     },
     css: {

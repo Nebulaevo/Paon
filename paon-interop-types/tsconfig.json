@@ -1,0 +1,18 @@
+/*
+- Generates only .d.ts files (no compiled JavaScript)
+- Keeps interop/ as a self-contained module.
+- Allows paon/ and src/ to reference interop/ without modifying their rootDir
+*/
+{
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,         // Generate .d.ts files only
+        "emitDeclarationOnly": true, // Do not compile JS, only types
+        "outDir": "dist",            // Output folder for .d.ts files
+        "strict": true,              // Ensure strict type safety
+        "esModuleInterop": true,      // Fix compatibility with CommonJS/ESM
+        "skipLibCheck": true,
+    },
+    "include": ["./"]
+  }
+  

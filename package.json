@@ -18,7 +18,7 @@
         "server": "cross-env NODE_ENV=PROD node ./paon/dist/template-server/run.js",
         "server:dev": "cross-env NODE_ENV=DEV node ./paon/dist/template-server/run.js",
         "server:preview": "cross-env NODE_ENV=PREVIEW node ./paon/dist/template-server/run.js",
-        "core:build": "tsc --project ./paon/tsconfig.json",
+        "core:build": "tsc --project ./paon-interop-types/tsconfig.json && tsc --project ./paon/tsconfig.json",
         "core:clean-outdir": "node ./paon/dist/dev-scripts/core-clean-outdir/run.js",
         "core:test": "vitest",
         "site:add": "node ./paon/dist/dev-scripts/site-add/run.js",

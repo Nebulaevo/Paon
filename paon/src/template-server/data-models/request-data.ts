@@ -1,5 +1,5 @@
 /** Declares the RequestData class (handling POST data received from backend server) */
-import type { appProps_T } from "&internal-interface/app-props"
+import type { appProps_T } from "&interop-types/app-props"
 
 // escaping javascript
 import serialize from 'serialize-javascript'

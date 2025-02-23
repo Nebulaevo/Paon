@@ -22,29 +22,64 @@
 
         /* My additionnal settings */
         "paths": {
-            "&internal-interface/*": [ 
-                "./src/_internal-interface/*.ts", 
-                "./src/_internal-interface/*" 
+            "&interop-types/*": [ 
+                "./paon-interop-types/dist/*.ts", 
+                "./paon-interop-types/dist/*" 
+            ],
+
+            "@core:components/*": [
+                "./src/core/components/*.tsx",
+                "./src/core/components/*.ts",
+                "./src/core/components/*",
+            ],
+            
+            "@core:hooks/*": [
+                "./src/core/hooks/*.tsx",
+                "./src/core/hooks/*.ts",
+                "./src/core/hooks/*",
+            ],
+
+            "@core:utils/*": [
+                "./src/core/utils/*.ts",
+                "./src/core/utils/*",
+            ],
+
+            "@core:assets/*": [
+                "./src/core/assets/*",
             ],
 
             "@components/*": [
-                "./src/components/*.tsx", 
-                "./src/components/*.ts",
-                "./src/components/*" 
+                "./src/shared/components/*.tsx", 
+                "./src/shared/components/*.ts",
+                "./src/shared/components/*",
             ],
-            "@assets/*": [ "./src/assets/*" ],
+
+            "@hooks/*": [
+                "./src/shared/hooks/*.tsx", 
+                "./src/shared/hooks/*.ts",
+                "./src/shared/hooks/*",
+            ],
+            
+            "@utils/*": [
+                "./src/shared/utils/*.ts",
+                "./src/shared/utils/*"
+            ],
+
+            "@assets/*": [ 
+                "./src/shared/assets/*" 
+            ],
+            
             "@sites/*": [
                 "./src/sites/*.tsx", 
                 "./src/sites/*.ts",
                 "./src/sites/*"
             ],
-            "@utils/*": [
-                "./src/utils/*.ts", 
-                "./src/utils/*"
-            ]
         }
     },
     "include": ["src"],
-    "exclude": ["paon"],
-    "references": [{ "path": "./tsconfig.node.json" }]
+    "exclude": ["paon", "paon-interop-types"],
+    "references": [
+        { "path": "./tsconfig.node.json" },
+        { "path": "./paon-interop-types/tsconfig.json" }
+    ]
 }

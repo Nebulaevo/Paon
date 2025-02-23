@@ -1,4 +1,4 @@
-/** 🔗 Internal interface type 🔒
+/** App props Type
  * 
  * Type of the object returned by RequestData.appProps() and used as props for the root App component */
 type appProps_T = {

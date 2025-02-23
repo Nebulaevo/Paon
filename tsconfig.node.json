@@ -6,13 +6,6 @@
         "moduleResolution": "Bundler",
         "allowSyntheticDefaultImports": true,
         "jsx": "preserve",
-        
-        /* My additionnal settings */
-        "paths": {
-            // NECESSARY -> otherwise vite.config.ts can't find ressouces in paon folder
-            // (used to list projects entrypoints)
-            "#paon/*": [ "./paon/src/*", "./paon/src/*.ts", "./paon/src/*.js" ]
-        }
     },
     "include": ["vite.config.ts"],
 }
