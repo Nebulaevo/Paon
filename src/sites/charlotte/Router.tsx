@@ -7,7 +7,7 @@ import { Route, Switch } from "wouter"
 import { lazy } from "react"
 // import loadable from "@loadable/component"
 
-import LazyPageWrapper from "@components/core/lazy-page-wrapper/v1/wrapper"
+import LazyPageWrapper from "@core:components/lazy-page-wrapper/v1/wrapper"
 
 // import Home from './pages/home/page.tsx'
 // import Other from './pages/other/page.tsx'

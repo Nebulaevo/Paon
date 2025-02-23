@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { Router } from 'wouter'
 
 import { appProps_T } from '&interop-types/app-props'
-import renderToStringAsync from '@utils/core/asyncRenderToString/v1/asyncRenderToString'
+import renderToStringAsync from '@core:utils/asyncRenderToString/v1/asyncRenderToString'
 
 import App from './App'
 
