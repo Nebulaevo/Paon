@@ -30,7 +30,16 @@ async function server( executionMode: serverExectutionMode_T ) {
         isDev ? 'src/sites' : 'dist/server' 
     )
 
-    const app = fastify()
+    const app = fastify({
+        // Filtering out poisoning attempt keys rather that returning error:
+        // by default fastify returns a 400 error if it finds any prototype/constructor poisoning attempts
+        // but with our setup it could lead to unreachable pages,
+        // as if some polluting attempts end up in the DB, (and json contains dynamic keys that could be manipulated)
+        // all queries to render the page will return a 400, 
+        // (even if that scenario does imply other problems)
+        onProtoPoisoning: 'remove',
+        onConstructorPoisoning: 'remove'
+    })
 
     // when in 'DEV' or 'PREVIEW' mode
     // we allow the server to serve static assets
