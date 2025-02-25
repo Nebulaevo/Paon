@@ -1,9 +1,9 @@
-import type { appProps_T } from '&internal-interface/app-props'
+import type { appProps_T } from '&interop-types/app-props'
 
 import { useState } from 'react'
 
-import paonIcon from '@assets/icons/paon.svg'
-import { purifyUrl } from '@utils/core/purify-url/v1/purify-url'
+import paonIcon from '@core:assets/icons/paon.svg'
+import { purifyUrl } from '@core:utils/purify-url/v1/purify-url'
 import './style.scss'
 
 
