@@ -1,6 +1,6 @@
-
+import Layout from './layout.tsx'
 import Routes from './Router.tsx'
-import { Link } from 'wouter'
+
 
 import './assets/css/index.css'
 import './assets/css/fonts.css'
@@ -12,9 +12,9 @@ function App( ssrPageContext?: { [key:string]: any } ) {
     // return <PaonDefaultPage url={url} pageContext={pageContext} />
     console.log( ssrPageContext )
     return <>
-        <Link href="/">Home</Link>
-        <Link href="/other/">Other</Link>
-        <Routes/>
+        <Layout>
+            <Routes/>
+        </Layout>
     </>
 }
 
