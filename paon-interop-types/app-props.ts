@@ -1,9 +1,9 @@
-/** App props Type
- * 
- * Type of the object returned by RequestData.appProps() and used as props for the root App component */
+import { type Dict_T } from "sniffly"
+
+/** Data structure expected by the root App component when rendering a page */
 type appProps_T = {
-    url: string, 
-    pageContext: { [key:string]: unknown }
+    url: string,
+    context: Dict_T<unknown>
 }
 
 export type {

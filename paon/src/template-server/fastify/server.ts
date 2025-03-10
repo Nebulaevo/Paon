@@ -6,7 +6,7 @@ import { getAbsolutePath } from "#paon/utils/file-system"
 
 import listAvailableSites from "#paon/template-server/helpers/list-available-sites"
 
-import getTemplateRequestHandlers from '#paon/template-server/fastify/request-handlers/template-request'
+import getRoutesDeclaration from '#paon/template-server/fastify/request-handlers/template-request'
 import type { serverExectutionMode_T } from '#paon/template-server/helpers/types'
 
 import type { ViteDevServer } from "vite"
@@ -74,11 +74,12 @@ async function server( executionMode: serverExectutionMode_T ) {
 
     // add 'vite.ssrLoadModule' and 'vite.transformIndexHtml'
     // to route handling
-    app.register( await getTemplateRequestHandlers({
+    const templateRequestRoutes = await getRoutesDeclaration({
         siteNames: siteNames, 
         serverExecutionMode: executionMode,
         vite: vite
-    }))
+    })
+    app.register( templateRequestRoutes )
     
     await app.listen({ port:port, host:host })
     consoleMessage(`Fastify server running listening on ${host} at :${port}`)

@@ -2,22 +2,123 @@
 import type { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyReply } from 'fastify'
 
 import { collectRessources, collectSiteRessources } from "#paon/template-server/helpers/collect-ressources"
-import { RequestData } from '#paon/template-server/data-models/request-data'
+import { buildSsrReqData } from '#paon/template-server/data-models/ssr-request-data'
 import type { Dict_T } from 'sniffly'
 import type { siteRessources_T, serverExectutionMode_T } from '#paon/template-server/helpers/types'
 import type { ViteDevServer } from 'vite'
 
-type templateHandlerArgs_T = {
+type routesDeclarationKwargs_T = {
     siteNames: string[],
     serverExecutionMode: serverExectutionMode_T,
     vite?: ViteDevServer | undefined
 }
 
-async function getTemplateRequestHandlers({
+type reqHandlerKwargs_T = {
+    siteName: string,
+    siteRessources?: Dict_T<siteRessources_T>,
+    serverExecutionMode: serverExectutionMode_T,
+    vite?: ViteDevServer
+}
+
+/** returns a handler function for SSR template requests */
+function _buildSsrRequestHandler({
+        siteName,
+        siteRessources,
+        serverExecutionMode,
+        vite
+}: reqHandlerKwargs_T ) {
+    
+    return async ( request:FastifyRequest, response:FastifyReply ) => {
+        
+        const requestData = buildSsrReqData(request.body)
+        if ( !requestData ) {
+            response.statusCode = 400
+            return response.send('POST data received were invalid')
+        }
+
+        try {
+            const { templateFragments, ssrManifestFile, entryServerPath } = siteRessources 
+                ? siteRessources[siteName]
+                : await collectSiteRessources({ siteName, serverExecutionMode, vite, pageUrl: requestData.url })
+            
+            const render = vite 
+                ? (await vite.ssrLoadModule(entryServerPath)).render
+                : (await import(entryServerPath)).render
+            
+            const rendered = await render(requestData.appPropsObject(), ssrManifestFile)
+            
+            const head = templateFragments.head 
+                + `<meta name="rendering-mode" content="SSR">`
+                + requestData.getPropsAsJsonScriptTag()
+                + (rendered.head ?? '')
+            
+            const body = templateFragments.body
+                .replace(`<!--app-html-->`, rendered.html ?? '')
+            
+            response.type( 'application/json' )
+            return response.send({ head, body })
+            
+        } catch (e) {
+            if (e instanceof Error) {
+                vite?.ssrFixStacktrace(e)
+                console.log( e.stack )
+            }
+            response.statusCode = 500
+            return response.send('Request handling failed')
+        }
+        
+    }
+}
+
+/** returns a handler function for CSR template requests */
+function _buildCsrRequestHandler({
+    siteName,
+    siteRessources,
+    serverExecutionMode,
+    vite
+}: reqHandlerKwargs_T ) {
+    return async (request: FastifyRequest, response: FastifyReply) => {
+        
+        try {
+            const { templateFragments } = siteRessources 
+                ? siteRessources[siteName]
+                // REMARK: that function calls "vite.transformIndexHtml" with given pageUrl not sure what url is doing
+                // but it is only triggered in DEV server anyways so we are using "/"
+                : await collectSiteRessources({ siteName, serverExecutionMode, vite, pageUrl: '/' }) 
+            
+            // REMARKS
+            // for CSR, we shouldn't set 'app-props' so that the app shell
+            // can be cached and used for any page.
+            // app-props should be added only for SSR.
+            const head = templateFragments.head 
+                + `<meta name="rendering-mode" content="CSR">`
+            
+            const body = templateFragments.body
+                .replace(`<!--app-html-->`, '')
+            
+            response.type( 'application/json' )
+            return response.send({ head, body })
+            
+        } catch (e) {
+            if (e instanceof Error) {
+                vite?.ssrFixStacktrace(e)
+                console.log( e.stack )
+            }
+            response.statusCode = 500
+            return response.send('Request handling failed')
+        }
+    }
+}
+
+/** Returns a function declaring 2 routes for each registered webiste
+ * - one to generate an app shell for the given website (CSR)
+ * - one to render a page server side with given context (SSR)
+ */
+async function getRoutesDeclaration({
     siteNames,
     serverExecutionMode,
     vite
-}: templateHandlerArgs_T) {
+}: routesDeclarationKwargs_T ) {
 
     // in PREVIEW and PROD modes we want to collect and cache all website ressources
     // in DEV mode we want to always get the latest ressources
@@ -27,75 +128,23 @@ async function getTemplateRequestHandlers({
 
     return async function routes( fastify: FastifyInstance, options: FastifyPluginOptions ) {
         for ( const siteName of siteNames ) {
+            const requestHandlerArgs = {siteName, siteRessources, serverExecutionMode, vite}
+            
+            // requests for CSR app shells
+            fastify.route({
+                method: 'GET',
+                url: `/${siteName}/`,
+                handler: _buildCsrRequestHandler(requestHandlerArgs)
+            })
+            
+            // requests for SSR rendered pages
             fastify.route({
                 method: 'POST',
                 url: `/${siteName}/`,
-                handler: async ( request:FastifyRequest, response:FastifyReply ) => {
-                    
-                    const requestData = new RequestData(request.body)
-                    if ( !requestData.isValid ) {
-                        response.statusCode = 400
-                        return response.send('POST data received were invalid')
-                    }
-
-                    try {
-                        let render: any | undefined
-
-                        const { templateFragments, ssrManifestFile, entryServerPath } = siteRessources 
-                            ? siteRessources[siteName]
-                            : await collectSiteRessources({ siteName, serverExecutionMode, vite, pageUrl: requestData.url })
-                        
-                        if ( requestData.ssr ) {
-                            render = vite 
-                                ? (await vite.ssrLoadModule(entryServerPath)).render
-                                : (await import(entryServerPath)).render
-                        }
-                        
-                        const rendered = render
-                            ? await render( requestData.appPropsObject(), ssrManifestFile )
-                            : { head: '', html: '' }
-                        
-                        // REMARKS
-                        // for CSR, we shouldn't set 'app-props' cuz the page will be cached
-                        // and Django will have to set different app-props for each request
-                        // app-props should be added only for SSR. (started implementing but still have to be changed in 'entry-client', 'requestData' and django side)
-                        const head = templateFragments.head 
-                            + requestData.asJsonScriptTag()
-                            + (rendered.head ?? '')
-                            + `<script id="rendering-mode" type="application/json">${ requestData.ssr ? 'SSR' : 'CSR' }</script>`
-                            // + `<meta id="meta-rendering" name="rendering-method" content="${ requestData.ssr ? 'SSR' : 'CSR' }">`
-                        
-                        const body = templateFragments.body
-                            .replace(`<!--app-html-->`, rendered.html ?? '')
-
-                        // const html = templateFile
-                        //     .replace(`<!--lang-->`, requestData.lang)
-                        //     .replace(`<!--app-head-->`, rendered.head ?? '')
-                        //     .replace(`<!--app-props-->`, `<script>window.__INITIAL_PROPS__=${ requestData.serializedAppProps() };</script>` )
-                        //     // .replace(
-                        //     //     `<!--app-props-->`, 
-                        //     //     requestData.ssr 
-                        //     //         ? `<script id="initial-props" type="application/json">${ requestData.serializedAppProps() }</script>` 
-                        //     //         : `<!--app-props-->`
-                        //     // )
-                        //     .replace(`<!--app-html-->`, rendered.html ?? '')
-                        
-                        response.type( 'application/json' )
-                        return response.send({ head, body })
-                        
-                    } catch (e) {
-                        if (e instanceof Error) {
-                            vite?.ssrFixStacktrace(e)
-                            console.log( e.stack )
-                        }
-                        response.statusCode = 500
-                        return response.send('Request handling failed')
-                    }
-                    
-                }
+                handler: _buildSsrRequestHandler(requestHandlerArgs)
             })
         }
     }
 }
 
-export default getTemplateRequestHandlers
+export default getRoutesDeclaration
