@@ -4,14 +4,10 @@ type errorFallbackComp_T = () => JSX.Element
 type errorHandlingFunc_T = ( error:Error, errorInfo:React.ErrorInfo ) => any
 
 type ErrorBoundaryProps_T = {
-    FallbackComp?: errorFallbackComp_T,
+    Fallback: errorFallbackComp_T,
     // function that will be called if an error is triggered and given the error details
     errorHandlingFunc?: errorHandlingFunc_T,
     children: React.ReactNode,
-}
-
-function _defaultFallbackComp () {
-    return <p>Oops.. Something went wrong</p>
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boolean}> {
@@ -19,10 +15,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boo
     constructor(props: ErrorBoundaryProps_T) {
         super(props)
         this.state = {hasError: false}
-    }
-
-    _getFallbackComp(): errorFallbackComp_T {
-        return this.props.FallbackComp ?? _defaultFallbackComp
     }
   
     static getDerivedStateFromError() {
@@ -38,7 +30,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boo
     
     render() {
         if (this.state.hasError) {
-            const Fallback = this._getFallbackComp()
+            const { Fallback } = this.props
             return <Fallback />
         }
     

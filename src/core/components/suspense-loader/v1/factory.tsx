@@ -1,31 +1,31 @@
 import { useEffect, useState } from "react"
 
 type loaderOptions_T = {
-    FallbackComp: () => JSX.Element,
+    Loader: () => JSX.Element,
     timeoutMs: number
 }
 
 
 function _DefaultLoadingComp() {
-    return <p>Loading...</p>
+    return <></>
 }
 
 function _getLoadingOptions( options?:Partial<loaderOptions_T> ): loaderOptions_T {
     return {
-        FallbackComp: options?.FallbackComp ?? _DefaultLoadingComp,
+        Loader: options?.Loader ?? _DefaultLoadingComp,
         timeoutMs: options?.timeoutMs ?? 1000
     }
 }
 
-function getSuspenseLoaderComp( options?: Partial<loaderOptions_T> ) {
-    const {FallbackComp, timeoutMs} = _getLoadingOptions( options )
-    
+function suspenseLoaderFactory( options?: Partial<loaderOptions_T> ) {
+    const {Loader, timeoutMs} = _getLoadingOptions( options )
+    const activateTimeout = timeoutMs > 0 
     return function Loading () {
 
         // only display loading component after timeout delay
-        const [ display, setDisplay ] = useState( false )
+        const [ display, setDisplay ] = useState( !activateTimeout )
         useEffect( () => {
-            const timer = timeoutMs > 0 
+            const timer = activateTimeout
                 ? setTimeout(
                     () => setDisplay( true ),
                     timeoutMs
@@ -33,16 +33,15 @@ function getSuspenseLoaderComp( options?: Partial<loaderOptions_T> ) {
                 : null
             
             return () => { 
-                console.log(`Clear Timeout ${timer}`)
                 clearTimeout( timer ?? undefined ) 
             }
         }, [])
         
         return display 
-            ? <FallbackComp/>
+            ? <Loader/>
             : <></>
     }
 }
 
-export default getSuspenseLoaderComp
+export default suspenseLoaderFactory
 export type { loaderOptions_T }
