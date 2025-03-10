@@ -1,3 +1,5 @@
+import ErrorBoundary from '@core:components/error-boundary/v1/component'
+
 import Layout from './layout.tsx'
 import Routes from './Router.tsx'
 
@@ -10,10 +12,13 @@ import './App.scss'
 
 function App( ssrPageContext?: { [key:string]: any } ) {
     // return <PaonDefaultPage url={url} pageContext={pageContext} />
-    console.log( ssrPageContext )
+    console.log( 'rendering <App>' )
     return <>
         <Layout>
-            <Routes/>
+            <ErrorBoundary Fallback={() => <h1>Initial Error Page (have to disapear on navigation now)</h1>}>
+                <Routes/>
+            </ErrorBoundary>
+            
         </Layout>
     </>
 }

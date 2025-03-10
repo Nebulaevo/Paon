@@ -1,4 +1,5 @@
 function Loader() {
+    console.log( 'rendering <Loader>' )
     return <>
         <p>Loading...</p>
     </>

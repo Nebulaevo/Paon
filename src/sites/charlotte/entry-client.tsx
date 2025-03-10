@@ -2,9 +2,9 @@ import { StrictMode } from 'react'
 import { hydrateRoot, createRoot } from 'react-dom/client'
 import App from './App'
 
-const renderType = document.getElementById('rendering-mode')?.textContent ?? 'CSR'
+const renderMode = document.querySelector<HTMLMetaElement>('meta[name="rendering-mode"]')?.content ?? 'CSR'
 
-if ( renderType === 'SSR' ) {
+if ( renderMode === 'SSR' ) {
     hydrateRoot(
         document.getElementById('root') as HTMLElement,
         <StrictMode>

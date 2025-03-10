@@ -2,8 +2,8 @@
 
 
 function Home( props: any ) {
-    console.log( 'Home received' )
-    console.log( props )
+    console.log('rendering <Home> with props:')
+    console.log(props)
 
     return <>
         <h1>Home</h1>
