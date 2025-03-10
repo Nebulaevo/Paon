@@ -3,7 +3,7 @@ import type { appProps_T } from '&interop-types/app-props'
 import { useState } from 'react'
 
 import paonIcon from '@core:assets/icons/paon.svg'
-import { purifyUrl } from '@core:utils/purify-url/v1/purify-url'
+import { purifyUrl } from '@core:utils/purify-url/v1/util'
 import './style.scss'
 
 
