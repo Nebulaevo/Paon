@@ -131,7 +131,7 @@ function _purifyAbsoluteUrl(
  * (BLANK_URL_STRING value exported and can be used for comparaison)
  * 
  * @example
- * import { purifyUrl, BLANK_URL_STRING } from '@utils/purify-url'
+ * import { purifyUrl, BLANK_URL_STRING } from '@core:utils/purify-url/v1/util'
  * 
  * const unsafeURL = "http://some.unsafe/url/"
  * 
