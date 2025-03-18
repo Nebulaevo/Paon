@@ -1,4 +1,5 @@
-import { Link } from 'wouter'
+import Link from "@core:components/link/v1/component"
+
 
 type layoutProps_T = {
     children: React.ReactNode,
@@ -9,7 +10,7 @@ function Layout( props:layoutProps_T ) {
     return <>
         <Link href="/">Home</Link>
         <Link href="/other/">Other</Link>
-        <Link href="/other/1/">Other 1</Link>
+        <Link href="/other/?q=cul">Other 1</Link>
         <Link href="/failure/">Failure</Link>
         {/* <Link href="/paon/">Paon</Link> */}
         { props.children }
