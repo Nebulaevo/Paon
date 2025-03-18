@@ -15,10 +15,7 @@ function App( ssrPageContext?: { [key:string]: any } ) {
     console.log( 'rendering <App>' )
     return <>
         <Layout>
-            <ErrorBoundary Fallback={() => <h1>Initial Error Page (have to disapear on navigation now)</h1>}>
-                <Routes/>
-            </ErrorBoundary>
-            
+            <Routes/>
         </Layout>
     </>
 }
