@@ -8,7 +8,7 @@ class ErrorStatus extends Error {
     status: string
 
     constructor( status:string ) {
-        super(status)
+        super(`Error Status: ${status}`)
         this.status = status
     }
 }

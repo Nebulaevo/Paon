@@ -1,6 +1,7 @@
 import { Route, Switch } from "wouter"
 
 import DefaultError from "@core:components/error-component-default/v1/component"
+import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 
 import asPage, { type asPageWrapperKwargs_T } from "./as-page/wrapper"
 
@@ -39,7 +40,7 @@ function RoutesFactory({pages, loaderOptions, errorHandlingOptions}: routesFacto
             {pages.map((pageData) => {
                 return _getRoute({pageData, loaderOptions, errorHandlingOptions})
             })}
-            <Route><Fallback/></Route>
+            <Route><Fallback error={new ErrorStatus('404')}/></Route>
         </Switch>
     }
 }
