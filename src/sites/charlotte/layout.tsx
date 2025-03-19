@@ -10,7 +10,8 @@ function Layout( props:layoutProps_T ) {
     return <>
         <Link href="/">Home</Link>
         <Link href="/other/">Other</Link>
-        <Link href="/other/?q=cul">Other 1</Link>
+        <Link href="/other/?q=gros">Other 1</Link>
+        <Link href="/other/?q=gros#cul">Other 2</Link>
         <Link href="/failure/">Failure</Link>
         {/* <Link href="/paon/">Paon</Link> */}
         { props.children }
