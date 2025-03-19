@@ -9,7 +9,7 @@ function getPathname( url: string ) {
 
 function getRelativeUrl( url:string ) {
     const urlObj = _asUrlObj( url )
-    return urlObj.pathname + urlObj.search
+    return urlObj.pathname + urlObj.search + urlObj.hash
 }
 
 export {
