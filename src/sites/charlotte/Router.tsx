@@ -1,32 +1,54 @@
-import { lazy } from "react"
+import {lazy} from "react"
 
-import RoutesFactory from "@core:components/routes/v1/factory"
+import RoutesFactory, {
+    type pageData_T,
+    type loaderOptions_T,
+    type errorHandlingOptions_T 
+} from "@core:components/routes/v1/factory"
 
-import Error from "./error.tsx"
+import fetchPageProps from "./endpoints/fetch-page-props.ts"
 import Loader from './loader.tsx'
+import Error from "./error.tsx"
+
 
 
 // Pages Options
 
-const pages = [
-    {path: '/', component: lazy(() => import('./pages/home/page.tsx'))},
-    {path: '/other/', component: lazy(() => import('./pages/other/page.tsx'))},
-    {path: '/other/:id/', component: lazy(() => import('./pages/other/page.tsx'))},
+const Home = lazy(() => import('./pages/home/page.tsx'))
+const Other = lazy(() => import('./pages/other/page.tsx'))
+
+const pages: pageData_T[] = [
+    {
+        path: '/', 
+        Component: Home,
+        propsFetcher: fetchPageProps,
+    }, {
+        path: '/other/', 
+        Component: Other,
+        propsFetcher: fetchPageProps,
+    }, {
+        path: '/other/:id/', 
+        Component: Other,
+        propsFetcher: fetchPageProps,
+    },
 ]
 
-const errorHandlingOptions = { 
+const errorHandlingOptions: errorHandlingOptions_T = { 
     Fallback: Error 
 }
 
-const loaderOptions = {
+const loaderOptions: loaderOptions_T = {
     Loader: Loader,
-    timeoutMs: 1000
+    timeoutMs: 0
 }
 
 // Routes
 
+
 const Routes = RoutesFactory({
-    pages, loaderOptions, errorHandlingOptions
+    pages,
+    loaderOptions, 
+    errorHandlingOptions
 })
 
 export default Routes

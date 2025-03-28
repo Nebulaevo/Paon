@@ -7,42 +7,45 @@ import asPage, { type asPageWrapperKwargs_T } from "./as-page/wrapper"
 
 
 
-type routeCompProps_T = {
-    path: string,
-    component: asPageWrapperKwargs_T["component"]
-}
+type pageData_T = Pick<asPageWrapperKwargs_T, 'pageData'>['pageData']
+type loaderOptions_T = Pick<asPageWrapperKwargs_T, 'loaderOptions'>['loaderOptions']
+type errorHandlingOptions_T = Pick<asPageWrapperKwargs_T, 'errorHandlingOptions'>['errorHandlingOptions']
 
-type pages_T = { pages: routeCompProps_T[] }
-type asPageOptions_T = Omit<asPageWrapperKwargs_T, "component">
+type pages_T = { pages: pageData_T[] }
+type asPageOptions_T = Omit<asPageWrapperKwargs_T, "pageData">
 
 
-type getRouteKwargs_T = { pageData: routeCompProps_T } & asPageOptions_T
 type routesFactoryKwargs_T  = pages_T & asPageOptions_T
 
-function _getRoute({pageData, loaderOptions, errorHandlingOptions}: getRouteKwargs_T){
-    const Page = asPage({
-        component: pageData.component,
-        loaderOptions, errorHandlingOptions
-    })
-    return <Route key = { pageData.path }
-        path = { pageData.path }
+function _getRoute(kwargs: asPageWrapperKwargs_T ) {
+
+    const Page = asPage(kwargs)
+    
+    return <Route key = { kwargs.pageData.path }
+        path = { kwargs.pageData.path }
         component = { Page }
-    /> 
+    />
 }
 
 
 function RoutesFactory({pages, loaderOptions, errorHandlingOptions}: routesFactoryKwargs_T){
     
     errorHandlingOptions = errorHandlingOptions ?? { Fallback: DefaultError }
-    const {Fallback} =  errorHandlingOptions
+    const { Fallback: ErrorFallback} =  errorHandlingOptions
     return function Routes() {
         return <Switch>
             {pages.map((pageData) => {
                 return _getRoute({pageData, loaderOptions, errorHandlingOptions})
             })}
-            <Route><Fallback error={new ErrorStatus('404')}/></Route>
+            <Route><ErrorFallback error={new ErrorStatus('404')}/></Route>
         </Switch>
     }
 }
 
 export default RoutesFactory
+
+export type {
+    pageData_T,
+    loaderOptions_T,
+    errorHandlingOptions_T
+}
