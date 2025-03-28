@@ -1,11 +1,12 @@
 
 import type { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyReply } from 'fastify'
+import type { ViteDevServer } from 'vite'
 
 import { collectRessources, collectSiteRessources } from "#paon/template-server/helpers/collect-ressources"
 import { buildSsrReqData } from '#paon/template-server/data-models/ssr-request-data'
 import type { Dict_T } from 'sniffly'
 import type { siteRessources_T, serverExectutionMode_T } from '#paon/template-server/helpers/types'
-import type { ViteDevServer } from 'vite'
+
 
 type routesDeclarationKwargs_T = {
     siteNames: string[],
@@ -49,7 +50,7 @@ function _buildSsrRequestHandler({
             
             const head = templateFragments.head 
                 + `<meta name="rendering-mode" content="SSR">`
-                + requestData.getPropsAsJsonScriptTag()
+                + requestData.getInitialPagePropsAsJsonTag()
                 + (rendered.head ?? '')
             
             const body = templateFragments.body

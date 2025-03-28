@@ -3,16 +3,23 @@ import { Router } from 'wouter'
 
 import { appProps_T } from '&interop-types/app-props'
 import renderToStringAsync from '@core:utils/async-render-to-string/v1/util'
+import { InitialPropsContextProvider } from '@core:hooks/use-intial-props/v1/context'
 
 import App from './App'
 
-export async function render( RequestData: appProps_T ) {
+async function render( RequestData: appProps_T ) {
     const html = await renderToStringAsync(
         <StrictMode>
-            <Router ssrPath={ RequestData.url } >
-                <App { ...RequestData.context }/>
-            </Router>
+            <InitialPropsContextProvider initialPageProps={ RequestData.context }>
+                <Router ssrPath={ RequestData.url } >
+                    <App/>
+                </Router>
+            </InitialPropsContextProvider>
         </StrictMode>
     )
     return { html }
+}
+
+export {
+    render
 }

@@ -1,5 +1,3 @@
-import ErrorBoundary from '@core:components/error-boundary/v1/component'
-
 import Layout from './layout.tsx'
 import Routes from './Router.tsx'
 
@@ -10,7 +8,7 @@ import './App.scss'
 
 // import PaonDefaultPage from '@components/paon-default-page/v1/component'
 
-function App( ssrPageContext?: { [key:string]: any } ) {
+function App() {
     // return <PaonDefaultPage url={url} pageContext={pageContext} />
     console.log( 'rendering <App>' )
     return <>

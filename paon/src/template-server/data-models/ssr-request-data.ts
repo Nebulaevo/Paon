@@ -53,17 +53,12 @@ class SsrRequestData {
         }
     }
 
-    serializedAppProps(): string {
-        return serialize( 
-            this.appPropsObject(),
-            // isJSON: true speeds serialization up
-            // indicates that the object doesn't contain any function or regexp
-            { isJSON: true } 
-        )
+    #serializeInitialPageProps(): string {
+        return serialize( this.context, {isJSON:true} )
     }
 
-    getPropsAsJsonScriptTag(): string {
-        return `<script id="initial-props" type="application/json">${this.serializedAppProps()}</script>`
+    getInitialPagePropsAsJsonTag(): string {
+        return `<script id="initial-page-props" type="application/json">${ this.#serializeInitialPageProps() }</script>`
     }
 
     /** (private) checks if the structure of the received data is valid 
