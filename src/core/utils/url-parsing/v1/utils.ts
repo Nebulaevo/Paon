@@ -7,6 +7,16 @@ function _asUrlObj( url:string ): URL {
     return new URL(url, 'http://dummy.com')
 }
 
+function splitRelativeUrl( 
+    url:string 
+): {pathname: string, search: string, hash: string} {
+    const urlObj = _asUrlObj(url)
+    return {
+        pathname: urlObj.pathname,
+        search: urlObj.search,
+        hash: urlObj.hash
+    }
+}
 
 function getFilteredRelativeUrl( url: string, options?:urlFilteringOptions ) {
     const urlObj = _asUrlObj( url )
@@ -34,6 +44,7 @@ function getRelativeUrl( url:string ) {
 }
 
 export {
+    splitRelativeUrl,
     getFilteredRelativeUrl,
     getPathname,
     getRelativeUrl
