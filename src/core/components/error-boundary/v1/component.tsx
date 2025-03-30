@@ -1,4 +1,4 @@
-import React from "react"
+import React, {JSX} from "react"
 
 import {resetInitialErrorStatus} from "@core:utils/error-status/v1/utils"
 
