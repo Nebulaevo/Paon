@@ -1,6 +1,6 @@
-import { lazy, Suspense, use, useEffect } from "react"
+import { Suspense, use, useEffect } from "react"
 
-import { InitialPropsContext } from "@core:hooks/use-intial-props/v1/context"
+import { InitialPropsContext, canUseInitialPageProps } from "@core:hooks/use-intial-props/v1/context"
 import ErrorBoundary, { type ErrorBoundaryProps_T } from "@core:components/error-boundary/v1/component"
 import suspenseLoaderFactory, { type loaderOptions_T } from "@core:components/suspense-loader/v1/factory"
 import { Dict_T } from "sniffly"
@@ -13,10 +13,12 @@ import { getFilteredRelativeUrl } from '@core:utils/url-parsing/v1/utils'
 
 type errorBoundaryOptions_T = Omit<ErrorBoundaryProps_T, 'children'>
 
+type propsFetcher_T = (url:string, abortController:AbortController) => Promise<unknown> | unknown
+
 type pageData_T = {
     path: string,
     Component: React.LazyExoticComponent<React.ComponentType<any>>,
-    propsFetcher?: (url:string, abortController:AbortController) => Promise<any> 
+    propsFetcher?: propsFetcher_T
 }
 
 type asPageWrapperKwargs_T = {
@@ -27,10 +29,6 @@ type asPageWrapperKwargs_T = {
 
 type pageDataWithFetcher_T = Required<pageData_T>
 
-// global token allowing usage of inital props
-// instead of fetching page props
-// (deactivated after first use)
-let _intialPropsUsageToken = true
 
 function _pageDataDeclaresFetcher(pageData: pageData_T): pageData is pageDataWithFetcher_T {
     return !!pageData.propsFetcher
@@ -49,12 +47,10 @@ function _buildLazyAndFetchingPage( pageData: pageDataWithFetcher_T ) {
         
         // attempt at using initial props if availble
         // (only first ever fetch of the whole application on client side)
-        if (_intialPropsUsageToken) {
-            
-            // globals aren't rest between calls
-            // if we consume the token on server side SSR stops working
-            // for all following requests
-            if ( isExecutedOnClient() ) _intialPropsUsageToken = false
+        // - Remark
+        // initial props should be consumed immidiatly because the tag
+        // is deleted as soon as first rendering cycle ends (useEffect in <Routes>)
+        if (canUseInitialPageProps()) {
 
             DATA_CACHE = initialProps
                 ? Promise.resolve(initialProps)
@@ -63,6 +59,7 @@ function _buildLazyAndFetchingPage( pageData: pageDataWithFetcher_T ) {
 
         // regular data fetching 
         if ( isExecutedOnClient() && DATA_CACHE === undefined ) {
+            console.log('- fetching props -')
             DATA_CACHE = pageData.propsFetcher(
                 getFilteredRelativeUrl(window.location.href, {ignoreHash:true}),
                 abortController

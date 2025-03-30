@@ -1,9 +1,11 @@
+import { useEffect } from "react"
 import { Route, Switch } from "wouter"
 
 import DefaultError from "@core:components/error-component-default/v1/component"
 import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 
 import asPage, { type asPageWrapperKwargs_T } from "./as-page/wrapper"
+import { disallowUsageOfInitialProps } from '@core:hooks/use-intial-props/v1/context'
 
 
 
@@ -33,6 +35,16 @@ function RoutesFactory({pages, loaderOptions, errorHandlingOptions}: routesFacto
     errorHandlingOptions = errorHandlingOptions ?? { Fallback: DefaultError }
     const { Fallback: ErrorFallback} =  errorHandlingOptions
     return function Routes() {
+        
+        // Necessary safety net insuring 
+        // initial page props are used only for first render
+        // - Why here? 
+        // have to be outside of routes so that initial-page-props
+        // are cleaned even if an exception is thrown by a Route
+        useEffect(() => {
+            disallowUsageOfInitialProps()
+        })
+        
         return <Switch>
             {pages.map((pageData) => {
                 return _getRoute({pageData, loaderOptions, errorHandlingOptions})
