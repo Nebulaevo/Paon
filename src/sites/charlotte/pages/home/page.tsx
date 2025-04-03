@@ -8,6 +8,9 @@ function Home( props: any ) {
     return <>
         <h1>Home</h1>
         <p>You are at home.</p>
+        <pre>
+            { JSON.stringify(props ?? {}) }
+        </pre>
     </>
 }
 

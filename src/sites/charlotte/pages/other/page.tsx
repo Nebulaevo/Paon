@@ -6,6 +6,9 @@ function Other( props: any ) {
     return <>
         <h1>Other</h1>
         <p>You are NOT at home.</p>
+        <pre>
+            { JSON.stringify(props ?? {}) }
+        </pre>
     </>
 }
 
