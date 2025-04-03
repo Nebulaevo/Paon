@@ -42,8 +42,15 @@ function RoutesFactory({pages, loaderOptions, errorHandlingOptions}: routesFacto
         // have to be outside of routes so that initial-page-props
         // are cleaned even if an exception is thrown by a Route
         useEffect(() => {
-            disallowUsageOfInitialProps()
-        })
+            // Dirty trick to allow disallowUsageOfInitialProps
+            // to run after the suspended page consumes the initial props
+            // (otherwise this useEffect runs before page comp consumes inital props)
+            const timeout = setTimeout(() => { 
+                disallowUsageOfInitialProps() 
+            }, 100 )
+
+            return () => clearTimeout(timeout)
+        }, [])
         
         return <Switch>
             {pages.map((pageData) => {
