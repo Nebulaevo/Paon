@@ -1,8 +1,7 @@
 import React from "react"
 import { Link as WouterLink } from "wouter"
 
-import {getRelativeUrl} from '@core:utils/url-parsing/v1/utils'
-
+import { getRelativeUrl } from "@core:utils/url-parsing/v1/utils"
 
 
 type LinkProps_T = React.ComponentProps<typeof WouterLink>

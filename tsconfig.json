@@ -27,6 +27,12 @@
                 "./paon-interop-types/dist/*" 
             ],
 
+            "@core:routing/*": [
+                "./src/core/routing/*.tsx",
+                "./src/core/routing/*.ts",
+                "./src/core/routing/*",
+            ],
+
             "@core:components/*": [
                 "./src/core/components/*.tsx",
                 "./src/core/components/*.ts",

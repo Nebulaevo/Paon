@@ -1,10 +1,5 @@
 import React, {JSX} from "react"
 
-import {resetInitialErrorStatus} from "@core:utils/error-status/v1/utils"
-
-import InitialErrorCatcher from './initial-error-catcher/component'
-
-
 type ErrorFallbackComp_T = (props?:{ error:unknown }) => JSX.Element
 type errorHandlingFunc_T = (error:unknown, errorInfo:React.ErrorInfo) => any
 
@@ -35,8 +30,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boo
         }
 
         this.setState({error})
-
-        resetInitialErrorStatus()
     }
     
     render() {
@@ -44,9 +37,10 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boo
             const { Fallback } = this.props
             return <Fallback error={this.state.error}/>
         }
-        return <InitialErrorCatcher>
-            { this.props.children }
-        </InitialErrorCatcher>
+        return this.props.children
+        // <InitialErrorCatcher>
+        //     { this.props.children }
+        // </InitialErrorCatcher>
     }
 }
 

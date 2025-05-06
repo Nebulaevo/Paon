@@ -9,11 +9,12 @@ function _asUrlObj( url:string ): URL {
 
 function splitRelativeUrl( 
     url:string 
-): {pathname: string, search: string, hash: string} {
+): {pathname: string, search: string, searchParams: URLSearchParams, hash: string} {
     const urlObj = _asUrlObj(url)
     return {
         pathname: urlObj.pathname,
         search: urlObj.search,
+        searchParams: urlObj.searchParams,
         hash: urlObj.hash
     }
 }
@@ -43,9 +44,24 @@ function getRelativeUrl( url:string ) {
     return getFilteredRelativeUrl(url)
 }
 
+function getIdFromRelativeUrl( url:string ) {
+    const {pathname, searchParams} = splitRelativeUrl(url)
+    const searchKeys = Array.from(searchParams.keys()).sort()
+
+    let sortedSearchString = ''
+    for (const key of searchKeys) {
+        if (sortedSearchString.length) sortedSearchString += '&'
+        else sortedSearchString += '?'
+        sortedSearchString += `${key}=${searchParams.get(key)}`
+    }
+
+    return pathname+sortedSearchString
+}
+
 export {
     splitRelativeUrl,
     getFilteredRelativeUrl,
     getPathname,
-    getRelativeUrl
+    getRelativeUrl,
+    getIdFromRelativeUrl
 }

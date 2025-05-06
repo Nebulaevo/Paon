@@ -17,6 +17,7 @@ export default defineConfig({
         alias: {
             "&internal-interface": resolve(rootPath, "./src/_internal-interface/"),
 
+            "@core:routing": resolve(rootPath, "./src/core/routing/"),
             "@core:components": resolve(rootPath, "./src/core/components/"),
             "@core:hooks": resolve(rootPath, "./src/core/hooks/"),
             "@core:utils": resolve(rootPath, "./src/core/utils/"),

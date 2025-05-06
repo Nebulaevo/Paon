@@ -1,54 +1,55 @@
-import {lazy} from "react"
+import { PagePropsFetcher } from "@core:routing/v1/utils/page-props-fetcher"
+import type { RouterProps_T } from "@core:routing/v1/router"
 
-import RoutesFactory, {
-    type pageData_T,
-    type loaderOptions_T,
-    type errorHandlingOptions_T 
-} from "@core:components/routes/v1/factory"
+import Other from './pages/other/page'
 
-import fetchPageProps from "./endpoints/fetch-page-props.ts"
+import fetchPageProps from "./api/page-props"
+import shortFetchPageProps from './api/short-page-props'
 import Loader from './loader.tsx'
 import Error from "./error.tsx"
 
 
+// common page props fetcher
+const pagePropsFetcher = new PagePropsFetcher({
+    fetcher: fetchPageProps,
+    cacheTimeS: 0 // 1 min
+})
+
+const shortPagePropsFetcher = new PagePropsFetcher({
+    fetcher: shortFetchPageProps,
+    cacheTimeS: 0 // 1 min
+})
 
 // Pages Options
 
-const Home = lazy(() => import('./pages/home/page.tsx'))
-const Other = lazy(() => import('./pages/other/page.tsx'))
+const loadHome = () => import('./pages/home/page.tsx')
+const loadOther = () => import('./pages/other/page.tsx', {})
 
-const pages: pageData_T[] = [
+const pages: RouterProps_T['pages'] = [
     {
         path: '/', 
-        Component: Home,
-        propsFetcher: fetchPageProps,
+        importComponent: loadHome,
+        propsFetcher: shortPagePropsFetcher
     }, {
         path: '/other/', 
         Component: Other,
-        propsFetcher: fetchPageProps,
+        propsFetcher: pagePropsFetcher
     }, {
         path: '/other/:id/', 
         Component: Other,
-        propsFetcher: fetchPageProps,
+        // propsFetcher: pagePropsFetcher
     },
 ]
 
-const errorHandlingOptions: errorHandlingOptions_T = { 
+const errorBoundaryOptions: RouterProps_T['errorBoundaryOptions'] = { 
     Fallback: Error 
 }
 
-const loaderOptions: loaderOptions_T = {
+const loaderOptions: RouterProps_T['loaderOptions'] = {
     Loader: Loader,
-    timeoutMs: 0
+    pagePreFetchLoaderOpts: {
+        timeoutMs: 500
+    }
 }
 
-// Routes
-
-
-const Routes = RoutesFactory({
-    pages,
-    loaderOptions, 
-    errorHandlingOptions
-})
-
-export default Routes
+export { pages, loaderOptions, errorBoundaryOptions }

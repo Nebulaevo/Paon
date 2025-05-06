@@ -1,0 +1,100 @@
+import { lazy, Suspense, Fragment } from "react"
+import type { Dict_T } from "sniffly"
+
+import ErrorBoundary from "@core:components/error-boundary/v1/component"
+
+import InitialErrorThrower from "../sub-components/initial-error-thrower"
+import type { useRouterSettings, pageData_T } from "../hooks/use-router-settings"
+import asPropsFetchingPage from "./as-props-fetching-page"
+import asStaticPage from "./as-static-page"
+import { HideOnLoading } from "@core:hooks/use-loading-state/v1/hook"
+
+
+type asPageKwargs_T = {
+    pageData: pageData_T,
+    loaderOptions: ReturnType<typeof useRouterSettings>['loaderOptions'],
+    errorBoundaryOptions: ReturnType<typeof useRouterSettings>['errorBoundaryOptions'],
+}
+
+type asSuspendedPageKwargs = {
+    Component: React.ComponentType<Dict_T<any>>,
+} & Pick<asPageKwargs_T, 'loaderOptions'>
+
+
+function _asSuspendedComponent(kwargs:asSuspendedPageKwargs) {
+    const { Component, loaderOptions } = kwargs
+
+    const FallbackLoader = loaderOptions.suspenseFallbackLoaderOpts.deactivate
+        ? Fragment
+        : loaderOptions.Loader
+    
+    const SuspendedPage = () => {
+        return <Suspense fallback={<FallbackLoader/>}>
+            <Component/>
+        </Suspense>
+    }
+    return SuspendedPage
+}
+
+function _getWrappedComponent(kwargs: Omit<asPageKwargs_T, 'errorBoundaryOptions'>) {
+    const {
+        pageData,
+        loaderOptions
+    } = kwargs
+    
+    // wrapping component with eventual
+    // props fetching logic
+    const Component = pageData.propsFetcher
+        ? asPropsFetchingPage({
+            Component: pageData.Component ?? lazy(pageData.importComponent), 
+            fetcher: pageData.propsFetcher
+        })
+        : asStaticPage(pageData.Component ?? lazy(pageData.importComponent))
+    
+    // if something in the component needs to be suspended we add suspense boundary
+    if (pageData.propsFetcher || pageData.importComponent) {
+        return _asSuspendedComponent({Component, loaderOptions})
+    }
+
+    return Component
+}
+
+
+function asPage( kwargs:asPageKwargs_T ) {
+    const {
+        pageData,
+        loaderOptions,
+        errorBoundaryOptions
+    } = kwargs
+
+    // wrapping component with eventual
+    // props fetching logic and suspense boundary
+    const Component = _getWrappedComponent({
+        pageData,
+        loaderOptions,
+    })
+    
+    // only "hide on load" if page prefetch loader is activated
+    const OptionalHideOnLoad = loaderOptions.pagePreFetchLoaderOpts.deactivate
+        ? Fragment
+        : HideOnLoading
+
+    const Page = () => {
+        console.log('rendering <Page>')
+        return <OptionalHideOnLoad>
+            <ErrorBoundary {...errorBoundaryOptions}>
+                <InitialErrorThrower>
+                    <Component/>
+                </InitialErrorThrower>
+            </ErrorBoundary>
+        </OptionalHideOnLoad>
+    }
+
+    return Page
+}
+
+export default asPage
+
+export type {
+    asPageKwargs_T
+}
