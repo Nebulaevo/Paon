@@ -3,6 +3,7 @@ import { isNumber, type Dict_T } from "sniffly"
 // import { InitialPropsContext, canUseInitialPageProps } from "@core:hooks/use-intial-props/v1/context"
 import { getIdFromRelativeUrl } from '@core:utils/url-parsing/v1/utils'
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
+import { getExpiryDate, hasExpired } from '@core:utils/date/v1/expiry-dates'
 
 type pageProps_T = Dict_T<unknown>
 
@@ -14,7 +15,7 @@ type PagePropsFetcherKwargs_T = {
 }
 
 type cacheEntry_T = {
-    expirationDate: Date,
+    expiryDate: Date,
     data: pageProps_T
 }
 
@@ -42,22 +43,6 @@ class PagePropsFetcher {
         return this.#abortController
     }
 
-    // static #resetAbortController(): void {
-    //     this.#abortController = new AbortController()
-    // }
-
-    // static getCommonAbortController(): Readonly<AbortController> {
-    //     if ( this.#abortController.signal.aborted ) {
-    //         this.#resetAbortController()
-    //     }
-    //     return this.#abortController
-    // }
-    
-    // static abortAllRequests() {
-    //     this.#abortController.abort()
-    //     this.#resetAbortController()
-    // }
-
     // ---------- Caching logic ----------
     // ⚠️ it's important to disable the caching on server
     // to avoid memory leak
@@ -66,7 +51,7 @@ class PagePropsFetcher {
     static #deleteChunkSize: number = 15
     
     static #isFreshCacheEntry(cacheEntry: cacheEntry_T): boolean {
-        return cacheEntry.expirationDate>new Date()
+        return !hasExpired(cacheEntry.expiryDate)
     }
     static #cleanOutdatedCacheEntries() {
         const outdatedKeys = Object.keys(this.#cache).filter(
@@ -85,9 +70,9 @@ class PagePropsFetcher {
             // we order keys from old to fresh
             // (the less time left first)
             cacheKeys.sort((keyA, keyB) => {
-                const expirationDateA = this.#cache[keyA].expirationDate.getTime()
-                const expirationDateB = this.#cache[keyB].expirationDate.getTime()
-                return expirationDateA-expirationDateB
+                const expiryDateA = this.#cache[keyA].expiryDate.getTime()
+                const expiryDateB = this.#cache[keyB].expiryDate.getTime()
+                return expiryDateA-expiryDateB
             })
 
             const excessKeys = cacheKeys.slice(0, this.#deleteChunkSize)
@@ -176,7 +161,7 @@ class PagePropsFetcher {
     #saveToCache(key:string, value: pageProps_T) {
         if (this.#cachingAllowed()) {
             PagePropsFetcher.setCacheEntry(key, {
-                expirationDate: new Date(Date.now()+this.#cacheTimeMS),
+                expiryDate: getExpiryDate(this.#cacheTimeMS),
                 data: value
             })
         }

@@ -1,37 +1,51 @@
 import { createContext, use, useCallback, useMemo, useRef } from "react"
 import { parse as secureJsonParse } from 'secure-json-parse'
-import { isDict, isNumber, type Dict_T } from "sniffly"
+import { isDict, type Dict_T } from "sniffly"
 
 import { getIdFromRelativeUrl } from '@core:utils/url-parsing/v1/utils'
 import { isExecutedOnServer } from "@core:utils/execution-context/v1/util"
 import { ErrorStatus } from "@core:utils/error-status/v1/utils"
+import { getExpiryDate, hasExpired } from '@core:utils/date/v1/expiry-dates'
 
 import { PagePropsFetcher } from "../utils/page-props-fetcher"
 
-
+/** Props given to a page component */
 type pageProps_T = Dict_T<unknown>
 
+/** [ *Result-Status*, *Result-Value* ]\
+ * tuple provided once the fetching promise is resolved 
+*/
 type propsFetchingResult_T = [
     'SUCCESS', pageProps_T
 ] | [
     'ERROR', ErrorStatus
 ]
 
-type PagePropsEntry_T = {
-    ownerUrlId?: string, // undefined => (server) owned by anyone (client) owned by no-one
-    expirationDate?: Date, // undefined => (ssr only) no expiration date
-    fetchingPromise?: Promise<propsFetchingResult_T>,
-    result: propsFetchingResult_T
-}
-
+/** [ *Operation-State*, *Operation-Result* ]\
+ * tuple that is returned by `getPageProps` function 
+ * (exported by `usePageProps` context hook) 
+*/
 type propsGetterReturnVal_T = [
     'FETCHING', Promise<propsFetchingResult_T>
 ] | [ 
     'READY', propsFetchingResult_T 
 ]
 
+/** Stucture of the data encapsulated in a ref, stored in the `PagePropsContext` 
+ * used to:
+ * - persiste data between different calls to the hook (like for pre-fetching)
+ * - prevent re-renders
+ * - determine when data can be re-used (ownerUrlId, expiryDate, status of tuple...)
+*/
+type PagePropsEntry_T = {
+    ownerUrlId?: string, // undefined => (server) owned by anyone (client) owned by no-one
+    expiryDate?: Date, // undefined => (ssr only) no expiration date
+    fetchingPromise?: Promise<propsFetchingResult_T>,
+    result: propsFetchingResult_T
+}
+
+
 type PagePropsContext_T = {
-    // pagePropsRef: PagePropsEntry_T,
     getPageProps: (url:string, fetcher:PagePropsFetcher) => propsGetterReturnVal_T,
     silentlyResetPageProps: () => void
 }
@@ -41,21 +55,11 @@ type PagePropsProviderProps_T = {
     ssrProps?: pageProps_T | undefined
 }
 
-// Returns a Date in the future at which point
-// we consider the page props to be too old to use
-function _getExpirationDate( validityTimeMs?:number ): Date {
-    validityTimeMs = isNumber(validityTimeMs, {positive:true})
-        ? validityTimeMs
-        : 5*60*1000 // 5 min by default
-
-    return new Date(Date.now()+validityTimeMs)
-}
-
 function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
 
     if (isExecutedOnServer()) return {
         ownerUrlId: undefined,
-        expirationDate: undefined,
+        expiryDate: undefined,
         fetchingPromise: undefined,
         result: ['SUCCESS', ssrProps ?? {}]
     } 
@@ -70,7 +74,7 @@ function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
 
         return {
             ownerUrlId: getIdFromRelativeUrl(window.location.href),
-            expirationDate: _getExpirationDate(), // 5min
+            expiryDate: getExpiryDate(5*60*1000), // 5min
             fetchingPromise: undefined,
             result: [
                 'SUCCESS',
@@ -81,7 +85,7 @@ function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
     } catch (err) {
         return {
             ownerUrlId: getIdFromRelativeUrl(window.location.href),
-            expirationDate: _getExpirationDate(2*1000), // 2sec
+            expiryDate: getExpiryDate(2*1000), // 2sec
             fetchingPromise: undefined,
             result: [
                 'ERROR',
@@ -94,9 +98,9 @@ function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
 }
 
 function _currentEntryIsFresh(currentEntry:PagePropsEntry_T): boolean {
-    const {expirationDate} = currentEntry
-    return expirationDate
-        ? expirationDate>new Date()
+    const {expiryDate} = currentEntry
+    return expiryDate
+        ? !hasExpired(expiryDate)
         : true // if no exp date => always fresh
 }
 
@@ -133,7 +137,6 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
 
         if (isExecutedOnServer()) {
             // server side shouldn't trigger fetching or any caching behaviour here
-            console.log('getPageProps - isExecutedOnServer')
             return ['READY', current.result]
         }
 
@@ -143,7 +146,6 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
             _currentEntryIsFresh(current) 
             && _currentEntryHasSameOwner(currenUrlId, current)
         ) {
-            console.log('getPageProps - isFresh')
             // awaiting for fetching to resolve
             if (current.fetchingPromise) return ['FETCHING', current.fetchingPromise]
             // result is available
@@ -154,7 +156,6 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
         // for that url
         const cachedProps = fetcher.getFromCache(url)
         if (cachedProps) {
-            console.log('getPageProps - from cache')
             return ['READY', ['SUCCESS', cachedProps]]
         }
 
@@ -163,7 +164,7 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
         // so that fetch promise can be re-used in case
         // the function is called again before promise is resolved
         current.ownerUrlId = currenUrlId
-        current.expirationDate = _getExpirationDate(60*1000) // 1min
+        current.expiryDate = getExpiryDate(60*1000) // 1min
         current.fetchingPromise = fetcher.fetch(url)
             .then( (data:unknown) => {
                 if (!isDict(data)) throw new ErrorStatus( ErrorStatus.TYPE_ERROR )
@@ -173,7 +174,7 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
                 // the current entry if the owner url has changed
                 // (because it means a new request has been initiated and that one should have been canceled)
                 if (_currentEntryHasSameOwner(currenUrlId, current)){
-                    current.expirationDate = _getExpirationDate() // 5min
+                    current.expiryDate = getExpiryDate(5*60*1000) // 5min
                     current.fetchingPromise = undefined
                     current.result = ['SUCCESS', data]
                 }
@@ -187,7 +188,7 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
                 // the current entry if the owner url has changed
                 // (because it means a new request has been initiated and that one should have been canceled)
                 if (_currentEntryHasSameOwner(currenUrlId, current)){
-                    current.expirationDate = _getExpirationDate(2*1000) // 2sec
+                    current.expiryDate = getExpiryDate(2*1000) // 2sec
                     current.fetchingPromise = undefined
                     current.result = [
                         'ERROR', 
@@ -200,7 +201,6 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
                 return current.result
             })
         
-        console.log('getPageProps - fetching')
         return ['FETCHING', current.fetchingPromise]
     }, [])
 
@@ -209,7 +209,7 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
             const { current } = pagePropsRef
 
             current.ownerUrlId = undefined
-            current.expirationDate = undefined
+            current.expiryDate = undefined
             current.fetchingPromise = undefined
             current.result = ['SUCCESS', {}]
         }, []
