@@ -249,16 +249,16 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
                 return _getResultTuple(current)
             })
             .catch( err => {
-                
                 // 🔧 BUG FIX: (in case we forgot to add abortController to fetch call)
                 // We prevent fetch promise callback to modify
                 // the current entry if the owner url has changed
                 // (because it means a new request has been initiated and that one should have been canceled)
                 if (_currentEntryHasSameOwner(currenUrlId, current)){
+                    console.error(err)
                     current.expiryDate = getExpiryDate(2*1000) // 2sec
                     current.fetchingPromise = undefined
                     current.result = [
-                        'ERROR', 
+                        'ERROR',
                         err instanceof ErrorStatus
                             ? err
                             : new ErrorStatus( ErrorStatus.OPERATION_FAILED )
