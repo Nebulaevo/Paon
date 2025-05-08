@@ -1,6 +1,12 @@
+import { isBool } from "sniffly"
+
 type urlFilteringOptions = {
     ignoreSearch?: boolean,
     ignoreHash?: boolean
+}
+
+type urlIdOptions = {
+    includeHash: boolean
 }
 
 function _asUrlObj( url:string ): URL {
@@ -44,8 +50,13 @@ function getRelativeUrl( url:string ) {
     return getFilteredRelativeUrl(url)
 }
 
-function getIdFromRelativeUrl( url:string ) {
-    const {pathname, searchParams} = splitRelativeUrl(url)
+function getIdFromRelativeUrl( url:string, options?:urlIdOptions ) {
+    
+    const includeHash = isBool(options?.includeHash)
+        ? options.includeHash
+        : false
+     
+    const {pathname, searchParams, hash} = splitRelativeUrl(url)
     const searchKeys = Array.from(searchParams.keys()).sort()
 
     let sortedSearchString = ''
@@ -55,7 +66,12 @@ function getIdFromRelativeUrl( url:string ) {
         sortedSearchString += `${key}=${searchParams.get(key)}`
     }
 
-    return pathname+sortedSearchString
+    let urlId = pathname+sortedSearchString
+    if (includeHash) {
+        urlId += hash
+    }
+
+    return urlId
 }
 
 export {

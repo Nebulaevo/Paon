@@ -11,21 +11,16 @@ import { usePageProps } from "./use-page-props"
 import { buildErrorHandler } from "../utils/error-handling-func"
 
 
-
-// page data
+/** Async function returning a call to "import(...)" */
 type pageAsyncLoadFunc_T = () => Promise<{
     default: React.ComponentType<Dict_T<any>>;
 }>
 
-type NonLazyReactComponent_T<T> = Exclude<
-    React.ComponentType<T>, 
-    React.LazyExoticComponent<React.ComponentType<T>>
->
-
+/** Dictionnary used to set up a route */
 type pageData_T = {
     path: string,
     propsFetcher?: PagePropsFetcher,
-    Component: NonLazyReactComponent_T<Dict_T<any>>,
+    Component: React.ComponentType<Dict_T<any>>,
     importComponent?: undefined,
 } | {
     path: string,
@@ -44,23 +39,26 @@ type pagePreFetchLoaderOpts_T = {
     timeoutMs: number,
 }
 
-// loader options
+/** Loading behavior settings for the router */
 type loaderOptions_T = {
     Loader: React.ComponentType<{}>,
     suspenseFallbackLoaderOpts: suspenseFallbackLoaderOpts_T,
     pagePreFetchLoaderOpts: pagePreFetchLoaderOpts_T
 }
 
+// REMARK:
+// we create a manual partial version cuz Partial<loaderOptions_T>
+// would not make sub-dictionnary partial.
 type partialLoaderOptions_T = {
     Loader?: loaderOptions_T['Loader'],
     suspenseFallbackLoaderOpts?: Partial<loaderOptions_T['suspenseFallbackLoaderOpts']>,
     pagePreFetchLoaderOpts?: Partial<loaderOptions_T['pagePreFetchLoaderOpts']>
 }
 
-// error boundary options
+/** Error boundary behaviour settings for the routes */
 type errorBoundaryOptions_T = Omit<ErrorBoundaryProps_T, 'children'>
 
-
+/** Data provided by the router settings context */
 type RouterSettings_T = {
     pages: pageData_T[],
     loaderOptions: loaderOptions_T,
@@ -75,7 +73,7 @@ type RouterSettingsProviderProps_T = {
 }
 
 
-// 
+/** Returns default loading options to be combined with the partial settings provided */
 function _getDefaultLoaderOptions(): loaderOptions_T {
     return {
         Loader: () => 'Loading', 
@@ -89,6 +87,7 @@ function _getDefaultLoaderOptions(): loaderOptions_T {
     }
 }
 
+/** Combines partial loading options provided with default one to garantee all expected keys are present */
 function _formatLoaderOptions( partialOptions:RouterSettingsProviderProps_T['loaderOptions'] ): loaderOptions_T {
     const defaultOptions = _getDefaultLoaderOptions()
     
@@ -109,11 +108,12 @@ function _formatLoaderOptions( partialOptions:RouterSettingsProviderProps_T['loa
     }
 }
 
-
+/** Returns default error boundary options to be combined with the partial settings provided */
 function _getDefaultErrorBoundaryOptions(): errorBoundaryOptions_T {
     return { Fallback: DefaultError }
 }
 
+/** Combines partial error boundary options provided with default one to garantee all expected keys are present */
 function _formatErrorBoundaryOptions(partialOptions:RouterSettingsProviderProps_T['errorBoundaryOptions']): errorBoundaryOptions_T {
     const defaultOptions = _getDefaultErrorBoundaryOptions()
     return {... defaultOptions, ...partialOptions}
@@ -122,7 +122,7 @@ function _formatErrorBoundaryOptions(partialOptions:RouterSettingsProviderProps_
 
 /** React context holding the settings of the application's Router
  * 
- * (settings are encapsulated in a ref because they are not supposed to change
+ * (settings are encapsulated in a private `ref` because they are not supposed to change
  * or trigger re-renders)
  */
 const RouterSettingsContext = createContext<React.RefObject<RouterSettings_T>>({ current: {
@@ -136,15 +136,13 @@ function useRouterSettings() {
     return { pages, loaderOptions, errorBoundaryOptions }
 }
 
-/** Provides router settings (pages declared, loader settings, error boundary settings)
+/** Provider for the `RouterSettingsContext`
  * 
- * @param props.pages
+ * @param props.pages array of dictionnaries used to set up routes
  * 
- * @param props.loaderOptions (optional)
+ * @param props.loaderOptions (optional) Loading behavior settings for the router
  * 
- * @param props.errorBoundaryOptions (optional)
- * 
- * @param props.children react nodes children
+ * @param props.errorBoundaryOptions (optional) Error boundary behaviour settings for the routes
  */
 function RouterSettingsProvider(props: RouterSettingsProviderProps_T) {
     

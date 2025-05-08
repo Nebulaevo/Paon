@@ -8,10 +8,10 @@ type errorHanderBuilderKwargs_T = {
     pagePropsHookResetHandler: () => void
 }
 
-/** Function generating a error handling callback 
+/** Function generating an error handling callback 
  * to give to an ErrorBoundary surrounding a Page component
  * 
- * it includes deafult error handling behaviour before calling
+ * it includes default error handling behaviour before calling
  * the optionnal "errorHandlingFunc" provided
  * 
  * **WARNING**: if memoised, function should be re-computed if related hooks change

@@ -14,32 +14,30 @@ type propsFetchingPageKwargs_T = {
     fetcher: PagePropsFetcher
 }
 
+/** Returns the component wrapped in a fetching layer in charge of providing it with its props */
 function asPropsFetchingPage({Component, fetcher}: propsFetchingPageKwargs_T) {
     
     const FetchingPage = () => {
-        console.log('rendering <FetchingPage>')
-        let pageProps: Dict_T<unknown> = {}
-
         const { getPageProps } = usePageProps()
         
         const url = isExecutedOnClient()
             ? window.location.href
             : '' // getPageProps will not be executed server side
 
-        const [state, content] = getPageProps(
+        const [operationState, operationResult] = getPageProps(
             url, fetcher
         )
 
-        const [status, value] = state==='FETCHING'
-            ? use(content)
-            : content
+        const [resultStatus, resultValue] = operationState==='FETCHING'
+            ? use(operationResult)
+            : operationResult
 
-        if (status==='ERROR') throw value
-        else pageProps = value
+        if (resultStatus==='ERROR') throw resultValue
 
+        const pageProps: Dict_T<unknown> = resultValue
         return <Component {...pageProps}/>
     }
     return FetchingPage
 }
 
-export default asPropsFetchingPage
+export { asPropsFetchingPage }

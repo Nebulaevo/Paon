@@ -10,9 +10,11 @@ function Layout( props:layoutProps_T ) {
 
     return <>
         <Link href="/">Fetching: Home</Link><br/>
-        <Link href="/?q=gros">Fetching: Home q=gros</Link><br/>
+        <Link href="/?a=petit&q=gros">Fetching: Home a=petit&q=gros</Link><br/>
+        <Link href="/?q=gros&a=petit">Fetching: Home q=gros&a=petit</Link><br/>
         <Link href="/other/">Fetching: Other</Link><br/>
-        <Link href="/other/?q=gros">Fetching: Other q=gros</Link><br/>
+        <Link href="/other/?a=petit&q=gros">Fetching: Other a=petit&q=gros</Link><br/>
+        <Link href="/other/?q=gros&a=petit">Fetching: Other q=gros&a=petit</Link><br/>
         <Link href="/other/?q=gros#cul">Fetching: Other q=gros#cul</Link><br/>
         
         <Link href="/other/12/">Other With ID</Link><br/>

@@ -7,10 +7,10 @@ import { usePageProps } from "../hooks/use-page-props"
 type Component_T = React.ComponentType<Dict_T<any>>
 type LazyComponent_T = React.LazyExoticComponent<Component_T>
 
+/** Returns the component wrapped in a layer making sure any previous page props have been reset */
 function asStaticPage(Component: Component_T | LazyComponent_T) {
     
     const StaticPage = () => {
-        console.log('rendering <StaticPage>')
         const { silentlyResetPageProps } = usePageProps()
         
         // 🔧 Bug fix:
@@ -27,4 +27,4 @@ function asStaticPage(Component: Component_T | LazyComponent_T) {
     return StaticPage
 }
 
-export default asStaticPage
+export { asStaticPage }

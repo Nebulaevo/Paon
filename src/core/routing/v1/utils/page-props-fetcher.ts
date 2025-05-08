@@ -1,6 +1,5 @@
 import { isNumber, type Dict_T } from "sniffly"
 
-// import { InitialPropsContext, canUseInitialPageProps } from "@core:hooks/use-intial-props/v1/context"
 import { getIdFromRelativeUrl } from '@core:utils/url-parsing/v1/utils'
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
 import { getExpiryDate, hasExpired } from '@core:utils/date/v1/expiry-dates'
@@ -19,19 +18,26 @@ type cacheEntry_T = {
     data: pageProps_T
 }
 
+/** Class allowing to generate fetcher instances handling fetching of page props for specific routes 
+ * 
+ * (those instances are used under the hood by usePageProps hook when it needs to fetch props for a page)
+*/
 class PagePropsFetcher {
 
     //-----------------------------------------------------------
     //                          CLASS
     //-----------------------------------------------------------
-    // ---------- Common abort controller ----------
+    
+    /** current abortController instance */
     static #abortController: AbortController | undefined = undefined
-
+    
+    /** Sends an abort signal on the current abortController if it exists */
     static abortCurrentRequest() {
         this.#abortController?.abort()
         this.#abortController = undefined
     }
-
+    
+    /** Returns a non-aborted instance of abortController */
     static getAbortController(): Readonly<AbortController> {
         if (
             !this.#abortController
@@ -50,9 +56,12 @@ class PagePropsFetcher {
     static #maxCacheSize: number = isExecutedOnClient() ? 100 : 0
     static #deleteChunkSize: number = 15
     
+    /** returns false if cache entry has expired */
     static #isFreshCacheEntry(cacheEntry: cacheEntry_T): boolean {
         return !hasExpired(cacheEntry.expiryDate)
     }
+
+    /** deletes all expired cache entries from cache */
     static #cleanOutdatedCacheEntries() {
         const outdatedKeys = Object.keys(this.#cache).filter(
             (key) => !this.#isFreshCacheEntry(this.#cache[key])
@@ -142,6 +151,7 @@ class PagePropsFetcher {
     //-----------------------------------------------------------
     //                         INSTANCE
     //-----------------------------------------------------------
+
     #fetcher: propsFetcher_T
     #cacheTimeMS: number
 
@@ -154,10 +164,12 @@ class PagePropsFetcher {
             : 0
     }
 
+    /** returns true if a non-zero cache time has been set for that instance */
     #cachingAllowed() {
         return this.#cacheTimeMS>0 && isExecutedOnClient()
     }
 
+    /** creates a cache entry */
     #saveToCache(key:string, value: pageProps_T) {
         if (this.#cachingAllowed()) {
             PagePropsFetcher.setCacheEntry(key, {
@@ -167,6 +179,7 @@ class PagePropsFetcher {
         }
     }
 
+    /** runs the provided fetching function */
     async fetch(url:string): Promise<pageProps_T> {
         // start fetching by sending 
         // an abort signal to all instances of PagePropsFetcher
@@ -184,6 +197,7 @@ class PagePropsFetcher {
             })
     }
 
+    /** returns the cached data for provided url, or undefined */
     getFromCache(url:string): pageProps_T | undefined {
         if (!this.#cachingAllowed()) return undefined
         return PagePropsFetcher.getCacheEntry(url)?.data

@@ -5,8 +5,8 @@ import ErrorBoundary from "@core:components/error-boundary/v1/component"
 
 import InitialErrorThrower from "../sub-components/initial-error-thrower"
 import type { useRouterSettings, pageData_T } from "../hooks/use-router-settings"
-import asPropsFetchingPage from "./as-props-fetching-page"
-import asStaticPage from "./as-static-page"
+import { asPropsFetchingPage } from "./as-props-fetching-page"
+import { asStaticPage } from "./as-static-page"
 import { HideOnLoading } from "@core:hooks/use-loading-state/v1/hook"
 
 
@@ -16,12 +16,16 @@ type asPageKwargs_T = {
     errorBoundaryOptions: ReturnType<typeof useRouterSettings>['errorBoundaryOptions'],
 }
 
-type asSuspendedPageKwargs = {
+type asSuspendedPageKwargs_T = {
     Component: React.ComponentType<Dict_T<any>>,
 } & Pick<asPageKwargs_T, 'loaderOptions'>
 
 
-function _asSuspendedComponent(kwargs:asSuspendedPageKwargs) {
+/** Returns the component wrapped in a suspense boundary 
+ * 
+ * (fallback used for suspense depends on router's loaderOptions)
+*/
+function _asSuspendedComponent(kwargs:asSuspendedPageKwargs_T) {
     const { Component, loaderOptions } = kwargs
 
     const FallbackLoader = loaderOptions.suspenseFallbackLoaderOpts.deactivate
@@ -36,6 +40,11 @@ function _asSuspendedComponent(kwargs:asSuspendedPageKwargs) {
     return SuspendedPage
 }
 
+/** Returns the component wrapped differently depending on if:
+ * - it is a static page (no props fetcher)
+ * - it is a fetching page (props fetcher provided)
+ * - it needs to be suspended (fetching or lazy component)
+*/
 function _getWrappedComponent(kwargs: Omit<asPageKwargs_T, 'errorBoundaryOptions'>) {
     const {
         pageData,
@@ -59,7 +68,7 @@ function _getWrappedComponent(kwargs: Omit<asPageKwargs_T, 'errorBoundaryOptions
     return Component
 }
 
-
+/** Returns the component provided with all it needs to be used as a route's component */
 function asPage( kwargs:asPageKwargs_T ) {
     const {
         pageData,
@@ -80,7 +89,6 @@ function asPage( kwargs:asPageKwargs_T ) {
         : HideOnLoading
 
     const Page = () => {
-        console.log('rendering <Page>')
         return <OptionalHideOnLoad>
             <ErrorBoundary {...errorBoundaryOptions}>
                 <InitialErrorThrower>
@@ -93,7 +101,7 @@ function asPage( kwargs:asPageKwargs_T ) {
     return Page
 }
 
-export default asPage
+export { asPage }
 
 export type {
     asPageKwargs_T

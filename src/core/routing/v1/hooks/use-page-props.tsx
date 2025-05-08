@@ -15,7 +15,7 @@ type pageProps_T = Dict_T<unknown>
 /** [ *Result-Status*, *Result-Value* ]\
  * tuple provided once the fetching promise is resolved 
 */
-type propsFetchingResult_T = [
+type propsFetchingResultTuple_T = [
     'SUCCESS', pageProps_T
 ] | [
     'ERROR', ErrorStatus
@@ -25,28 +25,27 @@ type propsFetchingResult_T = [
  * tuple that is returned by `getPageProps` function 
  * (exported by `usePageProps` context hook) 
 */
-type propsGetterReturnVal_T = [
-    'FETCHING', Promise<propsFetchingResult_T>
+type propsFetchingOperationTuple_T = [
+    'FETCHING', Promise<propsFetchingResultTuple_T>
 ] | [ 
-    'READY', propsFetchingResult_T 
+    'READY', propsFetchingResultTuple_T 
 ]
 
-/** Stucture of the data encapsulated in a ref, stored in the `PagePropsContext` 
+/** Stucture of the data encapsulated in a `ref`, stored in the `PagePropsContext` 
  * used to:
  * - persiste data between different calls to the hook (like for pre-fetching)
- * - prevent re-renders
- * - determine when data can be re-used (ownerUrlId, expiryDate, status of tuple...)
+ * - prevent re-renders (as it is in a `ref`)
+ * - determine when data can be re-used or awaited (ownerUrlId, expiryDate...)
 */
 type PagePropsEntry_T = {
-    ownerUrlId?: string, // undefined => (server) owned by anyone (client) owned by no-one
-    expiryDate?: Date, // undefined => (ssr only) no expiration date
-    fetchingPromise?: Promise<propsFetchingResult_T>,
-    result: propsFetchingResult_T
+    ownerUrlId?: string, // undefined => owned by no-one
+    expiryDate?: Date, // undefined => no expiration date
+    fetchingPromise?: Promise<propsFetchingResultTuple_T>,
+    result: propsFetchingResultTuple_T
 }
 
-
 type PagePropsContext_T = {
-    getPageProps: (url:string, fetcher:PagePropsFetcher) => propsGetterReturnVal_T,
+    getPageProps: (url:string, fetcher:PagePropsFetcher) => propsFetchingOperationTuple_T,
     silentlyResetPageProps: () => void
 }
 
@@ -55,6 +54,19 @@ type PagePropsProviderProps_T = {
     ssrProps?: pageProps_T | undefined
 }
 
+/** Provides the initial value for PageProps depending on the execution context
+ * 
+ * On the server:
+ * - If provided, returns ssrProps (context given to root App component) 
+ * - If not, returns an empty dictionnary
+ * 
+ * On the client:
+ * - If provided, parses the optional "initial-page-props" json script tag
+ * - If parsing said json tag raises a security error, we return an error state: ['ERROR', ErrorStatus('UNSAFE')]
+ * so that it can be thrown by a component wrapped by `asPropsFetchingPage`
+ * - If nothing has been provided returns an empty entry, 
+ * so that the component is free to initiate a page props fetch if it needs to.
+*/
 function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
 
     if (isExecutedOnServer()) return {
@@ -67,19 +79,29 @@ function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
     try {
         const jsonString = document.getElementById('initial-page-props')?.textContent
 
-        // if the json is evil it will throw error
+        // if the json is evil "secureJsonParse" will throw an error
         const parsedJson = jsonString
             ? secureJsonParse(jsonString, {protoAction:'error', constructorAction: 'error'})
             : undefined
 
+        // 🔧 BUG FIX:
+        // if 'initial-page-props' tag doesn't exist or is invalid
+        // we return a blank entry with no owner, this way if
+        // a fetcher is provided it will run to get necessary props
+        // for the page on render.
+        if (!isDict(parsedJson)) return {
+            ownerUrlId: undefined,
+            expiryDate: undefined,
+            fetchingPromise: undefined,
+            result: ['SUCCESS', {}]
+        }
+
+        // if initial props are provided we use it for the initial page component
         return {
             ownerUrlId: getIdFromRelativeUrl(window.location.href),
             expiryDate: getExpiryDate(5*60*1000), // 5min
             fetchingPromise: undefined,
-            result: [
-                'SUCCESS',
-                isDict(parsedJson) ? parsedJson : {}
-            ]
+            result: [ 'SUCCESS', parsedJson ]
         }
 
     } catch (err) {
@@ -97,6 +119,9 @@ function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
     }
 }
 
+/** Checks entry's expiry date, 
+ * 
+ * if expiry date is undefined the entry's always fresh */
 function _currentEntryIsFresh(currentEntry:PagePropsEntry_T): boolean {
     const {expiryDate} = currentEntry
     return expiryDate
@@ -104,26 +129,68 @@ function _currentEntryIsFresh(currentEntry:PagePropsEntry_T): boolean {
         : true // if no exp date => always fresh
 }
 
+/** Compares the entry's 'owner' url id (the url to whom belong this entry)
+ * to the given current url id
+ * 
+ * compared url ids have been modified to ordere search query keys to help matching
+ */
 function _currentEntryHasSameOwner(currentUrlId:string, currentEntry:PagePropsEntry_T): boolean {
     const {ownerUrlId} = currentEntry
     return currentUrlId===ownerUrlId
 }
 
+/** Creates a deep copy of the result to be used by components, so that they don't modify it by mistake 
+ * 
+ * (if status is ERROR we can't copy the ErrorStatus instance so we return the original)
+*/
+function _getResultTuple(currentEntry:PagePropsEntry_T) {
+    // if the result is an error we can't copy the ErrorStatus instance 
+    // this way so we return the original
+    const [resultState] = currentEntry.result
+    if (resultState==='ERROR') return currentEntry.result
+
+    // if success state we return a copy of the tuple
+    return JSON.parse(JSON.stringify(currentEntry.result))
+}
+
+/** React context providing a unified way of getting props for the current page component
+ * 
+ * (data entries are hold in a private `ref` because that hook is not meant to trigger re-renders)
+*/
 const PagePropsContext = createContext<PagePropsContext_T>({
     getPageProps: (_url:string, _fetcher:PagePropsFetcher) => ['READY', ['SUCCESS', {}]],
     silentlyResetPageProps: () => {}
 })
 
-/** Hook exposing the "PagePropsContext"
+/** Hook exposing the `PagePropsContext`
  * 
- * - getPageProps: returns page props or a promise that will resolve to the page props
- * - silentlyResetPageProps: resets the value of page props without triggering a re-render
+ * ⚙️ Everything operates around a `ref` encapsulating an 
+ * "entry" holding that page props, it allows to 
+ * persiste data between different calls to the hook (like for pre-fetching),
+ * prevent re-renders (as it is in a `ref`) and determine when data can be re-used 
+ * (ownerUrlId, expiryDate...)
+ * 
+ * - `getPageProps()`:\
+ * Callback in charge of providing page props.
+ * It takes care of fetching, modifying, and providing page props for a url,
+ * without causing re-renders (data is encapsulated in a `ref`).
+ * It returns an `-operation-tuple-` that can have 2 states:
+ *      - [ 'READY', `-result-tuple-` ]
+ *      - [ 'FETCHING', Promise<`-result-tuple-`> ]\
+ *      where `-result-tuple-` that can have 2 states:
+ *          - [ 'SUCCESS', `{page-props...}` ]
+ *          - [ 'ERROR', `ErrorStatus` ]
+ * 
+ * - `silentlyResetPageProps()`:\
+ * Callback reseting the content of the current page props (in the `ref`)
+ * 
+ * @returns [getPageProps, silentlyResetPageProps]
  */
 function usePageProps() {
     return use(PagePropsContext)
 }
 
-
+/** Provider for the `PagePropsContext` */
 function PagePropsProvider(props: PagePropsProviderProps_T) {
     const {children, ssrProps} = props
     
@@ -131,13 +198,13 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
         _getInitialPropsData(ssrProps)
     )
 
-    const getPageProps = useCallback((url:string, fetcher:PagePropsFetcher): propsGetterReturnVal_T => { 
+    const getPageProps = useCallback((url:string, fetcher:PagePropsFetcher): propsFetchingOperationTuple_T => { 
         const { current } = pagePropsRef
         const currenUrlId = getIdFromRelativeUrl(url)
 
         if (isExecutedOnServer()) {
             // server side shouldn't trigger fetching or any caching behaviour here
-            return ['READY', current.result]
+            return ['READY', _getResultTuple(current)]
         }
 
         // checking if the result is the one currently
@@ -149,7 +216,7 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
             // awaiting for fetching to resolve
             if (current.fetchingPromise) return ['FETCHING', current.fetchingPromise]
             // result is available
-            else return ['READY', current.result]
+            else return ['READY', _getResultTuple(current)]
         }
         
         // checking if a cache entry is available
@@ -179,7 +246,7 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
                     current.result = ['SUCCESS', data]
                 }
 
-                return current.result
+                return _getResultTuple(current)
             })
             .catch( err => {
                 
@@ -198,7 +265,7 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
                     ]
                 }
 
-                return current.result
+                return _getResultTuple(current)
             })
         
         return ['FETCHING', current.fetchingPromise]

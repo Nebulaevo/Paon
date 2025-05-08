@@ -9,7 +9,7 @@ async function shortFetchPageProps( url:string, abortController:AbortController 
     console.log('[fetching] -- start')
     console.log(url)
     await asyncSleep(600)
-    const data = { name:"martin", age:`${Math.random()}` }
+    const data = { name:"martin", age:`${Math.random()}`, tasks: [] }
 
     if ( !isDict(data) ) {
         throw new ErrorStatus( '400' )

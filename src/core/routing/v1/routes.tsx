@@ -3,7 +3,7 @@ import { Route as WouterRoute, Switch } from "wouter"
 import ThrowError from "@core:components/throw-error/v1/component"
 import { SynchronizedLoader } from "@core:hooks/use-loading-state/v1/hook"
 
-import asPage, { type asPageKwargs_T } from './wrappers/as-page'
+import { asPage, type asPageKwargs_T } from './wrappers/as-page'
 import { useRouterSettings, type pageData_T } from "./hooks/use-router-settings"
 import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 
@@ -41,6 +41,7 @@ function _getFallbackRoute( kwargs: Omit<asPageKwargs_T, 'pageData'>) {
 }
 
 /** Component displaying the routes as they were set up in the global router
+ * 
  * (uses router settings context to find routes and apply loader and error settings)
  */
 function Routes() {
