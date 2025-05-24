@@ -4,6 +4,9 @@ import { isString } from "sniffly"
 
 const INITIAL_ERROR_STATUS_META = "initial-error-status"
 
+/** Custom Error class - meant to represent generic error "codes" 
+ * (including http status errors) which we can react to in the error fallback component
+*/
 class ErrorStatus extends Error {
 
     // custom statuses
@@ -24,17 +27,20 @@ class ErrorStatus extends Error {
     }
 }
 
+/** Returns html meta tag containing initial error status if it exists */
 function _getInitialErrorMetaTag() {
     return isExecutedOnClient()
         ? document.querySelector<HTMLMetaElement>(`meta[name="${INITIAL_ERROR_STATUS_META}"]`)
         : undefined
 }
 
+/** Returns the initial error status if it was included in the document */
 function getInitialErrorStatus() {
     const metaTag = _getInitialErrorMetaTag()
     return metaTag?.content ?? undefined
 }
 
+/** Removes the initial error status tag if it finds it in the document */
 function resetInitialErrorStatus() {
     const metaTag = _getInitialErrorMetaTag()
     metaTag?.remove()

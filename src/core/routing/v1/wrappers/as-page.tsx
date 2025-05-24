@@ -2,12 +2,13 @@ import { lazy, Suspense, Fragment } from "react"
 import type { Dict_T } from "sniffly"
 
 import ErrorBoundary from "@core:components/error-boundary/v1/component"
+import { HideOnLoading } from "@core:hooks/use-loading-state/v1/hook"
 
 import InitialErrorThrower from "../sub-components/initial-error-thrower"
 import type { useRouterSettings, pageData_T } from "../hooks/use-router-settings"
 import { asPropsFetchingPage } from "./as-props-fetching-page"
 import { asStaticPage } from "./as-static-page"
-import { HideOnLoading } from "@core:hooks/use-loading-state/v1/hook"
+
 
 
 type asPageKwargs_T = {
@@ -40,10 +41,10 @@ function _asSuspendedComponent(kwargs:asSuspendedPageKwargs_T) {
     return SuspendedPage
 }
 
-/** Returns the component wrapped differently depending on if:
- * - it is a static page (no props fetcher)
- * - it is a fetching page (props fetcher provided)
- * - it needs to be suspended (fetching or lazy component)
+/** Returns the component wrapped differently depending on:
+ * - if it is a static page (no props fetcher)
+ * - if it is a fetching page (props fetcher provided)
+ * - if it needs to be suspended (fetching or lazy component)
 */
 function _getWrappedComponent(kwargs: Omit<asPageKwargs_T, 'errorBoundaryOptions'>) {
     const {

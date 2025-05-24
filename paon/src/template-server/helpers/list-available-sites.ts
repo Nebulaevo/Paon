@@ -29,4 +29,4 @@ async function listAvailableSites( folderPath:string ): Promise<string[]> {
     return siteNames
 }
 
-export default listAvailableSites
+export { listAvailableSites }

@@ -6,10 +6,15 @@ type patternOptions_T = {
     endAnchor: boolean
 }
 
+/** Returns a regex string representing a valid site name 
+ * 
+ * @param options.beginAnchor (boolean) add '^' at start of regex
+ * 
+ * @param options.endAnchor (boolean) add '$' at end of regex
+*/
 function getSiteNamePattern(
     options?: patternOptions_T
 ): string {
-    /* returns a regex string representing a valid site name */
 
     /* valid site name pattern 
     - only lowercas, numbers and '-' are allowed
@@ -17,33 +22,27 @@ function getSiteNamePattern(
     - site name cannot start or end with '-'
     */
     const pattern = '[a-z0-9]+(?:-[a-z0-9]+)*'
-    return _getRegexString(
+    return _formatPattern(
         pattern,
         options
     )
 }
 
+/** Returns a regex extracting a site name from a url segment /<SITE-NAME>/ 
+ * 
+ * @param options.beginAnchor (boolean) add '^' at start of regex
+ * 
+ * @param options.endAnchor (boolean) add '$' at end of regex
+*/
 function getUrlSiteNameExtractionPattern(
     options?: patternOptions_T
 ): string {
-    /* extracts a site name from a url segment /<SITE-NAME>/ */
     const siteNamePattern = getSiteNamePattern({
         beginAnchor: false, 
         endAnchor: false
     })
     const pattern = `\/?(${ siteNamePattern })\/?`
-    return _getRegexString(
-        pattern,
-        options
-    )
-}
-
-function getDotPathSegmentPattern(
-    options?: patternOptions_T
-): string {
-    /* matches "comming back" path segments '.' '..'*/
-    const pattern = '\\.+'
-    return _getRegexString(
+    return _formatPattern(
         pattern,
         options
     )
@@ -51,7 +50,8 @@ function getDotPathSegmentPattern(
 
 /* ------------------------- Private Helpers ------------------------------- */
 
-function _getRegexString( 
+/** Util optionally adding '^' and '$' to regex depending on provided options */
+function _formatPattern( 
     pattern: string,
     options: patternOptions_T | undefined, 
 ): string {
@@ -61,31 +61,16 @@ function _getRegexString(
     const endAnchor = options ? options.endAnchor : true
 
     if ( beginAnchor || endAnchor ) {
-        pattern = _formatPattern(
-            pattern,
-            { beginAnchor, endAnchor }
-        )
+        const begin = beginAnchor ? '^' : ''
+        const end = endAnchor ? '$' : ''
+        pattern = begin + pattern + end
     }
 
     return pattern
 }
 
-function _formatPattern( 
-    pattern: string,
-    { beginAnchor, endAnchor }: patternOptions_T
-): string {
-    /* Conditionnally adds '^' and '$' anchor signs to the regex string */
-    
-    const begin = beginAnchor ? '^' : ''
-    const end = endAnchor ? '$' : ''
-    
-    return begin + pattern + end
-}
-
-
 
 export {
     getSiteNamePattern,
     getUrlSiteNameExtractionPattern,
-    getDotPathSegmentPattern,
 }

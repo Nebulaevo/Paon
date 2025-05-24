@@ -15,8 +15,6 @@ Triggers the site:build command for every site in the src/sites/ folder
 displays command documentation
 `
 
-
-
 export {
     SCRIPT_NAME,
     COMMAND_DOCUMENTATION

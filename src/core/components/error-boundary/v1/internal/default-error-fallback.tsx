@@ -2,8 +2,8 @@ import {type ErrorFallbackComp_T} from '@core:components/error-boundary/v1/compo
 import { ErrorStatus } from '@core:utils/error-status/v1/utils'
 
 
-
-const Error: ErrorFallbackComp_T = (props) => {
+/** Default Error Fallback component */
+const DefaultErrorFallback: ErrorFallbackComp_T = (props) => {
     const { error } = props ?? {}
     let title: string = 'Oops'
     let message: string = 'Something went wrong..'
@@ -43,4 +43,4 @@ const Error: ErrorFallbackComp_T = (props) => {
     </>
 }
 
-export default Error
+export default DefaultErrorFallback

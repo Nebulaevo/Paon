@@ -8,7 +8,7 @@ import { getRootPath } from "#paon/utils/file-system"
 import siteBuild from '#paon/dev-scripts/site-build/script'
 import siteBuildAll from '#paon/dev-scripts/site-build-all/script'
 import { runBuildSiteCommand } from "#paon/dev-scripts/site-build-all/sub-process"
-import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/sub-process'
+import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/template-command'
 
 import { HELP_COMMAND } from '#paon/dev-scripts/helpers/help-command'
 import { ScriptClosureRequest, ScriptExecError } from "#paon/dev-scripts/helpers/script-interuption"

@@ -43,7 +43,7 @@ const _activeNavigationTarget: {current?:string} = {
 
 /** sets value of _activeNavigationTarget.current 
  * 
- * (sets it straight to a url Id for easier future comparison)
+ * (sets it straight to a url "Id" for easier future comparison)
 */
 function _setActiveNavigationTarget( targetUrl:string ) {
     _activeNavigationTarget.current = getIdFromRelativeUrl(
@@ -81,7 +81,7 @@ function _isActiveNavigationTarget( targetUrl:string ): boolean {
  * 
  * @param kwargs.parser the parser instance used by the wouter router for matching (`matchRoute` function needs it)
  * 
- * @returns a "pageData" dictionnary, or undefined if not found
+ * @returns a "pageData" dictionary, or undefined if not found
  */
 function _findMatchingPageData(kwargs:findingPageDataMatchKwargs_T): pageData_T | undefined {
     const { pages, parser } = kwargs
@@ -108,7 +108,7 @@ function _findMatchingPageData(kwargs:findingPageDataMatchKwargs_T): pageData_T 
  * 
  * @param kwargs.url the url we are pre-fetching for (propsFetcher call has to be given the url)
  * 
- * @param kwargs.pageData the pageData dictionnary for the route to pre-load
+ * @param kwargs.pageData the pageData dictionary for the route we want to pre-load
  * 
  * @param kwargs.getPagePropsHook the getPageProps function from usePageProps context hook (used as an interface for fetching props)
  */

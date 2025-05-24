@@ -107,7 +107,7 @@ function _purifyAbsoluteUrl(
  * the url that needs to be purified
  * 
  * @param {object} options 
- * additionnal restrictions applied to the url (only allows 'http' 'https' protocol by default)
+ * additionnal restrictions applied to the url
  * 
  * @param {boolean} options.forceRelativeUrl
  * if true, the resulting url is guaranteed to be relative or "about:blank"

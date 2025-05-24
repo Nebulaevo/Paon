@@ -18,9 +18,10 @@ type cacheEntry_T = {
     data: pageProps_T
 }
 
-/** Class allowing to generate fetcher instances handling fetching of page props for specific routes 
+/** Class generating fetcher instances handling fetching and caching page props for a given url
  * 
- * (those instances are used under the hood by usePageProps hook when it needs to fetch props for a page)
+ * ⚙️ This is used under the hood as a wrapper for the "props-fetching" function provided for a route,
+ * providing an interface that can be easily used in the "usePageProps" hook.
 */
 class PagePropsFetcher {
 
@@ -71,11 +72,12 @@ class PagePropsFetcher {
         }
     }
 
-    /** Deletes cache entries until cache is at max length 
-     * starting with entries that have the less time remaining */
+    /** If cache size is over designated limit, deletes a chunk of entries 
+     * (starting with entries that have the less time remaining) 
+    */
     static #limitCacheSize() {
         const cacheKeys = Object.keys(this.#cache)
-        if (cacheKeys.length>this.#maxCacheSize) {
+        if (cacheKeys.length>=this.#maxCacheSize) {
             // we order keys from old to fresh
             // (the less time left first)
             cacheKeys.sort((keyA, keyB) => {
@@ -89,10 +91,10 @@ class PagePropsFetcher {
         }
     }
 
-    /** PUBLIC: Sets the max length of the shared cache dictionnary 
+    /** PUBLIC: Sets the max length of the shared cache dictionary 
      * 
      * (Minimum is 10, if smaller it will be set to 10)
-     * (will adjust deleteChunkSize to be no more than half)
+     * (will adjust deleteChunkSize to be no more than half the max cache size)
     */
     static setMaxCacheSize(maxSize:number) {
         if (isExecutedOnClient() && isNumber(maxSize)) {
@@ -105,7 +107,7 @@ class PagePropsFetcher {
         // we make sure the deleteChunkSize is not bigger than half
         // the maxCacheSize
         const max = Math.round(this.#maxCacheSize/2)
-        if ( this.#deleteChunkSize > max ) {
+        if (this.#deleteChunkSize>max) {
             this.#deleteChunkSize = max
         }
     }
@@ -115,9 +117,10 @@ class PagePropsFetcher {
      * (The chunk size is forced between 1 and half the max cache size)
     */
     static setDeleteChunkSize(chunkSize:number) {
+        const min = 1
         const max = Math.round(this.#maxCacheSize/2)
         if (isExecutedOnClient() && isNumber(chunkSize)) {
-            if ( chunkSize<1 ) this.#deleteChunkSize = 1 
+            if ( chunkSize<min ) this.#deleteChunkSize = min 
             else if ( chunkSize>max ) this.#deleteChunkSize = max
             else this.#deleteChunkSize = chunkSize
         }
@@ -140,10 +143,7 @@ class PagePropsFetcher {
         const key = getIdFromRelativeUrl(url)
         if (isExecutedOnClient()) {
             this.#cleanOutdatedCacheEntries()
-            const cacheKeys = Object.keys(this.#cache)
-            if (cacheKeys.length>this.#maxCacheSize) {
-                this.#limitCacheSize()
-            }
+            this.#limitCacheSize()
             this.#cache[key] = cacheEntry
         }
     }
@@ -164,7 +164,9 @@ class PagePropsFetcher {
             : 0
     }
 
-    /** returns true if a non-zero cache time has been set for that instance */
+    /** returns true if a non-zero cache time has been set for that instance 
+     * and the function is called on clien side
+    */
     #cachingAllowed() {
         return this.#cacheTimeMS>0 && isExecutedOnClient()
     }

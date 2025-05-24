@@ -1,7 +1,7 @@
 import { PagePropsFetcher } from "@core:routing/v1/utils/page-props-fetcher"
 import type { RouterProps_T } from "@core:routing/v1/router"
 
-import Other from './pages/other/page'
+// import Other from './pages/other/page'
 
 import fetchPageProps from "./api/page-props"
 import shortFetchPageProps from './api/short-page-props'
@@ -32,11 +32,11 @@ const pages: RouterProps_T['pages'] = [
         propsFetcher: shortPagePropsFetcher
     }, {
         path: '/other/', 
-        Component: Other,
+        importComponent: loadOther,
         propsFetcher: pagePropsFetcher
     }, {
         path: '/other/:id/', 
-        Component: Other,
+        importComponent: loadOther,
         // propsFetcher: pagePropsFetcher
     },
 ]

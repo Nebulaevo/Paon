@@ -6,7 +6,6 @@ import promptUser from "#paon/dev-scripts/helpers/prompt-user"
 import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
 
 
-
 type expectedSiteState_T = 'EXISTANT' | 'NON_EXISTANT'
 
 type extractionKwargs_T = {
@@ -19,11 +18,15 @@ type siteNameValidationKwargs_T = {
     expectedSiteState: expectedSiteState_T
 }
 
-/** Function in charge of getting the targetted site name
+/** Provides the site name by either:
+ * - extracting it from process args
+ * - prompting the user to provide it
  * 
- * (function assumes the script can be only called with zero or one argument)
+ * @param kwargs.expectedSiteState 'EXISTANT' or 'NON_EXISTANT' 
+ * do we expect an entry for that site name to exist or not
  * 
- * if no site name was given, or the site name 
+ * @param kwargs.ifMultipleScriptArgs 'ERROR' | 'TAKE_FIRST'
+ * what to do if mulitple process args are provided to the script ?
  */
 async function getSiteName(kwargs: extractionKwargs_T): Promise<string> {
 
@@ -65,7 +68,7 @@ async function getSiteName(kwargs: extractionKwargs_T): Promise<string> {
 }
 
 
-/** Function that will calls 'interuptScript' if the site name is invalid
+/** Function that will calls `interuptScript` if the site name is invalid
  */
 async function _validateSiteName(kwargs: siteNameValidationKwargs_T): Promise<void> {
     

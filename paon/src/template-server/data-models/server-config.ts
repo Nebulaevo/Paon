@@ -21,19 +21,6 @@ type readingConfigFailedOptions_T = {
 
 /** Object representing the configuration of the Paon template server 
  * 
- * Attributes:
- * ----------
- * - **port** (int): 
- * Paon template server listening port
- * 
- * - **accessibleFromExterior** (boolean): 
- * if true server can be accessed from outside of localhost
- * 
- * Public Methods:
- * ---------------
- * - **initFromConfigFile** (async):
- * extract server config from json config file ('paon/server.config.json') 
- * 
  * @example
  * // creating a server config object
  * const serverConfig = new ServerConfig()
@@ -45,7 +32,6 @@ class ServerConfig {
     port: number
     accessibleFromExterior: boolean
 
-    /** init the object with default values */
     constructor() {
         this.port = 3000
         this.accessibleFromExterior = false

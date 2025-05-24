@@ -66,6 +66,7 @@ function HideOnLoading(props: HideOnLoadingProps_T) {
     return <>{!isLoading && props.children}</>
 }
 
+/** Provider for LoadingStateContext and LoadingSettersContext */
 function LoadingStateProvider(props: LoadingStateProviderProps_T) {
     const {children, Loader} = props
 

@@ -1,5 +1,7 @@
 import React, {JSX} from "react"
 
+import DefaultErrorFallback from './internal/default-error-fallback'
+
 type ErrorFallbackComp_T = (props?:{ error:unknown }) => JSX.Element
 type errorHandlingFunc_T = (error:unknown, errorInfo:React.ErrorInfo) => any
 
@@ -10,6 +12,10 @@ type ErrorBoundaryProps_T = {
     children: React.ReactNode,
 }
 
+/** Classic error boundary class with:
+ * - optional error handling handler (props.errorHandlingFunc) 
+ * - custom error fallback page (props.Fallback)
+ * */
 class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boolean, error: unknown}> {
     
     constructor(props: ErrorBoundaryProps_T) {
@@ -45,6 +51,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boo
 }
 
 export default ErrorBoundary
+
+export {
+    ErrorBoundary,
+    DefaultErrorFallback
+}
 
 export type { 
     ErrorBoundaryProps_T, 

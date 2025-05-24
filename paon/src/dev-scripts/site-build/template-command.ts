@@ -1,4 +1,5 @@
 
+/** uses provided site name to fill the build commands templates */
 function getSiteBuildCommand( siteName: string ) {
     const buildClientCommand = _getBuildClientCommand(siteName)
     const buildServerCommand = _getBuildServerCommand(siteName)

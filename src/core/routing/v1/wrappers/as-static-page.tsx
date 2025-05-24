@@ -11,14 +11,16 @@ type LazyComponent_T = React.LazyExoticComponent<Component_T>
 function asStaticPage(Component: Component_T | LazyComponent_T) {
     
     const StaticPage = () => {
-        const { silentlyResetPageProps } = usePageProps()
         
         // 🔧 Bug fix:
         // Adding resetting page props to non-fetching pages
         // (otherwise history navigation in and out of a non-fetching pages
         // can cause props to not be reset,
         // and adding a eventListener on popstate breaks the pre-loading logic)
+        const { silentlyResetPageProps } = usePageProps()
         useEffect(() => {
+            // Running reset as side effect of component building
+            // because it doesn't need to run for every render
             silentlyResetPageProps()
         }, [])
 

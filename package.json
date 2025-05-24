@@ -10,11 +10,6 @@
         ]
     },
     "scripts": {
-        "dev": "node server",
-        "build:frontend": "npm run build:frontend:client && npm run build:frontend:server",
-        "build:frontend:client": "vite build --ssrManifest charlotte/ssr-manifest.json --outDir dist/client/charlotte",
-        "build:frontend:server": "vite build --ssr src/sites/charlotte/entry-server.tsx --outDir dist/server/charlotte",
-        "preview": "cross-env NODE_ENV=production node server",
         "server": "cross-env NODE_ENV=PROD node ./paon/dist/template-server/run.js",
         "server:dev": "cross-env NODE_ENV=DEV node ./paon/dist/template-server/run.js",
         "server:preview": "cross-env NODE_ENV=PREVIEW node ./paon/dist/template-server/run.js",

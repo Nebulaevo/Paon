@@ -1,4 +1,4 @@
-//** Dev command scaffolding a new site folder */
+/** Dev command scaffolding a new site folder */
 
 import fs from 'node:fs/promises'
 import path from 'node:path'

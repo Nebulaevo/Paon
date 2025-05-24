@@ -1,15 +1,15 @@
-//** Dev command running commands building a site frontend */
+/** Dev command running commands building a site frontend */
 
 import childProcess from 'node:child_process'
 import fs from 'node:fs/promises'
 
 import { consoleErrorMessage, consoleBlueMessage, consoleSucessMessage, consoleMessage } from '#paon/utils/message-logging'
 import { getAbsolutePath, getSiteIndexHtmlPath } from '#paon/utils/file-system'
-
-import getSiteName from '#paon/dev-scripts/helpers/get-site-name'
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
-import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/sub-process'
 import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
+import getSiteName from '#paon/dev-scripts/helpers/get-site-name'
+import { getSiteBuildCommand } from '#paon/dev-scripts/site-build/template-command'
+
 import {
     COMMAND_DOCUMENTATION
 } from './constants.js'

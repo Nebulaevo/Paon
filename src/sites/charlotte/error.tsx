@@ -1,3 +1,5 @@
-import Error from "@core:components/error-component-default/v1/component"
+import { DefaultErrorFallback } from "@core:components/error-boundary/v1/component"
+
+const Error = DefaultErrorFallback
 
 export default Error

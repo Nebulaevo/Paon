@@ -58,7 +58,7 @@ type PagePropsProviderProps_T = {
  * 
  * On the server:
  * - If provided, returns ssrProps (context given to root App component) 
- * - If not, returns an empty dictionnary
+ * - If not, returns an empty dictionary
  * 
  * On the client:
  * - If provided, parses the optional "initial-page-props" json script tag
@@ -121,7 +121,8 @@ function _getInitialPropsData(ssrProps?: pageProps_T): PagePropsEntry_T {
 
 /** Checks entry's expiry date, 
  * 
- * if expiry date is undefined the entry's always fresh */
+ * (if expiry date is undefined the entry's always fresh) 
+ */
 function _currentEntryIsFresh(currentEntry:PagePropsEntry_T): boolean {
     const {expiryDate} = currentEntry
     return expiryDate
@@ -184,7 +185,7 @@ const PagePropsContext = createContext<PagePropsContext_T>({
  * - `silentlyResetPageProps()`:\
  * Callback reseting the content of the current page props (in the `ref`)
  * 
- * @returns [getPageProps, silentlyResetPageProps]
+ * @returns [`getPageProps`, `silentlyResetPageProps`]
  */
 function usePageProps() {
     return use(PagePropsContext)
@@ -236,10 +237,9 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
             .then( (data:unknown) => {
                 if (!isDict(data)) throw new ErrorStatus( ErrorStatus.TYPE_ERROR )
                 
-                // 🔧 BUG FIX: (in case we forgot to add abortController to fetch call)
-                // We prevent fetch promise callback to modify
-                // the current entry if the owner url has changed
-                // (because it means a new request has been initiated and that one should have been canceled)
+                // 🔧 BUG FIX: 
+                // Prevent side effect of another page from modifying current page props
+                // (for example chained navigation fetch requests that could resolve later than the intended one)
                 if (_currentEntryHasSameOwner(currenUrlId, current)){
                     current.expiryDate = getExpiryDate(5*60*1000) // 5min
                     current.fetchingPromise = undefined
@@ -249,10 +249,9 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
                 return _getResultTuple(current)
             })
             .catch( err => {
-                // 🔧 BUG FIX: (in case we forgot to add abortController to fetch call)
-                // We prevent fetch promise callback to modify
-                // the current entry if the owner url has changed
-                // (because it means a new request has been initiated and that one should have been canceled)
+                // 🔧 BUG FIX: 
+                // Prevent side effect of another page from modifying current page props
+                // (for example canceled request would throw and execute this catch callback)
                 if (_currentEntryHasSameOwner(currenUrlId, current)){
                     console.error(err)
                     current.expiryDate = getExpiryDate(2*1000) // 2sec

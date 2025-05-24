@@ -1,3 +1,5 @@
+/* Dev command deleting the content of the ./dist folder */
+
 import { consoleMessage } from '#paon/utils/message-logging'
 
 import deleteDistFolderContent from '#paon/dev-scripts/helpers/delete-dist-folder-content'

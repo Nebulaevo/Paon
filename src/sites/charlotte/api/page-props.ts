@@ -9,7 +9,7 @@ async function fetchPageProps( url:string, abortController:AbortController ) {
     console.log('[fetching] -- start')
     console.log(url)
     await asyncSleep(2000)
-    const data = { name:"martin", age:`${Math.random()}` }
+    const data = { name:"martin", age:`${Math.random()}`, url }
 
     if ( !isDict(data) ) {
         throw new ErrorStatus( '400' )

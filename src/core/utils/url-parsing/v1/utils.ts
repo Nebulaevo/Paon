@@ -13,6 +13,7 @@ function _asUrlObj( url:string ): URL {
     return new URL(url, 'http://dummy.com')
 }
 
+/** Returns object containing different parts of parsed relative URL */
 function splitRelativeUrl( 
     url:string 
 ): {pathname: string, search: string, searchParams: URLSearchParams, hash: string} {
@@ -25,6 +26,7 @@ function splitRelativeUrl(
     }
 }
 
+/** Removes selected section from a relative URL (hash or search) */
 function getFilteredRelativeUrl( url: string, options?:urlFilteringOptions ) {
     const urlObj = _asUrlObj( url )
 
@@ -41,15 +43,17 @@ function getFilteredRelativeUrl( url: string, options?:urlFilteringOptions ) {
     return urlObj.pathname + urlSearch + urlHash
 }
 
+/** Returns only pathname */
 function getPathname( url: string ) {
     return getFilteredRelativeUrl(url, {ignoreSearch: true, ignoreHash: true})
 }
 
-
+/** Returns the url as a relative URL */
 function getRelativeUrl( url:string ) {
     return getFilteredRelativeUrl(url)
 }
 
+/** Attempts to make URLs easier to compare by sorting URL search query keys */
 function getIdFromRelativeUrl( url:string, options?:urlIdOptions ) {
     
     const includeHash = isBool(options?.includeHash)

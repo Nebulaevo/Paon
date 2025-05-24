@@ -4,7 +4,7 @@ import { consoleMessage } from "#paon/utils/message-logging"
 const HELP_COMMAND = 'help'
 
 
-/** Function returning true if any given arg is the provided HELP_COMMAND */
+/** Function returning true if any given arg is the provided `HELP_COMMAND` */
 function isAskingForHelp(): boolean {
     const args = process.argv.slice(2)
     return args.includes( HELP_COMMAND )

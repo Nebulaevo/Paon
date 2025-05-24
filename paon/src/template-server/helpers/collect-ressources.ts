@@ -74,8 +74,6 @@ async function collectSiteRessources(
             // so we only use it in the dev server.
             // replacing paths relative to the file by paths relative to the root 
             templateFile = _makePathsRelativeToRoot( templateFile, siteName )
-
-            // '/' have to be changed to URL received from query
             templateFile = await vite.transformIndexHtml(pageUrl, templateFile)
         }
 
@@ -120,9 +118,9 @@ function _makePathsRelativeToRoot( template:string, siteName:string ): string {
         .replaceAll( /href\s*=\s*'\.?\/?/g, `href='/src/sites/${siteName}/` )
 }
 
-
+/** Very simple utility using regex to extract content of a tag in an html document */
 function _extractTemplateFragement({template, siteName, tag}: fragmentExtractionArgs): string {
-
+    
     const fragmentExtractionPattern = new RegExp(
         `<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`,
         'i'

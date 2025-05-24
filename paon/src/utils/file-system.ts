@@ -4,10 +4,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import type { Dirent } from 'node:fs'
 
-import { iterHasItems } from 'sniffly'
-
 import { consoleErrorMessage } from '#paon/utils/message-logging'
-import { getDotPathSegmentPattern } from '#paon/utils/string-patterns'
 
 type direntIdentifier_T = RegExp | string
 
@@ -25,32 +22,37 @@ type filePathGetterOptions_T = {
 }
 
 // keep a cached version of the root path
-let ROOT_PATH:string = ''
+let _ROOT_PATH:string = ''
 
+/** Returns absolute path to the root of the app */
 function getRootPath(): string {
-    /* returns path to package root */
-    if (ROOT_PATH) {
-        return ROOT_PATH
-    } else {
-        return _findRootPath()
-    }
-}
-
-function getAbsolutePath( pathFromRoot:string ): string {
-    /* transforms a relative path (from package root) to an absolute path */
-
-    // we remove any eventual '/./' '/../' 
-    // to prevent the absolute path to point to the outside
-    pathFromRoot = _filterPathDottedSegments( pathFromRoot )
+    if (!_ROOT_PATH) _findRootPath()
     
-    return path.resolve( getRootPath(), pathFromRoot )
+    return _ROOT_PATH
 }
 
+/** Returns an absolute path, given a path relative to package root
+ * 
+ * Returned path can't point outside of package root, if it does we return absoulte path to package root instead
+*/
+function getAbsolutePath( pathFromRoot:string ): string {
+
+    const absRoot = getRootPath()
+    // we resolve the given path relative to root 
+    // to loose any '.' or '..' segments
+    const resolvedAbsPath = path.resolve(absRoot, pathFromRoot)
+
+    // if absolute path doesn't point inside root folder we return package root path
+    if (!resolvedAbsPath.startsWith(absRoot)) return absRoot
+    
+    return resolvedAbsPath
+}
+
+/** Given as option a folderPattern or a filePattern, 
+ * looks for a matching element at the provided relative path.
+ * If found, returns the element name, otherwise returns undefined
+*/
 async function findInFolder( folderRelativePath:string, options:folderContainsOption_T ): Promise<string | undefined> {
-    /* looks for a matching file or folder in a given directory (relative to package root)
-    - if found: return the file/folder name 
-    - if not found: returns undefined
-    */
 
     let pattern: direntIdentifier_T
     let foundDirent: Dirent | undefined
@@ -77,6 +79,12 @@ async function findInFolder( folderRelativePath:string, options:folderContainsOp
     return foundDirent?.name
 }
 
+/** Returns expected absolute path to HTML index file for a given site name 
+ * 
+ * @param kwargs.siteName the site name
+ * 
+ * @param kwargs.folder ('src' or 'dist') which version do we want, the dev one (src) or the prod one (dist)
+*/
 function getSiteIndexHtmlPath(
         { siteName, folder }: filePathGetterOptions_T 
 ): string {
@@ -87,6 +95,12 @@ function getSiteIndexHtmlPath(
     return getAbsolutePath( pathFromRoot )
 }
 
+/** Returns expected absolute path to entry-server file for a given site name 
+ * 
+ * @param kwargs.siteName the site name
+ * 
+ * @param kwargs.folder ('src' or 'dist') which version do we want, the dev one (src) or the prod one (dist)
+*/
 function getSiteEntryServerPath( 
         { siteName, folder }: filePathGetterOptions_T  
 ): string {
@@ -97,6 +111,7 @@ function getSiteEntryServerPath(
     return getAbsolutePath( pathFromRoot )
 }
 
+/** Returns expected absolute path to ssr-manifest file for a given site name */
 function getSiteSsrManifestPath( siteName: string ): string {
     siteName = siteName.toLowerCase()
     const pathFromRoot = path.join('dist', 'client', '.vite', siteName, 'ssr-manifest.json')
@@ -107,8 +122,11 @@ function getSiteSsrManifestPath( siteName: string ): string {
 
 /* ------------------------- Private Helpers ------------------------------- */
 
-function _findRootPath(): string {
-    /* Function assuming this file is in 'paon' folder and the 'paon' folder is in the root folder */
+/** Function figuring out the absolute path to package root 
+ * 
+ * (assumes the file containing this function is in a 'paon' folder, that is directly in the root folder)
+*/
+function _findRootPath() {
 
     const PAON_FOLDER_NAME = 'paon'
     
@@ -137,20 +155,7 @@ function _findRootPath(): string {
     }
 
     const rootPath = path.dirname(currentPath)
-    ROOT_PATH = rootPath
-    return rootPath
-}
-
-function _filterPathDottedSegments( relativePath:string ) {
-    /* removes any "/./" "/../" path segments */
-    const dotPathSegmentPattern = new RegExp( getDotPathSegmentPattern() )
-    const pathSegments = relativePath.split( path.sep )
-
-    return path.join( 
-        ...pathSegments.filter( 
-            segment => iterHasItems(segment) && !segment.match( dotPathSegmentPattern ) 
-        ) 
-    )
+    _ROOT_PATH = rootPath
 }
 
 export {

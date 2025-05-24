@@ -1,16 +1,16 @@
 import fastify from "fastify"
+import type { ViteDevServer } from "vite"
 
 import ServerConfig from '#paon/template-server/data-models/server-config'
 import { consoleMessage } from "#paon/utils/message-logging"
 import { getAbsolutePath } from "#paon/utils/file-system"
 
-import listAvailableSites from "#paon/template-server/helpers/list-available-sites"
+import { listAvailableSites } from "#paon/template-server/helpers/list-available-sites"
 
 import getRoutesDeclaration from '#paon/template-server/fastify/request-handlers/template-request'
 import type { serverExectutionMode_T } from '#paon/template-server/helpers/types'
 
-import type { ViteDevServer } from "vite"
-
+/** Creates a fastify server configured to serve site templates */
 async function server( executionMode: serverExectutionMode_T ) {
 
     const config = new ServerConfig()
@@ -18,8 +18,8 @@ async function server( executionMode: serverExectutionMode_T ) {
 
     const port = config.port
     const host = config.accessibleFromExterior 
-        ? '0.0.0.0' 
-        : '127.0.0.1'
+        ? '0.0.0.0' // tells the OS to bind all available interfaces (localhost, or any remote device)
+        : '127.0.0.1' // bind the server to lookback interface (remote devices can't connect)
 
     const isProduction = executionMode === 'PROD'
     const isDev = executionMode === 'DEV'
@@ -68,7 +68,7 @@ async function server( executionMode: serverExectutionMode_T ) {
 
         app.register(fastifyStatic, {
             root: getAbsolutePath( 'dist/client/assets' ),
-            prefix: '/assets/'
+            prefix: '/assets/',
         })
     }
 

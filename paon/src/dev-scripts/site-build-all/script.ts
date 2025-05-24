@@ -1,3 +1,5 @@
+/** Dev command running commands building all registered sites frontends */
+
 import fs from 'node:fs/promises'
 
 import { getAbsolutePath } from '#paon/utils/file-system'
@@ -31,13 +33,15 @@ async function script() {
         .filter( dirent => dirent.isDirectory() )
         .map( dir => dir.name )
 
-
-    for ( const siteName of siteNames ) {
+    // build commands have to be run sequentially
+    // because each build task will produce an "index.html" file 
+    // that have to be renamed to "build-SITENAME.html"
+    for (const siteName of siteNames) {
         try {
             await runBuildSiteCommand( siteName )
         } catch(e) {
             interuptScript({
-                message: `Build command for "${siteName}" website failed`,
+                message: `Build command for "${siteName}" website failed with ${e}`,
                 isError: true
             })
         }

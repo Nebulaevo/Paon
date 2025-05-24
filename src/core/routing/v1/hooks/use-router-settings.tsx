@@ -2,7 +2,7 @@ import { createContext, use, useRef } from "react"
 import type React from "react"
 import type { Dict_T } from "sniffly"
 
-import DefaultError from "@core:components/error-component-default/v1/component"
+import { DefaultErrorFallback } from "@core:components/error-boundary/v1/component"
 import type { ErrorBoundaryProps_T } from "@core:components/error-boundary/v1/component"
 import { LoadingStateProvider } from "@core:hooks/use-loading-state/v1/hook"
 
@@ -16,7 +16,7 @@ type pageAsyncLoadFunc_T = () => Promise<{
     default: React.ComponentType<Dict_T<any>>;
 }>
 
-/** Dictionnary used to set up a route */
+/** Dictionary used to set up a route */
 type pageData_T = {
     path: string,
     propsFetcher?: PagePropsFetcher,
@@ -48,7 +48,7 @@ type loaderOptions_T = {
 
 // REMARK:
 // we create a manual partial version cuz Partial<loaderOptions_T>
-// would not make sub-dictionnary partial.
+// would not make sub-dictionary partial.
 type partialLoaderOptions_T = {
     Loader?: loaderOptions_T['Loader'],
     suspenseFallbackLoaderOpts?: Partial<loaderOptions_T['suspenseFallbackLoaderOpts']>,
@@ -110,7 +110,7 @@ function _formatLoaderOptions( partialOptions:RouterSettingsProviderProps_T['loa
 
 /** Returns default error boundary options to be combined with the partial settings provided */
 function _getDefaultErrorBoundaryOptions(): errorBoundaryOptions_T {
-    return { Fallback: DefaultError }
+    return { Fallback: DefaultErrorFallback }
 }
 
 /** Combines partial error boundary options provided with default one to garantee all expected keys are present */
@@ -131,6 +131,21 @@ const RouterSettingsContext = createContext<React.RefObject<RouterSettings_T>>({
     errorBoundaryOptions: _getDefaultErrorBoundaryOptions()
 }})
 
+/** Hook exposing the `RouterSettingsContext` 
+ * 
+ * (those objects are not supposed, or expected to be mutated or modified)
+ * 
+ * - `pages`\
+ * An array of dictionaries describing each routes of the app
+ * 
+ * - `loaderOptions`\
+ * A dictionay setting behaviour of loading in the router
+ * 
+ * - `errorBoundaryOptions`\
+ * A dictionay setting behaviour of the error boundaries wrapping each page
+ * 
+ * @returns [`pages`, `loaderOptions`, `errorBoundaryOptions`]
+*/
 function useRouterSettings() {
     const { pages, loaderOptions, errorBoundaryOptions } = use(RouterSettingsContext).current
     return { pages, loaderOptions, errorBoundaryOptions }
@@ -138,7 +153,7 @@ function useRouterSettings() {
 
 /** Provider for the `RouterSettingsContext`
  * 
- * @param props.pages array of dictionnaries used to set up routes
+ * @param props.pages array of dictionaries used to set up routes
  * 
  * @param props.loaderOptions (optional) Loading behavior settings for the router
  * 

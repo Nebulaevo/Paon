@@ -7,6 +7,10 @@ import { getAbsolutePath } from '#paon/utils/file-system'
 import promptUser from '#paon/dev-scripts/helpers/prompt-user'
 import { interuptScript } from '#paon/dev-scripts/helpers/script-interuption'
 
+/** Deletes a "dist" folder
+ * 
+ * @param relPath relative path to the dist folder (from project root)
+ */
 async function deleteDistFolderContent( relPath:string ) {
 
     // safeguard to avoid deleting something unexpected
