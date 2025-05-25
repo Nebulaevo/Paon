@@ -1,5 +1,7 @@
 # 🦚 Paon Template Server
 
+--- 🏗️ README IN CONSTRUCTION PLEASE DON'T JUDGE 🔧 ---
+
 Node server in charge of rendering a template.\
 Providing an API POST endpoint, where it can receive template rendering queries.
 
