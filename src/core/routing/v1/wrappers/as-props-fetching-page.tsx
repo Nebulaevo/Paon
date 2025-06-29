@@ -2,9 +2,13 @@ import { use } from "react"
 import type React from "react"
 import type { Dict_T } from "sniffly"
 
+import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
+import { RelativeURL } from "@core:utils/url/v1/utils"
+
 import { usePageProps } from "../hooks/use-page-props"
 import type { PagePropsFetcher } from "../utils/page-props-fetcher"
-import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
+
+
 
 type Component_T = React.ComponentType<Dict_T<any>>
 type LazyComponent_T = React.LazyExoticComponent<Component_T>
@@ -19,10 +23,17 @@ function asPropsFetchingPage({Component, fetcher}: propsFetchingPageKwargs_T) {
     
     const FetchingPage = () => {
         const { getPageProps } = usePageProps()
-        
+
         const url = isExecutedOnClient()
-            ? window.location.href
-            : '' // getPageProps will not be executed server side
+            // ℹ️ Remark:
+            // in thoery construction of a RelativeURL instance can throw an error
+            // but if it fails to parse current URL something went horribly wrong and the app
+            // should probably crash 
+            ? new RelativeURL(window.location.href, {onPurifyFail:'ERROR'})
+
+            // ℹ️ Remark:
+            // getPageProps will not be executed server side
+            : ''
 
         const [operationState, operationResult] = getPageProps(
             url, fetcher

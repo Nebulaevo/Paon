@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { matchRoute, useRouter, type BaseLocationHook, type Parser } from "wouter"
 import { useBrowserLocation } from "wouter/use-browser-location"
 
-import { getIdFromRelativeUrl, getPathname } from "@core:utils/url-parsing/v1/utils"
+import { RelativeURL } from "@core:utils/url/v1/utils"
 import { useLoadingSetters } from "@core:hooks/use-loading-state/v1/hook"
 
 import { PagePropsFetcher } from "../utils/page-props-fetcher"
@@ -17,13 +17,13 @@ type useBrowserLocationOptions_T = Parameters<typeof useBrowserLocation>[0]
 type navigateFuncArgs_T = Parameters<ReturnType<typeof useBrowserLocation>[1]>
 
 type findingPageDataMatchKwargs_T = {
-    url: string,
+    url: RelativeURL,
     pages: RouterSettings_T['pages'],
     parser: Parser,
 }
 
 type pagePreLoadingKwargs_T = {
-    url: string,
+    url: RelativeURL,
     pageData?: pageData_T,
     getPagePropsHook: ReturnType<typeof usePageProps>['getPageProps']
 }
@@ -45,10 +45,8 @@ const _activeNavigationTarget: {current?:string} = {
  * 
  * (sets it straight to a url "Id" for easier future comparison)
 */
-function _setActiveNavigationTarget( targetUrl:string ) {
-    _activeNavigationTarget.current = getIdFromRelativeUrl(
-        targetUrl, {includeHash:true}
-    )
+function _setActiveNavigationTarget(targetUrl:RelativeURL) {
+    _activeNavigationTarget.current = targetUrl.asId({includeHash:true})
 }
 
 /** resets value of _activeNavigationTarget.current to undefined */
@@ -62,20 +60,16 @@ function _existsActiveNavigationTarget(): boolean {
 }
 
 /** compares the given target url (by converting it to a url id) with the value of _activeNavigationTarget.current */
-function _isActiveNavigationTarget( targetUrl:string ): boolean {
+function _isActiveNavigationTarget(targetUrl:RelativeURL): boolean {
     if (!_activeNavigationTarget.current) return false
-    const targetUrlId = getIdFromRelativeUrl(
-        targetUrl, 
-        {includeHash:true}
-    )
-    return _activeNavigationTarget.current===targetUrlId
+    return _activeNavigationTarget.current===targetUrl.asId({includeHash:true})
 }
 
 
 /** Finds the pageData entry (route) matching the given url
  * (mainly using Wouter's `matchRoute` function)
  * 
- * @param kwargs.url the url that have to be matched
+ * @param kwargs.url a ReltiveURL instance that have to be matched
  * 
  * @param kwargs.pages the list of pageData entries
  * 
@@ -88,13 +82,26 @@ function _findMatchingPageData(kwargs:findingPageDataMatchKwargs_T): pageData_T 
 
     // 🔧 Bug fix: matchRoute expects pathname not a full relative URL
     // if search or hash is present, the route matching will give incorrect results
-    const pathname = getPathname(kwargs.url)
-    
+    // 
+    // 🔧 Bug fix 2: We need to decode the pathname before trying 
+    // to match it with the routes patterns, as it may contain encoded characters.
+    // Remark: 
+    // This method is a naive simple fix allowing to have special characters in URLs.
+    // It will fail if pageData pattern is an encoded URL like "/oth%C3%A9r/:id/",
+    // but there is very little reason to have that kind of pattern, 
+    // and the router patterns are static so we just do not handle that case.
+    const decodedTargetPathname = decodeURI(kwargs.url.pathname)
+
     for ( const pageData of pages ) {
         // Remark: 
         // the last argument (loose: boolean) allows for partial match (used for nested routes matching)
         // and in our case should stay false because we want a full match
-        const [ match ] = matchRoute(parser, pageData.path, pathname, false) // false -> not 'loose' 
+        const [ match ] = matchRoute(
+            parser, 
+            pageData.path,
+            decodedTargetPathname, 
+            false // false -> not 'loose' 
+        )
         if (match) return pageData
     }
 
@@ -128,8 +135,7 @@ async function _preloadPage(kwargs: pagePreLoadingKwargs_T) {
         // so it's important that page itself doesn't rely on the data being ready
         if (propsFetcher) {
             const [ state, resultTuple ] = getPagePropsHook(
-                url,
-                propsFetcher
+                url, propsFetcher
             )
             if (state==="FETCHING") {
                 promises.push(resultTuple)
@@ -161,12 +167,24 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
     const delayedNavigate = useCallback((...args:navigateFuncArgs_T) => {
         
         const [ to ] = args // url we are navigating to
-        
-        const targetUrl = to instanceof URL ? to.toString() : to
-        const currentUrl = window.location.href
 
-        const targetUrlId = getIdFromRelativeUrl(targetUrl, {includeHash:true})
-        const currentUrlId = getIdFromRelativeUrl(currentUrl, {includeHash:true})
+        // No error handling: if it fails it should all crash
+        const currentUrl = new RelativeURL(window.location.href)
+
+        // ℹ️ Remark:
+        // As opposed to currentUrl, 
+        // we do not trust targetUrl to be valid
+        const targetUrl = RelativeURL.parse(
+            to instanceof URL ? to.toString() : to, 
+            undefined,
+            {onPurifyFail:'ERROR'}
+        )
+        
+        // if parsing of target url failed we cancel the navigation attempt
+        if (!targetUrl) return
+
+        const targetUrlId = targetUrl.asId({includeHash:true})
+        const currentUrlId = currentUrl.asId({includeHash:true})
         
         // Preventing double history entries
         // - if that taget url is already being scheduled for navigation: we ignore
@@ -190,7 +208,7 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
         // we only trigger delayed navigation for new
         // relative URL pathname 
         // (search changes have to be handled by page)
-        if (getPathname(currentUrl)!==getPathname(targetUrl)){
+        if (currentUrl.normalizedPath!==targetUrl.normalizedPath){
             const timer = setTimeout(() => {
                 if (_isActiveNavigationTarget(targetUrl)) {
                     activateLoading()
@@ -207,7 +225,7 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
             const pageData = _findMatchingPageData({
                 url: targetUrl, pages, parser
             })
-
+            
             _preloadPage({
                 url: targetUrl,
                 pageData,

@@ -1,12 +1,14 @@
-import { isNumber, type Dict_T } from "sniffly"
+import { isDict, isNumber, type Dict_T } from "sniffly"
+import { parse as secureJsonParse } from 'secure-json-parse'
 
-import { getIdFromRelativeUrl } from '@core:utils/url-parsing/v1/utils'
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
 import { getExpiryDate, hasExpired } from '@core:utils/date/v1/expiry-dates'
+import type { EnhancedURL_T } from "@core:utils/url/v1/utils"
+import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 
 type pageProps_T = Dict_T<unknown>
 
-type propsFetcher_T = (url:string, abortController:AbortController) => Promise<pageProps_T>
+type propsFetcher_T = (url:string, abortController:AbortController) => Promise<Response>
 
 type PagePropsFetcherKwargs_T = {
     fetcher: propsFetcher_T,
@@ -62,14 +64,19 @@ class PagePropsFetcher {
         return !hasExpired(cacheEntry.expiryDate)
     }
 
+    /** deletes multiple cache entries */
+    static #deleteEntries(keys:string[]) {
+        for (const key of keys) delete this.#cache[key]
+    }
+
     /** deletes all expired cache entries from cache */
     static #cleanOutdatedCacheEntries() {
-        const outdatedKeys = Object.keys(this.#cache).filter(
-            (key) => !this.#isFreshCacheEntry(this.#cache[key])
-        )
-        for (const key of outdatedKeys) {
-            this.#cache[key]
-        }
+        const cacheKeys = Object.keys(this.#cache)
+        const outdatedKeys = cacheKeys.filter(key => {
+            const entry = this.#cache[key]
+            return !this.#isFreshCacheEntry(entry)
+        })
+        this.#deleteEntries(outdatedKeys)
     }
 
     /** If cache size is over designated limit, deletes a chunk of entries 
@@ -87,7 +94,7 @@ class PagePropsFetcher {
             })
 
             const excessKeys = cacheKeys.slice(0, this.#deleteChunkSize)
-            for (const key of excessKeys) delete this.#cache[key]
+            this.#deleteEntries(excessKeys)
         }
     }
 
@@ -127,24 +134,25 @@ class PagePropsFetcher {
     }
 
     /** PUBLIC: get corresponding cache entry */
-    static getCacheEntry(url:string) {
-        const key = getIdFromRelativeUrl(url)
-        if (isExecutedOnClient() && this.#cache[key]) {
-            const isFresh = this.#isFreshCacheEntry(this.#cache[key])
-            if (isFresh) return this.#cache[key]
-            else delete this.#cache[key]
+    static getCacheEntry(urlID:string) {
+        if (isExecutedOnClient() && this.#cache[urlID]) {
+            const isFresh = this.#isFreshCacheEntry(this.#cache[urlID])
+            if (isFresh) {
+                const cacheEntryDeepCopy = JSON.parse(JSON.stringify(this.#cache[urlID]))
+                return cacheEntryDeepCopy
+            }
+            else delete this.#cache[urlID]
         }
 
         return undefined
     }
 
     /** PUBLIC: save a cache entry */
-    static setCacheEntry(url:string, cacheEntry:cacheEntry_T) {
-        const key = getIdFromRelativeUrl(url)
+    static setCacheEntry(urlID:string, cacheEntry:cacheEntry_T) {
         if (isExecutedOnClient()) {
             this.#cleanOutdatedCacheEntries()
             this.#limitCacheSize()
-            this.#cache[key] = cacheEntry
+            this.#cache[urlID] = cacheEntry
         }
     }
 
@@ -172,9 +180,9 @@ class PagePropsFetcher {
     }
 
     /** creates a cache entry */
-    #saveToCache(key:string, value: pageProps_T) {
+    #saveToCache(urlID:string, value: pageProps_T) {
         if (this.#cachingAllowed()) {
-            PagePropsFetcher.setCacheEntry(key, {
+            PagePropsFetcher.setCacheEntry(urlID, {
                 expiryDate: getExpiryDate(this.#cacheTimeMS),
                 data: value
             })
@@ -182,7 +190,7 @@ class PagePropsFetcher {
     }
 
     /** runs the provided fetching function */
-    async fetch(url:string): Promise<pageProps_T> {
+    async fetch(url:EnhancedURL_T): Promise<pageProps_T> {
         // start fetching by sending 
         // an abort signal to all instances of PagePropsFetcher
         PagePropsFetcher.abortCurrentRequest()
@@ -192,17 +200,20 @@ class PagePropsFetcher {
         // this way we can directly get errors thrown by
         // the custom "this.#fetcher" there
         const abortController = PagePropsFetcher.getAbortController()
-        return this.#fetcher(url, abortController)
-            .then(result => {
-                this.#saveToCache(url, result)
+        return this.#fetcher(url.toString(), abortController)
+            .then(response => response.text())
+            .then(jsonString => {
+                const result = secureJsonParse(jsonString, {protoAction:'error', constructorAction: 'error'})
+                if (!isDict(result)) throw new ErrorStatus(ErrorStatus.TYPE_ERROR)
+                this.#saveToCache(url.asId(), result)
                 return result
             })
     }
 
     /** returns the cached data for provided url, or undefined */
-    getFromCache(url:string): pageProps_T | undefined {
+    getFromCache(url:EnhancedURL_T): pageProps_T | undefined {
         if (!this.#cachingAllowed()) return undefined
-        return PagePropsFetcher.getCacheEntry(url)?.data
+        return PagePropsFetcher.getCacheEntry(url.asId())?.data
     }
 }
 

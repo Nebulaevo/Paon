@@ -3,7 +3,7 @@ import type { appProps_T } from '&interop-types/app-props'
 import { useState } from 'react'
 
 import paonIcon from '@core:assets/icons/paon.svg'
-import { purifyUrl } from '@core:utils/purify-url/v1/util'
+import { RelativeURL } from '@core:utils/url/v1/utils'
 import './style.scss'
 
 
@@ -43,12 +43,13 @@ function DataTable( { title, data }: DataTableProps_T ) {
 
 
 function PaonDefaultPage(
-    { url, pageContext }: appProps_T 
+    { url, context }: appProps_T 
 ) {
-    const purifiedUrl = purifyUrl( url, { forceRelativeUrl: true })
+    const purifiedUrl = new RelativeURL(url)
+    // const purifiedUrl = purifyUrl( url, { forceRelativeUrl: true })
     const urlData = {
         rawUrl: url,
-        purifiedUrl: purifiedUrl,
+        purifiedUrl: purifiedUrl.toString(),
     }
     const [count, setCount] = useState(0)
 
@@ -73,7 +74,7 @@ function PaonDefaultPage(
 
             <div>
                 <DataTable title='Requested URL' data={urlData} />
-                <DataTable title='Page Context Received' data={pageContext} />
+                <DataTable title='Page Context Received' data={context} />
             </div>
         </div>
     </div>
