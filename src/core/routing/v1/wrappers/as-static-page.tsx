@@ -11,7 +11,7 @@ type LazyComponent_T = React.LazyExoticComponent<Component_T>
 function asStaticPage(Component: Component_T | LazyComponent_T) {
     
     const StaticPage = () => {
-        
+
         // 🔧 Bug fix:
         // Adding resetting page props to non-fetching pages
         // (otherwise history navigation in and out of a non-fetching pages

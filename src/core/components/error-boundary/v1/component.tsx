@@ -44,9 +44,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boo
             return <Fallback error={this.state.error}/>
         }
         return this.props.children
-        // <InitialErrorCatcher>
-        //     { this.props.children }
-        // </InitialErrorCatcher>
     }
 }
 

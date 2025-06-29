@@ -1,8 +1,8 @@
 import Router, {type RouterProps_T} from '@core:routing/v1/router'
 import Routes from '@core:routing/v1/routes'
 
-import Layout from './layout.tsx'
-import { pages, loaderOptions, errorBoundaryOptions } from './Router.tsx'
+import Layout from './layout'
+import { pages, loaderOptions, errorBoundaryOptions } from './Router'
 
 import './assets/css/index.css'
 import './assets/css/fonts.css'

@@ -2,8 +2,7 @@ import { createContext, use, useRef } from "react"
 import type React from "react"
 import type { Dict_T } from "sniffly"
 
-import { DefaultErrorFallback } from "@core:components/error-boundary/v1/component"
-import type { ErrorBoundaryProps_T } from "@core:components/error-boundary/v1/component"
+import { DefaultErrorFallback, type ErrorBoundaryProps_T } from "@core:components/error-boundary/v1/component"
 import { LoadingStateProvider } from "@core:hooks/use-loading-state/v1/hook"
 
 import type { PagePropsFetcher } from "../utils/page-props-fetcher"
@@ -73,7 +72,7 @@ type RouterSettingsProviderProps_T = {
 }
 
 
-/** Returns default loading options to be combined with the partial settings provided */
+/** Returns default loading options (to be combined with the partial settings provided) */
 function _getDefaultLoaderOptions(): loaderOptions_T {
     return {
         Loader: () => 'Loading', 
@@ -108,7 +107,7 @@ function _formatLoaderOptions( partialOptions:RouterSettingsProviderProps_T['loa
     }
 }
 
-/** Returns default error boundary options to be combined with the partial settings provided */
+/** Returns default error boundary options (to be combined with the partial settings provided) */
 function _getDefaultErrorBoundaryOptions(): errorBoundaryOptions_T {
     return { Fallback: DefaultErrorFallback }
 }
@@ -118,7 +117,6 @@ function _formatErrorBoundaryOptions(partialOptions:RouterSettingsProviderProps_
     const defaultOptions = _getDefaultErrorBoundaryOptions()
     return {... defaultOptions, ...partialOptions}
 }
-
 
 /** React context holding the settings of the application's Router
  * 
@@ -162,6 +160,7 @@ function useRouterSettings() {
 function RouterSettingsProvider(props: RouterSettingsProviderProps_T) {
     
     const {children, pages} = props
+    
     const loaderOptions = _formatLoaderOptions( props.loaderOptions )
     const errorBoundaryOptions = _formatErrorBoundaryOptions( props.errorBoundaryOptions )
 

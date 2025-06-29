@@ -1,7 +1,7 @@
 {
     "name": "paon-template-server",
     "private": true,
-    "version": "0.0.0",
+    "version": "0.1.0",
     "type": "module",
     "imports": {
         "#paon/*": [
@@ -21,16 +21,6 @@
         "site:build-all": "node ./paon/dist/dev-scripts/site-build-all/run.js",
         "site:clean-outdir": "node ./paon/dist/dev-scripts/site-clean-outdir/run.js"
     },
-    "_dependencies": {
-        "@braintree/sanitize-url": "^7.1.0",
-        "fastify": "^5.0.0",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "serialize-javascript": "^6.0.2",
-        "sniffly": "^1.0.2",
-        "wouter": "^3.3.5",
-        "zustand": "^5.0.1"
-    },
     "dependencies": {
         "@braintree/sanitize-url": "^7.1.1",
         "fastify": "^5.2.1",
@@ -40,21 +30,6 @@
         "sniffly": "^1.0.2",
         "wouter": "^3.6.0",
         "zustand": "^5.0.3"
-    },
-    "_devDependencies": {
-        "@fastify/express": "^4.0.1",
-        "@fastify/static": "^8.0.2",
-        "@types/node": "^22.7.5",
-        "@types/react": "^18.3.11",
-        "@types/react-dom": "^18.3.1",
-        "@types/serialize-javascript": "^5.0.4",
-        "@vitejs/plugin-react": "^4.3.2",
-        "cross-env": "^7.0.3",
-        "memfs": "^4.17.0",
-        "sass-embedded": "^1.80.1",
-        "typescript": "^5.6.3",
-        "vite": "^5.4.8",
-        "vitest": "^2.1.3"
     },
     "devDependencies": {
         "@fastify/express": "^4.0.2",

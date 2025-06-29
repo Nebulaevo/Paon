@@ -5,8 +5,8 @@ import type { RouterProps_T } from "@core:routing/v1/router"
 
 import fetchPageProps from "./api/page-props"
 import shortFetchPageProps from './api/short-page-props'
-import Loader from './loader.tsx'
-import Error from "./error.tsx"
+import Loader from './loader'
+import Error from "./error"
 
 
 // common page props fetcher
@@ -35,10 +35,10 @@ const pages: RouterProps_T['pages'] = [
         importComponent: loadOther,
         propsFetcher: pagePropsFetcher
     }, {
-        path: '/other/:id/', 
+        path: '/othér/:id/', 
         importComponent: loadOther,
         // propsFetcher: pagePropsFetcher
-    },
+    }
 ]
 
 const errorBoundaryOptions: RouterProps_T['errorBoundaryOptions'] = { 
