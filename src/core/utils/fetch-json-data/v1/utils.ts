@@ -178,7 +178,7 @@ async function _secondaryAccessAttempt<DataType_T>(
 async function fetchJsonData<DataType_T>(
     url: EnhancedURL_T, 
     opts: fetchJsonDataOpts_T<DataType_T>,
-): Promise<DataType_T | ErrorStatus> {
+): Promise<DataType_T> {
 
     const fetchJsonOpts = extractFetchJsonOpts<DataType_T>(opts.fetchJsonOpts)
     const requestInit = extractRequestInit(opts.requestInit, fetchJsonOpts.abortController)
