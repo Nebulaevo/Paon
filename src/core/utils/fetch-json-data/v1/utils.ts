@@ -3,7 +3,7 @@ import type { EnhancedURL_T } from "@core:utils/url/v1/utils"
 
 import caching from './internal/caching'
 import shortcuts from "./internal/shortcuts"
-import { extractFetchJsonOpts } from './internal/options-extraction'
+import { extractFetchJsonOpts, extractRequestInit } from './internal/options-extraction'
 import type { 
     fetchJsonOpts_T, 
     partialFetchJsonOpts_T, 
@@ -12,7 +12,7 @@ import type {
 
 
 type fetchJsonDataOpts_T<DataType_T> = {
-    requestInit?: Omit<RequestInit, 'signal' | 'method' | 'body'>,
+    requestInit?: Omit<RequestInit, 'signal' >,
     fetchJsonOpts?: partialFetchJsonOpts_T<DataType_T>,
 }
 
@@ -20,23 +20,6 @@ type accessAttemptKwargs_T<DataType_T> = {
     url: EnhancedURL_T, 
     requestInit: RequestInit, 
     fetchJsonOpts: fetchJsonOpts_T<DataType_T>
-}
-
-/** Mutates the requestInit object to set defaults and force certain values */
-function _standardiseGetRequestInit<DataType_T>(requestInit: RequestInit, fetchJsonOpts: fetchJsonOpts_T<DataType_T>) {
-
-    requestInit.method = 'GET'
-
-    // we include the abort constroller signal
-    requestInit.signal = fetchJsonOpts.abortController.signal
-
-    // if no browser cache strategy is explicitly provided
-    // we prevent use of browser cache (as caching is manually handled)
-    if (!requestInit.cache) requestInit.cache = 'no-store'
-
-    // if no redirection directive was given 
-    // we refuse to follow redirects by default
-    if (!requestInit.redirect) requestInit.redirect = 'error'
 }
 
 /** Manually raise an `AbortError` if the state of the abortController is aborted 
@@ -145,8 +128,8 @@ async function _secondaryAccessAttempt<DataType_T>(
 }
 
 
-/** Wrapper around `fetch` focused on getting json data, including multiple features:
- * - ⚙️ Secure parsing of json data (throws an error if data is unsafe)
+/** Wrapper around `fetch` focused on receiving json data, including multiple features:
+ * - ⚙️ Secure parsing of received json data (throws an error if data is unsafe)
  * - ⚙️ Custom data validation for every access (throws an error if data does not satisfy provided validators)
  * - ⚙️ Granular control over caching strategy per request, using the browser's Cache API.
  * - ⚙️ Custom number of retries and timeout duration per request
@@ -157,9 +140,9 @@ async function _secondaryAccessAttempt<DataType_T>(
  * @param opts object with 2 keys `requestInit` and `fetchJsonOpts`
  * 
  * @param opts.requestInit 
- * 'RequestInit' object provided to built-in fetch function but:
- * - excluding `method` & `body` keys because we are building a 'GET' request
- * - excluding `signal` because it is replaced by `fetchJsonOpts.abortController`
+ * 'RequestInit' options object provided to built-in fetch function but 
+ * excluding `signal` key because it is automatically populated from 
+ * `fetchJsonOpts.abortController` set in `fetchJsonOpts`
  * 
  * @param opts.fetchJsonOpts
  * = {
@@ -197,11 +180,8 @@ async function fetchJsonData<DataType_T>(
     opts: fetchJsonDataOpts_T<DataType_T>,
 ): Promise<DataType_T | ErrorStatus> {
 
-    const {requestInit={}} = opts
     const fetchJsonOpts = extractFetchJsonOpts<DataType_T>(opts.fetchJsonOpts)
-
-    // we mutate requestInit to set defaults and forced values
-    _standardiseGetRequestInit<DataType_T>(requestInit, fetchJsonOpts)
+    const requestInit = extractRequestInit(opts.requestInit, fetchJsonOpts.abortController)
 
     // first attempt at retreiving the data
     // (depending on cache strategy)

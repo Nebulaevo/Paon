@@ -79,6 +79,30 @@ function extractFetchJsonOpts<DataType_T>(opts?: partialFetchJsonOpts_T<DataType
     }
 }
 
+/** Function setting up defaults and forceing values before returning the requestInit object */
+function extractRequestInit(requestInit: RequestInit | undefined, abortController: AbortController) {
+    if (!requestInit) requestInit = {}
+
+    // we include the abort controller signal
+    requestInit.signal = abortController.signal
+
+    // if no browser cache strategy is explicitly provided
+    // we prevent use of browser cache (as caching is manually handled)
+    if (!requestInit.cache) requestInit.cache = 'no-store'
+
+    // if no redirection directive was given 
+    // we refuse to follow redirects by default
+    if (!requestInit.redirect) requestInit.redirect = 'error'
+
+    // we set 'Accept' header to be 'application/json'
+    const headers = new Headers( requestInit.headers ?? [] )
+    headers.set('Accept', 'application/json')
+    requestInit.headers = headers
+
+    return requestInit
+}
+
 export {
     extractFetchJsonOpts,
+    extractRequestInit
 }
