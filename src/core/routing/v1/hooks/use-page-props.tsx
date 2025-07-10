@@ -7,7 +7,7 @@ import { isExecutedOnServer } from "@core:utils/execution-context/v1/util"
 import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 import { getExpiryDate, hasExpired } from '@core:utils/date/v1/expiry-dates'
 
-import { PagePropsFetcher } from "../utils/page-props-fetcher"
+import type { pagePropsGetterFunc_T } from './use-router-settings'
 
 /** Props given to a page component */
 type pageProps_T = Dict_T<unknown>
@@ -45,8 +45,9 @@ type PagePropsEntry_T = {
 }
 
 type PagePropsContext_T = {
-    getPageProps: (relativeUrl:string | RelativeURL, fetcher:PagePropsFetcher) => propsFetchingOperationTuple_T,
-    silentlyResetPageProps: () => void
+    getPageProps: (relativeUrl:string | RelativeURL, fetcher:pagePropsGetterFunc_T) => propsFetchingOperationTuple_T,
+    silentlyResetPageProps: () => void,
+    abortPendingPagePropsRequest: () => void
 }
 
 type PagePropsProviderProps_T = {
@@ -159,8 +160,9 @@ function _getResultTuple(currentEntry:PagePropsEntry_T) {
  * (data entries are hold in a private `ref` because that hook is not meant to trigger re-renders)
 */
 const PagePropsContext = createContext<PagePropsContext_T>({
-    getPageProps: (_relativeUrl:string | RelativeURL, _fetcher:PagePropsFetcher) => ['READY', ['SUCCESS', {}]],
-    silentlyResetPageProps: () => {}
+    getPageProps: (_relativeUrl:string | RelativeURL, _fetcher:pagePropsGetterFunc_T) => ['READY', ['SUCCESS', {}]],
+    silentlyResetPageProps: () => {},
+    abortPendingPagePropsRequest: () => {}
 })
 
 /** Hook exposing the `PagePropsContext`
@@ -185,6 +187,9 @@ const PagePropsContext = createContext<PagePropsContext_T>({
  * - `silentlyResetPageProps()`:\
  * Callback reseting the content of the current page props (in the `ref`)
  * 
+ *  - `abortPendingPagePropsRequest()`:\
+ * Callback triggering the abort signal linked to any page props fetching request
+ * 
  * @returns [`getPageProps`, `silentlyResetPageProps`]
  */
 function usePageProps() {
@@ -195,11 +200,15 @@ function usePageProps() {
 function PagePropsProvider(props: PagePropsProviderProps_T) {
     const {children, ssrProps} = props
     
+    const abortControllerRef = useRef<AbortController>(
+        new AbortController()
+    )
+
     const pagePropsRef = useRef<PagePropsEntry_T>(
         _getInitialPropsData(ssrProps)
     )
 
-    const getPageProps = useCallback((relativeUrl:string | RelativeURL, fetcher:PagePropsFetcher): propsFetchingOperationTuple_T => { 
+    const getPageProps = useCallback((relativeUrl:string | RelativeURL, fetcher:pagePropsGetterFunc_T): propsFetchingOperationTuple_T => { 
         const { current } = pagePropsRef
         
         // sanitizing and encoding url
@@ -237,20 +246,30 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
         // for that url
         // (object returned by "getFromCache" is already a 
         // deep copy of the object stored in cache)
-        const cachedProps = fetcher.getFromCache(relativeUrl)
-        if (cachedProps) {
-            return ['READY', ['SUCCESS', cachedProps]]
-        }
+        // const cachedProps = fetcher.getFromCache(relativeUrl)
+        // if (cachedProps) {
+        //     return ['READY', ['SUCCESS', cachedProps]]
+        // }
 
-        // fetching
+        // ---------- Fetching ----------
+        // first we abort any eventual pending page props request
+        abortPendingPagePropsRequest()
+
         // we set the owner and exp date
         // so that fetch promise can be re-used in case
         // the function is called again before promise is resolved
         current.ownerUrlId = relativeUrl.asId()
         current.expiryDate = getExpiryDate(60*1000) // 1min
-        current.fetchingPromise = fetcher.fetch(relativeUrl)
-            .then( (data:unknown) => {
-                if (!isDict(data)) throw new ErrorStatus( ErrorStatus.TYPE_ERROR )
+        
+        // we create a dedicated copy of the current URL obj 
+        // that can be freely mutated by the fetcher function
+        const fetchingUrl = new RelativeURL(
+            relativeUrl.toString(),
+            { 'onPurifyFail': 'IGNORE' } // we do not re-sanatize
+        )
+        current.fetchingPromise = fetcher(fetchingUrl, abortControllerRef.current)
+            .then(data => {
+                // if (!isDict(data)) throw new ErrorStatus( ErrorStatus.TYPE_ERROR )
                 
                 // 🔧 BUG FIX: 
                 // Prevent side effect of another page from modifying current page props
@@ -296,11 +315,19 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
         }, []
     )
 
+    const abortPendingPagePropsRequest = useCallback(
+        () => {
+            abortControllerRef.current.abort()
+            abortControllerRef.current = new AbortController()
+        }, []
+    )
+
     // we memoise the context's value
     const value = useMemo(() => {
         return {
             getPageProps,
-            silentlyResetPageProps
+            silentlyResetPageProps,
+            abortPendingPagePropsRequest
         }
     }, [])
 

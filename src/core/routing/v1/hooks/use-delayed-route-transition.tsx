@@ -5,7 +5,6 @@ import { useBrowserLocation } from "wouter/use-browser-location"
 import { RelativeURL } from "@core:utils/url/v1/utils"
 import { useLoadingSetters } from "@core:hooks/use-loading-state/v1/hook"
 
-import { PagePropsFetcher } from "../utils/page-props-fetcher"
 import { useRouterSettings } from "./use-router-settings"
 import type { RouterSettings_T, pageData_T } from "./use-router-settings"
 import { usePageProps } from "./use-page-props"
@@ -160,7 +159,11 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
     const [ location, navigate ] = useBrowserLocation(opts)
     const { parser } = useRouter()
     const { pages, loaderOptions } = useRouterSettings()
-    const { getPageProps, silentlyResetPageProps } = usePageProps()
+    const { 
+        getPageProps, 
+        silentlyResetPageProps, 
+        abortPendingPagePropsRequest 
+    } = usePageProps()
     
     const {activateLoading, deactivateLoading} = useLoadingSetters()
 
@@ -196,7 +199,7 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
             // if another navigation was scheduled, we cancel it
             if (_existsActiveNavigationTarget()) {
                 // we do not want to reset page props
-                PagePropsFetcher.abortCurrentRequest()
+                abortPendingPagePropsRequest()
                 _resetActiveNavigationTarget()
                 deactivateLoading()
             }
@@ -219,7 +222,7 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
 
             // reseting eventual page props 
             // and cancelling eventual hanging fetch
-            PagePropsFetcher.abortCurrentRequest()
+            abortPendingPagePropsRequest()
             silentlyResetPageProps()
             
             const pageData = _findMatchingPageData({

@@ -17,9 +17,15 @@ function _runValidators(data:unknown, dataValidators: validatorFunc_T[]) {
 /** Helper converting the response body into json with `secure-json-parse.parse` 
  * 
  * (it will throw an error if json data is judged un-safe (proto or constructor poisoning) )
+ * 
+ * (makes sure not to consume the original response's body stream)
 */
 async function _secureParseJsonResponse(response: Response) {
-    return await response.text()
+    
+    // we need to clone the response object 
+    // to avoid consuming the original's body stream
+    // (body stream can be used only once)
+    return await response.clone().text()
         .then( jsonString => {
             const data = secureJsonParse(jsonString, {
                 protoAction: 'error', 

@@ -2,10 +2,10 @@ import { createContext, use, useRef } from "react"
 import type React from "react"
 import type { Dict_T } from "sniffly"
 
+import type { RelativeURL } from "@core:utils/url/v1/utils"
 import { DefaultErrorFallback, type ErrorBoundaryProps_T } from "@core:components/error-boundary/v1/component"
 import { LoadingStateProvider } from "@core:hooks/use-loading-state/v1/hook"
 
-import type { PagePropsFetcher } from "../utils/page-props-fetcher"
 import { usePageProps } from "./use-page-props"
 import { buildErrorHandler } from "../utils/error-handling-func"
 
@@ -15,15 +15,17 @@ type pageAsyncLoadFunc_T = () => Promise<{
     default: React.ComponentType<Dict_T<any>>;
 }>
 
+type pagePropsGetterFunc_T = (currentUrl: RelativeURL, abortController: AbortController) => Promise<Dict_T<unknown>>
+
 /** Dictionary used to set up a route */
 type pageData_T = {
     path: string,
-    propsFetcher?: PagePropsFetcher,
+    propsFetcher?: pagePropsGetterFunc_T,
     Component: React.ComponentType<Dict_T<any>>,
     importComponent?: undefined,
 } | {
     path: string,
-    propsFetcher?: PagePropsFetcher,
+    propsFetcher?: pagePropsGetterFunc_T,
     Component?: undefined,
     importComponent: pageAsyncLoadFunc_T
 }
@@ -194,5 +196,6 @@ export type {
     loaderOptions_T,
     errorBoundaryOptions_T,
     RouterSettings_T, 
-    RouterSettingsProviderProps_T 
+    RouterSettingsProviderProps_T,
+    pagePropsGetterFunc_T
 }

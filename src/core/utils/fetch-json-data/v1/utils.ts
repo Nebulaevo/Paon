@@ -1,4 +1,3 @@
-import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 import type { EnhancedURL_T } from "@core:utils/url/v1/utils"
 
 import caching from './internal/caching'

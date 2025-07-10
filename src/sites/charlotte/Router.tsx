@@ -1,43 +1,32 @@
-import { PagePropsFetcher } from "@core:routing/v1/utils/page-props-fetcher"
+// import { PagePropsFetcher } from "@core:routing/v1/utils/page-props-fetcher"
 import type { RouterProps_T } from "@core:routing/v1/router"
 
 // import Other from './pages/other/page'
 
-import fetchPageProps from "./api/page-props"
-import shortFetchPageProps from './api/short-page-props'
+import {fetchPost} from "./api/posts.ts"
+import {fetchComment} from './api/users.ts'
 import Loader from './loader'
 import Error from "./error"
 
 
-// common page props fetcher
-const pagePropsFetcher = new PagePropsFetcher({
-    fetcher: fetchPageProps,
-    cacheTimeS: 0 // 1 min
-})
-
-const shortPagePropsFetcher = new PagePropsFetcher({
-    fetcher: shortFetchPageProps,
-    cacheTimeS: 0 // 1 min
-})
-
 // Pages Options
 
 const loadHome = () => import('./pages/home/page.tsx')
-const loadOther = () => import('./pages/other/page.tsx', {})
+const loadOther = () => import('./pages/other/page.tsx')
 
 const pages: RouterProps_T['pages'] = [
     {
         path: '/', 
         importComponent: loadHome,
-        propsFetcher: shortPagePropsFetcher
+        propsFetcher: fetchPost
     }, {
         path: '/other/', 
         importComponent: loadOther,
-        propsFetcher: pagePropsFetcher
+        propsFetcher: fetchComment
     }, {
         path: '/othér/:id/', 
         importComponent: loadOther,
-        // propsFetcher: pagePropsFetcher
+        // propsFetcher: fetchComment
     }
 ]
 

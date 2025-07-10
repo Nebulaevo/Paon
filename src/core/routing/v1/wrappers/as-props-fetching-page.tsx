@@ -6,7 +6,7 @@ import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
 import { RelativeURL } from "@core:utils/url/v1/utils"
 
 import { usePageProps } from "../hooks/use-page-props"
-import type { PagePropsFetcher } from "../utils/page-props-fetcher"
+import type { pagePropsGetterFunc_T } from "../hooks/use-router-settings"
 
 
 
@@ -15,7 +15,7 @@ type LazyComponent_T = React.LazyExoticComponent<Component_T>
 
 type propsFetchingPageKwargs_T = {
     Component: Component_T | LazyComponent_T,
-    fetcher: PagePropsFetcher
+    fetcher: pagePropsGetterFunc_T
 }
 
 /** Returns the component wrapped in a fetching layer in charge of providing it with its props */

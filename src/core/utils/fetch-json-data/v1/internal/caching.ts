@@ -50,10 +50,15 @@ function _getTimestampFromCachedResponse(response: Response): number | undefined
 
 /** Creates a new Response object with an additionnal header 
  * storing a timestamp of the cache entry creation time.
+ * 
+ * (makes sure not to consume the original response's body stream)
  * */
 async function _formatCachedResponse(response: Response): Promise<Response> {
     
-    const body = await response.text()
+    // we need to clone the response object 
+    // to avoid consuming the original's body stream
+    // (body stream can be used only once)
+    const body = await response.clone().text()
     const headers = new Headers(response.headers)
     headers.set(
         _TIMESTAMP_HEADER_NAME, 
