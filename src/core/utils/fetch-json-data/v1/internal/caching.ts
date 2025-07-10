@@ -1,7 +1,7 @@
 import { isNumber } from "sniffly";
 
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util";
-import type { EnhancedURL_T } from "@core:utils/url/v1/utils";
+import { type EnhancedURL_T, RelativeURL } from "@core:utils/url/v1/utils";
 
 import type { staleWhileRevalidateOpts_T } from './types'
 
@@ -79,6 +79,21 @@ function _canUseCache() {
     return isExecutedOnClient() && 'caches' in window
 }
 
+/** Formats a cache key
+ * 
+ * (caches API uses relative URL, 
+ * so we use a small trick to have unique keys for external urls)
+ */
+function _formatCacheKey(url: EnhancedURL_T): string {
+    const targetUrl = url.asId()
+    if (url instanceof RelativeURL) return targetUrl
+
+    const urlKey = new RelativeURL('/')
+    urlKey.searchParams.set('externalUrl', targetUrl)
+    
+    return urlKey.asId()
+}
+
 /** Creates or updates a cache entry for given url */
 async function set(kwargs: setCacheEntryKwargs_T) {
     const {
@@ -93,7 +108,10 @@ async function set(kwargs: setCacheEntryKwargs_T) {
         caches.open(_CACHE_NAME)
     ])
 
-    await cache.put(url.asId(), formattedResponse)
+    await cache.put(
+        _formatCacheKey(url), 
+        formattedResponse
+    )
 }
 
 /** Retrieves the corresponding cache entry if it exists 
@@ -112,7 +130,7 @@ async function get<DataType_T>(
     
     if (_canUseCache()) return {state: 'NONE', response: undefined}
 
-    const urlID = url.asId()
+    const urlID = _formatCacheKey(url)
     const cache = await caches.open(_CACHE_NAME)
 
     const cachedReponse = await cache.match(urlID)
