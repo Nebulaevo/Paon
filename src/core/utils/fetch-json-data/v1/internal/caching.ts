@@ -88,7 +88,8 @@ function _formatCacheKey(url: EnhancedURL_T): string {
     const targetUrl = url.asId()
     if (url instanceof RelativeURL) return targetUrl
 
-    const urlKey = new RelativeURL('/')
+    // Remark: we do not need to run the purifier for this
+    const urlKey = new RelativeURL('/', {onPurifyFail: 'IGNORE'}) 
     urlKey.searchParams.set('externalUrl', targetUrl)
     
     return urlKey.asId()
