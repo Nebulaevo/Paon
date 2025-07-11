@@ -1,5 +1,3 @@
-import { isNumber } from 'sniffly'
-
 import type { EnhancedURL_T } from '@core:utils/url/v1/utils'
 import { ErrorStatus } from '@core:utils/error-status/v1/utils'
 
@@ -231,12 +229,10 @@ async function networkCallWithCacheUpdate<DataType_T>(
     const {retries, timeoutS, abortController} = fetchJsonOpts
     
     // we set an abort timer if a timeoutS was provided
-    const timer = isNumber(timeoutS, {min:0})
-        ? setTimeout(
-            () => abortController.abort(),
-            timeoutS * 1000 // convert to ms
-        )
-        : undefined
+    const timer = setTimeout(
+        () => abortController.abort(),
+        timeoutS * 1000 // convert to ms
+    )
     
     // we set a retry loop for the query
     let i = 0

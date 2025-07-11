@@ -60,7 +60,7 @@ type fetchJsonOpts_T<DataType_T> = {
     cache: cachingOpts_T<DataType_T>
     dataValidators: validatorFunc_T[],
     abortController: AbortController,
-    timeoutS: 'NONE' | number,
+    timeoutS: number,
     retries: number,
 }
 

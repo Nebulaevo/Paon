@@ -150,7 +150,7 @@ async function _secondaryAccessAttempt<DataType_T>(
  * 
  * > `abortController` (optionnal) : AbortController instance to link with fetch call
  * 
- * > `timeoutS` (default: 15s) : 'NONE' or number of seconds until the fetch attempt is cancelled
+ * > `timeoutS` (default: 15s) : number of seconds until the fetch attempt is cancelled (min: 2s and max: 5min)
  * 
  * > `retries` (default: 2x) : Number of retries within the set timeout
  * 

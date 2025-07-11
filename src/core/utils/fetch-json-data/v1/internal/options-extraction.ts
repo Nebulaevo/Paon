@@ -59,9 +59,8 @@ function _extractCachingOptions<DataType_T>(cachingOpts?: partialCachingOpts_T<D
 }
 
 /** Helper returning a valid value for timeoutS */
-function _extractTimeoutS(value: number | "NONE" | undefined) {
-    if (value === 'NONE') return value
-    if (isNumber(value, {min:0})) return value
+function _extractTimeoutS(value: number | undefined) {
+    if (isNumber(value, {min:2, max:5*60})) return value // min - 2s max 5min
     return 15 // 15s by default
 }
 
