@@ -129,7 +129,7 @@ async function get<DataType_T>(
         staleEntryMaxAgeS = 0
     } = options ?? {}
     
-    if (_canUseCache()) return {state: 'NONE', response: undefined}
+    if (!_canUseCache()) return {state: 'NONE', response: undefined}
 
     const urlID = _formatCacheKey(url)
     const cache = await caches.open(_CACHE_NAME)
