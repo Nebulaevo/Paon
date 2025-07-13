@@ -3,8 +3,8 @@ import type { RouterProps_T } from "@core:routing/v1/router"
 
 // import Other from './pages/other/page'
 
-import {fetchPost} from "./api/posts.ts"
-import {fetchComment} from './api/users.ts'
+import {fetchApi} from "./api/api.ts"
+// import {fetchComment} from './api/users.ts'
 import Loader from './loader'
 import Error from "./error"
 
@@ -18,11 +18,11 @@ const pages: RouterProps_T['pages'] = [
     {
         path: '/', 
         importComponent: loadHome,
-        propsFetcher: fetchPost
+        propsFetcher: fetchApi
     }, {
         path: '/other/', 
         importComponent: loadOther,
-        propsFetcher: fetchComment
+        propsFetcher: fetchApi
     }, {
         path: '/othér/:id/', 
         importComponent: loadOther,
@@ -37,7 +37,7 @@ const errorBoundaryOptions: RouterProps_T['errorBoundaryOptions'] = {
 const loaderOptions: RouterProps_T['loaderOptions'] = {
     Loader: Loader,
     pagePreFetchLoaderOpts: {
-        timeoutMs: 500
+        timeoutMs: 1000
     }
 }
 
