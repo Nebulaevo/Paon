@@ -5,7 +5,7 @@ import { SynchronizedLoader } from "@core:hooks/use-loading-state/v1/hook"
 import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 
 import { asPage, type asPageKwargs_T } from './wrappers/as-page'
-import { useRouterSettings, type pageData_T } from "./hooks/use-router-settings"
+import { useRouterSettings, type pageData_T } from "./hooks/use-router-settings/hook"
 
 
 function _getRoute(kwargs: asPageKwargs_T) {

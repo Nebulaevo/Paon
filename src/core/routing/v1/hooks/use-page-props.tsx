@@ -6,8 +6,7 @@ import { RelativeURL } from "@core:utils/url/v1/utils"
 import { isExecutedOnServer } from "@core:utils/execution-context/v1/util"
 import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 import { getExpiryDate, hasExpired } from '@core:utils/date/v1/expiry-dates'
-
-import type { pagePropsGetterFunc_T } from './use-router-settings'
+import type { pagePropsGetterFunc_T } from '@core:routing/v1/hooks/use-router-settings/hook'
 
 /** Props given to a page component */
 type pageProps_T = Dict_T<unknown>

@@ -3,9 +3,9 @@ import type { Dict_T } from "sniffly"
 
 import ErrorBoundary from "@core:components/error-boundary/v1/component"
 import { HideOnLoading } from "@core:hooks/use-loading-state/v1/hook"
+import InitialErrorThrower from "@core:routing/v1/sub-components/initial-error-thrower"
+import type { useRouterSettings, pageData_T } from "@core:routing/v1/hooks/use-router-settings/hook"
 
-import InitialErrorThrower from "../sub-components/initial-error-thrower"
-import type { useRouterSettings, pageData_T } from "../hooks/use-router-settings"
 import { asPropsFetchingPage } from "./as-props-fetching-page"
 import { asStaticPage } from "./as-static-page"
 

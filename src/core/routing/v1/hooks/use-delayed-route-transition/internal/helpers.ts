@@ -1,9 +1,8 @@
 import { matchRoute, type Parser } from "wouter"
 
 import { RelativeURL } from "@core:utils/url/v1/utils"
-
-import type { RouterSettings_T, pageData_T } from "../../use-router-settings"
-import { usePageProps } from "../../use-page-props"
+import type { RouterSettings_T, pageData_T } from "@core:routing/v1/hooks/use-router-settings/hook"
+import { usePageProps } from "@core:routing/v1/hooks/use-page-props"
 
 
 
