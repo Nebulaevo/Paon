@@ -1,7 +1,7 @@
 import React from "react"
 import { Router as WouterRouter } from "wouter"
 
-import { PagePropsProvider, type PagePropsProviderProps_T } from "./hooks/use-page-props"
+import { PagePropsProvider, type PagePropsProviderProps_T } from "./hooks/use-page-props/hook"
 import { RouterSettingsProvider, type RouterSettingsProviderProps_T } from './hooks/use-router-settings/hook'
 import { useDelayedRouteTransition } from "./hooks/use-delayed-route-transition/hook"
 

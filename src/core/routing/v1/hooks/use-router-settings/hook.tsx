@@ -2,7 +2,7 @@ import { createContext, use, useRef } from "react"
 import type React from "react"
 
 import { LoadingStateProvider } from "@core:hooks/use-loading-state/v1/hook"
-import { usePageProps } from "@core:routing/v1/hooks/use-page-props"
+import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
 
 import { buildErrorHandler } from './internal/error-handling'
 import {

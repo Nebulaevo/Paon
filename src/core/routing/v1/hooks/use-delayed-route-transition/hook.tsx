@@ -5,7 +5,7 @@ import { useBrowserLocation } from "wouter/use-browser-location"
 import { RelativeURL } from "@core:utils/url/v1/utils"
 import { useLoadingSetters } from "@core:hooks/use-loading-state/v1/hook"
 import { useRouterSettings } from  "@core:routing/v1/hooks/use-router-settings/hook"
-import { usePageProps } from "@core:routing/v1/hooks/use-page-props"
+import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
 
 import navigationTarget from './internal/navigation-target'
 import { preloadPage, findMatchingPageData } from "./internal/helpers"

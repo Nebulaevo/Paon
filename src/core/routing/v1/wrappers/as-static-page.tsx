@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import type React from "react"
 import type { Dict_T } from "sniffly"
 
-import { usePageProps } from "@core:routing/v1/hooks/use-page-props"
+import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
 
 type Component_T = React.ComponentType<Dict_T<any>>
 type LazyComponent_T = React.LazyExoticComponent<Component_T>

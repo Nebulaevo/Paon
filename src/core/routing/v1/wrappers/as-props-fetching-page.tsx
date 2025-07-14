@@ -4,7 +4,7 @@ import type { Dict_T } from "sniffly"
 
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
 import { RelativeURL } from "@core:utils/url/v1/utils"
-import { usePageProps } from "@core:routing/v1/hooks/use-page-props"
+import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
 import type { pagePropsGetterFunc_T } from "@core:routing/v1/hooks/use-router-settings/hook"
 
 
