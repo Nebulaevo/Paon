@@ -5,6 +5,7 @@ import { LoadingStateProvider } from "@core:hooks/use-loading-state/v1/hook"
 import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
 
 import { buildErrorHandler } from './internal/error-handling'
+import { generateLazyPageComponents } from "./internal/generate-lazy-page-components"
 import {
     getDefaultLoaderOptions,
     getDefaultErrorBoundaryOptions,
@@ -19,6 +20,7 @@ import type {
     RouterSettings_T, 
     RouterSettingsProviderProps_T
 } from './internal/types'
+
 
 /** React context holding the settings of the application's Router
  * 
@@ -77,9 +79,10 @@ function RouterSettingsProvider(props: RouterSettingsProviderProps_T) {
         pagePropsHookResetHandler: silentlyResetPageProps
     })
 
-    const ref = useRef<RouterSettings_T>(
-        {pages, loaderOptions, errorBoundaryOptions}
-    )
+    const ref = useRef<RouterSettings_T>({
+        pages: generateLazyPageComponents(pages), 
+        loaderOptions, errorBoundaryOptions
+    })
 
     return <RouterSettingsContext value={ref} >
         <LoadingStateProvider Loader={loaderOptions.Loader}>

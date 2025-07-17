@@ -1,4 +1,4 @@
-import { lazy, Suspense, Fragment } from "react"
+import { Suspense, Fragment } from "react"
 import type { Dict_T } from "sniffly"
 
 import ErrorBoundary from "@core:components/error-boundary/v1/component"
@@ -56,10 +56,10 @@ function _getWrappedComponent(kwargs: Omit<asPageKwargs_T, 'errorBoundaryOptions
     // props fetching logic
     const Component = pageData.propsFetcher
         ? asPropsFetchingPage({
-            Component: pageData.Component ?? lazy(pageData.importComponent), 
+            Component: pageData.Component, 
             fetcher: pageData.propsFetcher
         })
-        : asStaticPage(pageData.Component ?? lazy(pageData.importComponent))
+        : asStaticPage(pageData.Component)
     
     // if something in the component needs to be suspended we add suspense boundary
     if (pageData.propsFetcher || pageData.importComponent) {

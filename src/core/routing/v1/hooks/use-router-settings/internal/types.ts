@@ -12,8 +12,8 @@ type pageAsyncLoadFunc_T = () => Promise<{
 
 type pagePropsGetterFunc_T = (currentUrl: RelativeURL, abortController: AbortController) => Promise<Dict_T<unknown>>
 
-/** Dictionary used to set up a route */
-type pageData_T = {
+/** Raw page data given to initialize the routes */
+type rawPageData_T = {
     path: string,
     propsFetcher?: pagePropsGetterFunc_T,
     Component: React.ComponentType<Dict_T<any>>,
@@ -24,6 +24,27 @@ type pageData_T = {
     Component?: undefined,
     importComponent: pageAsyncLoadFunc_T
 }
+
+/** Refined page data stored in the router settings */
+type pageData_T = {
+    path: string,
+    propsFetcher?: pagePropsGetterFunc_T,
+    Component: React.ComponentType<Dict_T<any>>,
+    importComponent?: pageAsyncLoadFunc_T,
+}
+
+/** Dictionary used to set up a route */
+// type pageData_T = {
+//     path: string,
+//     propsFetcher?: pagePropsGetterFunc_T,
+//     Component: React.ComponentType<Dict_T<any>>,
+//     importComponent?: undefined,
+// } | {
+//     path: string,
+//     propsFetcher?: pagePropsGetterFunc_T,
+//     Component?: undefined,
+//     importComponent: pageAsyncLoadFunc_T
+// }
 
 
 type suspenseFallbackLoaderOpts_T = {
@@ -63,13 +84,14 @@ type RouterSettings_T = {
 
 type RouterSettingsProviderProps_T = {
     children: React.ReactNode,
-    pages: pageData_T[],
+    pages: rawPageData_T[],
     loaderOptions?: partialLoaderOptions_T,
     errorBoundaryOptions?: errorBoundaryOptions_T
 }
 
 export type { 
     pagePropsGetterFunc_T,
+    rawPageData_T,
     pageData_T,
     loaderOptions_T,
     errorBoundaryOptions_T,
