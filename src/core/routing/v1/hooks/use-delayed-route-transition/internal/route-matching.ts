@@ -2,20 +2,12 @@ import { matchRoute, type Parser } from "wouter"
 
 import { RelativeURL } from "@core:utils/url/v1/utils"
 import type { RouterSettings_T, pageData_T } from "@core:routing/v1/hooks/use-router-settings/hook"
-import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
-
 
 
 type findingPageDataMatchKwargs_T = {
     url: RelativeURL,
     pages: RouterSettings_T['pages'],
     parser: Parser,
-}
-
-type pagePreLoadingKwargs_T = {
-    url: RelativeURL,
-    pageData?: pageData_T,
-    getPagePropsHook: ReturnType<typeof usePageProps>['getPageProps']
 }
 
 /** Finds the pageData entry (route) matching the given url
@@ -60,51 +52,6 @@ function findMatchingPageData(kwargs:findingPageDataMatchKwargs_T): pageData_T |
     return undefined
 }
 
-/** Asynchronous function preloading ressources for a page
- * 
- * It will pre-import the component if the page component is lazy,
- * and pre-fetch the page props if a propsFetcher is provided for that route.
- * 
- * @param kwargs.url the url we are pre-fetching for (propsFetcher call has to be given the url)
- * 
- * @param kwargs.pageData the pageData dictionary for the route we want to pre-load
- * 
- * @param kwargs.getPagePropsHook the getPageProps function from usePageProps context hook (used as an interface for fetching props)
- */
-async function preloadPage(kwargs: pagePreLoadingKwargs_T) {
-    const {url, pageData, getPagePropsHook} = kwargs
-    const promises: Promise<any>[] = []
+export { findMatchingPageData }
 
-    if (pageData) {
-        const { importComponent, propsFetcher } = pageData
-        if (importComponent) {
-            promises.push( importComponent() )
-        }
-
-        // remark:
-        // it is possible that data preloading cache becomes stale by the time
-        // the page component is rendered (if it was near finish)
-        // so it's important that page itself doesn't rely on the data being ready
-        if (propsFetcher) {
-            const [ state, resultTuple ] = getPagePropsHook(
-                url, propsFetcher
-            )
-            if (state==="FETCHING") {
-                promises.push(resultTuple)
-            }
-        }
-    }
-
-    if (promises) {
-        const [a, b] = await Promise.all(promises)
-        console.log('Preload promise A')
-        console.log(a)
-        console.log('Preload promise B')
-        console.log(b)
-    }
-}
-
-export {
-    findMatchingPageData,
-    preloadPage
-}
+export type { findingPageDataMatchKwargs_T }

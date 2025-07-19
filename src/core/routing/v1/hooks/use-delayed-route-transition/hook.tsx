@@ -8,7 +8,10 @@ import { useRouterSettings } from  "@core:routing/v1/hooks/use-router-settings/h
 import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
 
 import navigationTarget from './internal/navigation-target'
-import { preloadPage, findMatchingPageData } from "./internal/helpers"
+import { preloadPage, markInitialComponentAsLoaded } from "./internal/pre-loading"
+import { findMatchingPageData } from './internal/route-matching'
+
+
 
 /** Options expected by wouter `useBrowserLocation` hook */
 type useBrowserLocationOptions_T = Parameters<typeof useBrowserLocation>[0]
@@ -38,6 +41,9 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
     } = usePageProps()
     
     const {activateLoading, deactivateLoading} = useLoadingSetters()
+
+    // we add initial component to list of already loaded components
+    markInitialComponentAsLoaded({parser, pages})
 
     const delayedNavigate = useCallback((...args: navigateFuncArgs_T) => {
         

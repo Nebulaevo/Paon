@@ -8,7 +8,7 @@ import type { RelativeURL } from "@core:utils/url/v1/utils"
  * - prevent overriden navigation requests to perform certain actions
  * - prevent multiple navigation requests with the same target to be initiated
  */
-let NAVIGATION_TARGET: {target?: string}= {target:undefined}
+const NAVIGATION_TARGET: {target?: string}= {target:undefined}
 
 /** Saves the url of the current navigation target */
 function set(targetUrl:RelativeURL) {
