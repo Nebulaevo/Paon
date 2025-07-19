@@ -1,7 +1,12 @@
 import React from 'react'
-import { Dict_T } from 'sniffly'
+import type { Dict_T } from 'sniffly'
 
-import type { rawPageData_T, pageData_T } from './types'
+import type { 
+    rawPageData_T, 
+    pageData_T, 
+    regularPageData_T, 
+    lazyPageData_T 
+} from './types'
 
 
 /** Completes the pages data by creating the component instances 
@@ -27,10 +32,10 @@ function generateLazyPageComponents(rawPagesData:rawPageData_T[] ): pageData_T[]
             )
         }
 
-        return lazyCompMap.get(importFunc) as React.ComponentType<Dict_T<any>>
+        return lazyCompMap.get(importFunc) as React.LazyExoticComponent<React.ComponentType<Dict_T<any>>>
     }
 
-    return rawPagesData.map(pageData => {
+    return rawPagesData.map((pageData) => {
 
         const {path, propsFetcher} = pageData
         // if a component is given we make sure 
@@ -39,11 +44,11 @@ function generateLazyPageComponents(rawPagesData:rawPageData_T[] ): pageData_T[]
         if (pageData.Component) return {
             path, propsFetcher, 
             Component: pageData.Component,
-        }
+        } as regularPageData_T
 
         const { importComponent } = pageData        
         const Component = getLazyComponent(importComponent)
-        return {path, propsFetcher, Component, importComponent}
+        return {path, propsFetcher, Component, importComponent} as lazyPageData_T
     })
 }
 

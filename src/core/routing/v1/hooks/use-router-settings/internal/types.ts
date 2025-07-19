@@ -12,39 +12,46 @@ type pageAsyncLoadFunc_T = () => Promise<{
 
 type pagePropsGetterFunc_T = (currentUrl: RelativeURL, abortController: AbortController) => Promise<Dict_T<unknown>>
 
-/** Raw page data given to initialize the routes */
-type rawPageData_T = {
+type lazyPageComponent_T = React.LazyExoticComponent<
+    React.ComponentType<Dict_T<any>>
+>
+
+
+type rawRegularPageData_T = {
     path: string,
     propsFetcher?: pagePropsGetterFunc_T,
     Component: React.ComponentType<Dict_T<any>>,
     importComponent?: undefined,
-} | {
+}
+
+type rawLazyPageData_T = {
     path: string,
     propsFetcher?: pagePropsGetterFunc_T,
     Component?: undefined,
     importComponent: pageAsyncLoadFunc_T
 }
 
-/** Refined page data stored in the router settings */
-type pageData_T = {
+/** Raw page data given to initialize the routes */
+type rawPageData_T = rawRegularPageData_T | rawLazyPageData_T
+
+
+
+type regularPageData_T = {
     path: string,
     propsFetcher?: pagePropsGetterFunc_T,
     Component: React.ComponentType<Dict_T<any>>,
+    importComponent?: undefined,
+}
+
+type lazyPageData_T = {
+    path: string,
+    propsFetcher?: pagePropsGetterFunc_T,
+    Component: lazyPageComponent_T,
     importComponent?: pageAsyncLoadFunc_T,
 }
 
-/** Dictionary used to set up a route */
-// type pageData_T = {
-//     path: string,
-//     propsFetcher?: pagePropsGetterFunc_T,
-//     Component: React.ComponentType<Dict_T<any>>,
-//     importComponent?: undefined,
-// } | {
-//     path: string,
-//     propsFetcher?: pagePropsGetterFunc_T,
-//     Component?: undefined,
-//     importComponent: pageAsyncLoadFunc_T
-// }
+/** Refined page data stored in the router settings */
+type pageData_T = regularPageData_T | lazyPageData_T
 
 
 type suspenseFallbackLoaderOpts_T = {
@@ -90,9 +97,11 @@ type RouterSettingsProviderProps_T = {
 }
 
 export type { 
+    rawRegularPageData_T, rawLazyPageData_T, rawPageData_T,
+    regularPageData_T, lazyPageData_T, pageData_T,
+    
+    lazyPageComponent_T,
     pagePropsGetterFunc_T,
-    rawPageData_T,
-    pageData_T,
     loaderOptions_T,
     errorBoundaryOptions_T,
     RouterSettings_T, 
