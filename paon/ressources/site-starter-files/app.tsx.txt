@@ -2,11 +2,11 @@ import Router, {type RouterProps_T} from '@core:routing/v1/router'
 import Routes from '@core:routing/v1/routes'
 
 import Layout from './layout'
-import { pages, loaderOptions, errorBoundaryOptions } from './Router'
+import { pages, loaderOptions, errorBoundaryOptions } from './router'
 
 import './assets/css/index.css'
 import './assets/css/fonts.css'
-import './App.scss'
+import './app.scss'
 
 type baseAppProps = {
     ssrPath?: RouterProps_T['ssrPath'], 

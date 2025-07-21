@@ -1,9 +1,9 @@
 import type { RouterProps_T } from "@core:routing/v1/router"
 
-import PaonWelcomePage from "./pages/welcome/page"
+import PaonWelcomePage from "./pages/welcome/page.tsx"
 import { fetchApi } from "./api/api.ts"
-import Loader from './loader'
-import Error from "./error"
+import Loader from './loader.tsx'
+import Error from "./error.tsx"
 
 
 /** We declare some lazy component import functions 

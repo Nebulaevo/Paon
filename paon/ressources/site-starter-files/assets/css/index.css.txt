@@ -50,9 +50,6 @@ table {
     /* (browser before 2020) */
     overflow-wrap: break-word;
     word-break: break-word;
-
-    /* DEBUG */
-    /* outline: 2px solid red; */
 }
 
 /* prevent long words from leaking out of the box */
@@ -101,7 +98,7 @@ input, textarea, button, select {
     font: inherit;
 }
 
-h1, h2, h3, h4, h5, h6, thead {
+h1, h2, h3, h4, h5, h6, thead, button {
     font-family: 'Nunito Sans', system-ui, sans-serif;
     line-height: 1.1em;
     letter-spacing: normal;
@@ -119,6 +116,7 @@ p, li, figcaption {
 }
 
 a {
+    color: currentColor;
     text-decoration: none;
 }
 
@@ -147,4 +145,11 @@ button, a {
 
 table {
     text-align: left;
+}
+
+@media screen and (max-width: 400px) {
+    :root {
+        line-height: 1.5;
+        font-size: 15px;
+    }
 }
