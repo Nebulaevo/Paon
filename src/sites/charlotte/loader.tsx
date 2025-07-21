@@ -1,8 +1,8 @@
 function Loader() {
     console.log( 'rendering <Loader>' )
-    return <>
+    return <div>
         <p>Loading...</p>
-    </>
+    </div>
 }
 
 export default Loader

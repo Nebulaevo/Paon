@@ -1,43 +1,55 @@
-// import { PagePropsFetcher } from "@core:routing/v1/utils/page-props-fetcher"
 import type { RouterProps_T } from "@core:routing/v1/router"
 
-// import Other from './pages/other/page'
-
-import {fetchApi} from "./api/api.ts"
-// import {fetchComment} from './api/users.ts'
+import PaonWelcomePage from "./pages/welcome/page"
+import { fetchApi } from "./api/api.ts"
 import Loader from './loader'
 import Error from "./error"
 
 
-// Pages Options
+/** We declare some lazy component import functions 
+ * 
+ * Remark:
+ * there should be only one instance of import function
+ * per path, and they should all be declarred here.
+*/
+const lazyLoaders = {
+    Welcome: () => import('./pages/welcome/page.tsx'),
+    Hello: () => import('./pages/hello/page.tsx')
+}
 
-const loadHome = () => import('./pages/home/page.tsx')
-const loadOther = () => import('./pages/other/page.tsx')
-
+/** Declaring routes of the app */
 const pages: RouterProps_T['pages'] = [
     {
+        // path for which that route will be rendered
         path: '/', 
-        importComponent: loadHome,
-        propsFetcher: fetchApi
+        
+        // page component
+        Component: PaonWelcomePage,
+        
+        // for components expecting data we can add a props fetcher
+        // that will be run in the background before the page is rendered
+        propsFetcher: fetchApi,
     }, {
-        path: '/other/', 
-        importComponent: loadOther,
-        propsFetcher: fetchApi
-    }, {
-        path: '/othér/:id/', 
-        importComponent: loadOther,
-        // propsFetcher: fetchComment
+        // we can use dynamic paths for routes
+        path: 'hello/:name/',
+
+        // we can declare a lazy import function
+        // instead of the component, it will 
+        // will set up a lazy component for the route
+        importComponent: lazyLoaders.Hello,
     }
 ]
 
+/** Settings applied to the error boundaries surrounding page components */
 const errorBoundaryOptions: RouterProps_T['errorBoundaryOptions'] = { 
     Fallback: Error 
 }
 
+/** Settings defining route transition loading behaviour */
 const loaderOptions: RouterProps_T['loaderOptions'] = {
     Loader: Loader,
     pagePreFetchLoaderOpts: {
-        timeoutMs: 1000
+        timeoutMs: 500
     }
 }
 

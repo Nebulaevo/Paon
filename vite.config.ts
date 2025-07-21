@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path'
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-
+import svgr from 'vite-plugin-svgr'
 
 const rootPath = dirname( fileURLToPath( import.meta.url ) )
 
@@ -11,7 +11,16 @@ const rootPath = dirname( fileURLToPath( import.meta.url ) )
 export default defineConfig({
     publicDir: false,
     plugins: [
-        react()
+        react(),
+        svgr({
+            svgrOptions: {
+                // we include a plugin to optimize SVGs
+                plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
+                svgoConfig: {
+                    floatPrecision: 3,
+                },
+            },
+        })
     ],
     resolve: {
         alias: {
@@ -36,7 +45,7 @@ export default defineConfig({
             scss: {
                 api: 'modern-compiler' // default used by vite is deprecated
             }
-        } 
+        }
     },
     build: {
         /* Why assetsInlineLimit have to be 0 ?
@@ -47,7 +56,7 @@ export default defineConfig({
         </svg>
         */
         
-        emptyOutDir: false, // manually handling output dir beacause it conains multiple sites
+        emptyOutDir: false, // manually handling output dir beacause it contains multiple sites
         assetsInlineLimit: 0, // otherwise it breaks svg 
         outDir: './dist/client',
         target: 'ES2015',
