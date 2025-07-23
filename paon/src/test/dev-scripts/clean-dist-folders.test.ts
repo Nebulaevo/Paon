@@ -70,13 +70,13 @@ beforeEach(async () => {
 describe('#core:clean-outdir (dev-script)', () => {
     
     it('should delete the content of /paon/dist directory', async () => {
-        
+
         // Wraps tested function to catch and return any eventual script interuption errors
         // to know how the script was closed
         const raisedInterutionError = await interceptInteruptionErrors( coreCleanOutdir )
         
-        const distAbsPath = getAbsolutePath('/paon/dist')
-
+        const distAbsPath = getAbsolutePath('paon/dist')
+        
         // check if dist dir still exists
         const exists = await virtualFs.promises.access( distAbsPath )
             .then( () => true )
@@ -103,7 +103,7 @@ describe('#core:clean-outdir (dev-script)', () => {
             })
         )
 
-        const distAbsPath = getAbsolutePath('/paon/dist')
+        const distAbsPath = getAbsolutePath('paon/dist')
 
         // check if dist dir still exists
         const exists = await virtualFs.promises.access( distAbsPath )
@@ -132,7 +132,7 @@ describe('#site:clean-outdir (dev-script)', () => {
         // to know how the script was closed
         const raisedInterutionError = await interceptInteruptionErrors( siteCleanOutdir )
         
-        const distAbsPath = getAbsolutePath('/dist')
+        const distAbsPath = getAbsolutePath('dist')
 
         // check if dist dir still exists
         const exists = await virtualFs.promises.access( distAbsPath )
@@ -160,7 +160,7 @@ describe('#site:clean-outdir (dev-script)', () => {
             })
         )
 
-        const distAbsPath = getAbsolutePath('/dist')
+        const distAbsPath = getAbsolutePath('dist')
 
         // check if dist dir still exists
         const exists = await virtualFs.promises.access( distAbsPath )

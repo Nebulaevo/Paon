@@ -1,7 +1,7 @@
 /** Testing dev script "site-build" */
 
 import { vol } from "memfs"
-import { vi, describe, expect, beforeEach, it, type MockedFunction } from "vitest"
+import { vi, describe, expect, beforeEach, it } from "vitest"
 import childProcess from "node:child_process"
 
 import { getRootPath } from "#paon/utils/file-system"

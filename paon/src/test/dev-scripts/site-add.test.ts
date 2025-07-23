@@ -1,7 +1,7 @@
 /** Testing dev script "site-add" */
 
 import { vol, fs as virtualFs, type NestedDirectoryJSON } from "memfs"
-import { vi, describe, expect, beforeEach, it, type MockedFunction, beforeAll } from "vitest"
+import { vi, describe, expect, beforeEach, it, beforeAll } from "vitest"
 
 import { getRootPath, getAbsolutePath } from "#paon/utils/file-system"
 import siteAdd from '#paon/dev-scripts/site-add/script'
@@ -107,7 +107,7 @@ describe('#site:add (dev-script)', () => {
             })
         )
 
-        const siteFolderAbsPath = getAbsolutePath(`/src/sites/${NEW_SITE_NAME}`)
+        const siteFolderAbsPath = getAbsolutePath(`src/sites/${NEW_SITE_NAME}`)
 
         // check if new site folder exists
         const exists = await virtualFs.promises.access( siteFolderAbsPath )
@@ -139,7 +139,7 @@ describe('#site:add (dev-script)', () => {
             })
         )
 
-        const siteFolderAbsPath = getAbsolutePath(`/src/sites/${NEW_SITE_NAME}`)
+        const siteFolderAbsPath = getAbsolutePath(`src/sites/${NEW_SITE_NAME}`)
 
         // check if new site folder exists
         const exists = await virtualFs.promises.access( siteFolderAbsPath )
@@ -172,7 +172,7 @@ describe('#site:add (dev-script)', () => {
         )
 
         // check if site folder still exists
-        const siteFolderAbsPath = getAbsolutePath(`/src/sites/${EXISTING_SITE_NAME}`)
+        const siteFolderAbsPath = getAbsolutePath(`src/sites/${EXISTING_SITE_NAME}`)
         const dirContent = await virtualFs.promises.readdir(siteFolderAbsPath)
         expect(dirContent).toEqual(['app.html'])
 
@@ -196,7 +196,7 @@ describe('#site:add (dev-script)', () => {
         )
 
         // check if site folder still exists
-        const siteFolderAbsPath = getAbsolutePath(`/src/sites/${EXISTING_SITE_NAME}`)
+        const siteFolderAbsPath = getAbsolutePath(`src/sites/${EXISTING_SITE_NAME}`)
         const dirContent = await virtualFs.promises.readdir(siteFolderAbsPath)
         expect(dirContent).toEqual(['app.html'])
 
@@ -222,7 +222,7 @@ describe('#site:add (dev-script)', () => {
             )
             
             // check if new site folder exists
-            const siteFolderAbsPath = getAbsolutePath(`/src/sites/${invalidSiteName}`)
+            const siteFolderAbsPath = getAbsolutePath(`src/sites/${invalidSiteName}`)
             const exists = await virtualFs.promises.access( siteFolderAbsPath )
                 .then( () => true )
                 .catch( () => false )
@@ -251,7 +251,7 @@ describe('#site:add (dev-script)', () => {
             )
             
             // check if new site folder exists
-            const siteFolderAbsPath = getAbsolutePath(`/src/sites/${invalidSiteName}`)
+            const siteFolderAbsPath = getAbsolutePath(`src/sites/${invalidSiteName}`)
             const exists = await virtualFs.promises.access( siteFolderAbsPath )
                 .then( () => true )
                 .catch( () => false )
@@ -277,7 +277,7 @@ describe('#site:add (dev-script)', () => {
             })
         )
 
-        const sitesFolderAbsPath = getAbsolutePath(`/src/sites`)
+        const sitesFolderAbsPath = getAbsolutePath(`src/sites`)
 
         // check that no new folders were created
         const dirContent = await virtualFs.promises.readdir(sitesFolderAbsPath) // Check the directory
@@ -304,7 +304,7 @@ describe('#site:add (dev-script)', () => {
         )
 
         // check if new site folder exists
-        const siteFolderAbsPath = getAbsolutePath(`/src/sites/${HELP_COMMAND}`)
+        const siteFolderAbsPath = getAbsolutePath(`src/sites/${HELP_COMMAND}`)
         const exists = await virtualFs.promises.access( siteFolderAbsPath )
             .then( () => true )
             .catch( () => false )

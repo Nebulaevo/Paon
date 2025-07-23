@@ -24,6 +24,14 @@ type filePathGetterOptions_T = {
 // keep a cached version of the root path
 let _ROOT_PATH:string = ''
 
+/** Small patch utility making sure the path isn't considered absolute on linux */
+function _ensureNoLeadingSlash(path: string) {
+    while (path.length>0 && path[0]=='/') {
+        path = path.substring(1)
+    }
+    return path
+}
+
 /** Returns absolute path to the root of the app */
 function getRootPath(): string {
     if (!_ROOT_PATH) _findRootPath()
@@ -37,6 +45,11 @@ function getRootPath(): string {
 */
 function getAbsolutePath( pathFromRoot:string ): string {
 
+    // 🔧 BUG FIX :
+    // if the received path starts with '/' it is considered absolute
+    // and ignored during the path.resolve call so we make sure it's not absolute
+    pathFromRoot = _ensureNoLeadingSlash(pathFromRoot)
+    
     const absRoot = getRootPath()
     // we resolve the given path relative to root 
     // to loose any '.' or '..' segments
