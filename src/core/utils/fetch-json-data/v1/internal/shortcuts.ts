@@ -117,7 +117,7 @@ async function simpleCacheLookup<DataType_T>(
     const data = response
         ? await processReponse<DataType_T>(response, fetchJsonOpts.dataValidators)
             .catch( async err => {
-                // if data is invalid or unsafe, 
+                // if data is invalid, 
                 // we 'fire and forget' a task 
                 // removing that entry from the cache
                 caching.remove(url)
@@ -186,7 +186,7 @@ async function staleWhileRevalidateCacheLookup<DataType_T>(
     const data = response
         ? await processReponse<DataType_T>(response, fetchJsonOpts.dataValidators)
             .catch( async err => {
-                // if data is invalid or unsafe, 
+                // if data is invalid, 
                 // we 'fire and forget' a task 
                 // removing that entry from the cache
                 caching.remove(url)

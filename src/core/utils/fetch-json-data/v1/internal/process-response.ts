@@ -28,8 +28,12 @@ async function _secureParseJsonResponse(response: Response) {
     return await response.clone().text()
         .then( jsonString => {
             const data = secureJsonParse(jsonString, {
-                protoAction: 'error', 
-                constructorAction: 'error'
+                // we have set up fastify to remove dangerous keys in json data
+                // instead of throwing an error.
+                // to ensure coherence between frontend and backend data handling 
+                // we do the same here
+                protoAction: 'remove', 
+                constructorAction: 'remove'
             })
 
             return data

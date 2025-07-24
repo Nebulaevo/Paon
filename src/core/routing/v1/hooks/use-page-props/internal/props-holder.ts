@@ -60,9 +60,12 @@ class PropsHolder {
         try {
             const jsonString = document.getElementById('initial-page-props')?.textContent
 
-            // if the json is evil "secureJsonParse" will throw an error
+            // we have set up fastify to remove dangerous keys in json data
+            // instead of throwing an error.
+            // to ensure coherence between frontend and backend data handling 
+            // we do the same here
             parsedJson = jsonString
-                ? secureJsonParse(jsonString, {protoAction:'error', constructorAction: 'error'})
+                ? secureJsonParse(jsonString, {protoAction:'remove', constructorAction: 'remove'})
                 : undefined
             
         } catch (_err) {
