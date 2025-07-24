@@ -19,11 +19,11 @@ function NavBar() {
         : 'World'
 
     return <nav className='top-nav'>
-        <RelativeLink href='/' className='home-link title-2'>
+        <RelativeLink href='/' className='home-link'>
             <div className='icon-container'>
                 <FeatherSVG/>
             </div>
-            Paon
+            <span  className='title-2'>Paon</span>
         </RelativeLink>
         
         <div className='hello-link-container'>
