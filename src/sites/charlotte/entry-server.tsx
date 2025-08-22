@@ -1,20 +1,25 @@
 import { StrictMode } from 'react'
 
 import { appProps_T } from '&interop-types/app-props'
+
 import renderToStringAsync from '@core:utils/async-render-to-string/v1/util'
+import { renderMetasToString } from '@core:components/meta-hat/v1/server-utils'
 
 import App from './app'
 
-async function render( RequestData: appProps_T ) {
+async function render( requestData: appProps_T ) {
     const html = await renderToStringAsync(
         <StrictMode>
             <App 
-                ssrPath={RequestData.url} 
-                ssrProps={RequestData.context}
+                ssrPath={requestData.url} 
+                ssrProps={requestData.context}
             />
         </StrictMode>
     )
-    return { html }
+
+    const head = renderMetasToString( requestData.context.meta as any )
+    
+    return { head, html }
 }
 
 export {
