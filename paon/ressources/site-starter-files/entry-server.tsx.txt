@@ -17,6 +17,7 @@ async function render( requestData: appProps_T ) {
         </StrictMode>
     )
 
+    // If given context has a "meta" key we try to use it to render the page meta tags
     const head = renderMetasToString( requestData.context.meta as any )
     
     return { head, html }
