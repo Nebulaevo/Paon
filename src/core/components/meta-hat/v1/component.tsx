@@ -22,12 +22,14 @@ type MetaHatProps_T = {
 
 type tagRenderingMode_T = 'RENDER' | 'HOIST'
 
+/** Clears all tags in the document head handled by `MetaHat`  */
 function _clearMetaTags() {
     if (isExecutedOnClient()) {
         removeTags( queryMetaHatTags() )
     }
 }
 
+/** Takes a list of dictionnaries and renders according meta tags */
 function asMetaTags(headTags: headTagSpecs_T[], renderingMode: tagRenderingMode_T) {
     let i = 0
     return headTags.map( tagProps => {
@@ -49,7 +51,8 @@ function asMetaTags(headTags: headTagSpecs_T[], renderingMode: tagRenderingMode_
     })
 }
 
-function MetaHatComponent({ headTags }: MetaHatProps_T ) {
+/** Component rendering page meta tags on the client side */
+function _MetaHatClientComponent({ headTags }: MetaHatProps_T ) {
 
     // Hook in charge of manually removing the MetaHat json-ld tag
     // on component unmount or dependency change
@@ -69,7 +72,7 @@ function MetaHatComponent({ headTags }: MetaHatProps_T ) {
     return <>{tags}</>
 }
 
-const MetaHat = asClientOnly(MetaHatComponent)
+const MetaHat = asClientOnly(_MetaHatClientComponent)
 
 export default MetaHat
 export { MetaHat, asMetaTags }

@@ -11,11 +11,27 @@ type linkSpecs_T = {
 } & Partial<linkAllowedAttrs_T>
 
 const ALLOWED_ATTRS = [
-    'className', 'rel', 'href', 'sizes', 'media', 'type', 'as'
+    'className', 'rel', 'href', 'sizes', 'media', 'type', 'as', 'title'
 ] as const
 
 
-
+/** Component rendering a `link` tag 
+ * 
+ * (`link` tags are automatically hoisted by React, 
+ * and removed from head as soon as this component is unmounted)
+ * 
+ * @param props.tagType "LINK"
+ * 
+ * @param props can include any of theese allowed attrs (str): 
+ * - `className`
+ * - `rel`
+ * - `href`
+ * - `sizes`
+ * - `media`
+ * - `type`
+ * - `as`
+ * - `title`
+*/
 function HeadLink(props: linkSpecs_T) {
     const {
         tagType: _,

@@ -7,6 +7,17 @@ type titleSpecs_T = {
     className?: string,
 }
 
+/** Component rendering a `title` tag 
+ * 
+ * (`title` tags are automatically hoisted by React, 
+ * and removed from head as soon as this component is unmounted)
+ * 
+ * @param props.tagType "JSON_LD"
+ * 
+ * @param props.content (string) page's title
+ * 
+ * @param props.className (optional string) html classes
+*/
 function Title(props: titleSpecs_T) {
     
     const content = isString(props.content) ? props.content : ''

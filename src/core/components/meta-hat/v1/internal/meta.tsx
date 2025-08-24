@@ -11,6 +11,21 @@ const ALLOWED_ATTRS = [
     'className', 'name', 'property', 'charset', 'itemprop', 'content'
 ] as const
 
+/** Component rendering a `meta` tag 
+ * 
+ * (`meta` tags are automatically hoisted by React, 
+ * and removed from head as soon as this component is unmounted)
+ * 
+ * @param props.tagType "META"
+ * 
+ * @param props can include any of theese allowed attrs (str): 
+ * - `className`
+ * - `name`
+ * - `property`
+ * - `charset`
+ * - `itemprop`
+ * - `content`
+*/
 function Meta(props: metaSpecs_T) {
     const {
         tagType: _, 
