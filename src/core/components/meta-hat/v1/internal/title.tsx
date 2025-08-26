@@ -1,10 +1,9 @@
 import { isString } from 'sniffly'
-import { withMetaHatClass } from './helpers'
+import { PAGE_HEAD_TAG_CLS } from './helpers'
 
 type titleSpecs_T = {
     tagType: 'TITLE',
-    content: string,
-    className?: string,
+    content: string
 }
 
 /** Component rendering a `title` tag 
@@ -15,17 +14,13 @@ type titleSpecs_T = {
  * @param props.tagType "JSON_LD"
  * 
  * @param props.content (string) page's title
- * 
- * @param props.className (optional string) html classes
 */
 function Title(props: titleSpecs_T) {
     
     const content = isString(props.content) ? props.content : ''
 
-    // we include the meta hat class
-    const className = withMetaHatClass(props.className)
-
-    return <title className={className}>
+    // we set the meta hat class
+    return <title className={PAGE_HEAD_TAG_CLS}>
         { content }
     </title>
 }

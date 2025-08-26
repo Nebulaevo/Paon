@@ -4,13 +4,12 @@ import htmlEscapedStringify from 'htmlescape'
 
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
 
-import { PAGE_HEAD_TAG_CLS, removeTags, withMetaHatClass } from './helpers'
+import { PAGE_HEAD_TAG_CLS, removeTags } from './helpers'
 
 
 type jsonLdSpecs_T = {
     tagType: 'JSON_LD',
-    data: Dict_T<unknown>,
-    className?: string,
+    data: Dict_T<unknown>
 }
 
 /** Converts the data dict to an html escaped json string */
@@ -43,18 +42,14 @@ const JsonLd = {
      * @param props.tagType "JSON_LD"
      * 
      * @param props.data (dict) structured data dictionnary
-     * 
-     * @param props.className (optional string) html classes
     */
     Rendered: (props: jsonLdSpecs_T) => {
         const escapedJsonString = _toEscapedJsonString(props.data)
-        
-        // we include the meta hat class
-        const className = withMetaHatClass(props.className)
 
         return <script 
+            // we set the meta hat class
+            className={PAGE_HEAD_TAG_CLS}
             type="application/ld+json" 
-            className={className}
             dangerouslySetInnerHTML={{
                 __html: JSON.stringify(escapedJsonString),
             }}
@@ -66,14 +61,9 @@ const JsonLd = {
      * @param props.tagType "JSON_LD"
      * 
      * @param props.data (dict) structured data dictionnary
-     * 
-     * @param props.className (optional string) html classes
     */
     Hoisted: (props: jsonLdSpecs_T) => {
         const escapedJsonString = _toEscapedJsonString(props.data)
-
-        // we include the meta hat class
-        const className = withMetaHatClass(props.className)
 
         // Side effect:
         // manually hoisting json ld script tag
@@ -82,7 +72,8 @@ const JsonLd = {
                 // we manually create and add
                 // the tag as it is not hoisted by react like <title>, <meta> and <link>
                 const scriptTag = document.createElement('script')
-                scriptTag.setAttribute('class', className)
+                // we set the meta hat class
+                scriptTag.setAttribute('class', PAGE_HEAD_TAG_CLS)
                 scriptTag.setAttribute('type', 'application/ld+json')
                 scriptTag.textContent = escapedJsonString
 

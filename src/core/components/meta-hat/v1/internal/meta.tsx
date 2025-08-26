@@ -1,4 +1,4 @@
-import { withMetaHatClass, checkStringAttrs } from './helpers'
+import { PAGE_HEAD_TAG_CLS, checkStringAttrs } from './helpers'
 
 type metaAllowedAttrs_T = Record<typeof ALLOWED_ATTRS[number], string>
 
@@ -8,7 +8,7 @@ type metaSpecs_T = {
 } & Partial<metaAllowedAttrs_T>
 
 const ALLOWED_ATTRS = [
-    'className', 'name', 'property', 'charset', 'itemprop', 'content'
+    'name', 'property', 'charset', 'itemprop', 'content'
 ] as const
 
 /** Component rendering a `meta` tag 
@@ -19,7 +19,6 @@ const ALLOWED_ATTRS = [
  * @param props.tagType "META"
  * 
  * @param props can include any of theese allowed attrs (str): 
- * - `className`
  * - `name`
  * - `property`
  * - `charset`
@@ -36,11 +35,9 @@ function Meta(props: metaSpecs_T) {
     // we do not render the tag
     const attrsAreValid = checkStringAttrs( attrs, ALLOWED_ATTRS as any as string[] )
     if (!attrsAreValid) return null
-
-    // we include the meta hat class
-    attrs.className = withMetaHatClass(attrs.className)
-
-    return <meta {...attrs} />
+    
+    // we set the meta hat class
+    return <meta className={PAGE_HEAD_TAG_CLS} {...attrs} />
 }
 
 export default Meta

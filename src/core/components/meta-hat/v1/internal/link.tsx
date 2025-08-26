@@ -1,6 +1,6 @@
 import {isAbsoluveUrl, AbsoluteURL, RelativeURL } from '@core:utils/url/v1/utils'
 
-import { PAGE_HEAD_TAG_CLS, withMetaHatClass, checkStringAttrs } from './helpers'
+import { PAGE_HEAD_TAG_CLS, checkStringAttrs } from './helpers'
 
 
 type linkAllowedAttrs_T = Record<typeof ALLOWED_ATTRS[number], string>
@@ -11,7 +11,7 @@ type linkSpecs_T = {
 } & Partial<linkAllowedAttrs_T>
 
 const ALLOWED_ATTRS = [
-    'className', 'rel', 'href', 'sizes', 'media', 'type', 'as', 'title'
+    'rel', 'href', 'sizes', 'media', 'type', 'as', 'title'
 ] as const
 
 
@@ -23,7 +23,6 @@ const ALLOWED_ATTRS = [
  * @param props.tagType "LINK"
  * 
  * @param props can include any of theese allowed attrs (str): 
- * - `className`
  * - `rel`
  * - `href`
  * - `sizes`
@@ -42,9 +41,6 @@ function HeadLink(props: linkSpecs_T) {
     // we do not render the tag
     const attrsAreValid = checkStringAttrs( attrs, ALLOWED_ATTRS as any as string[] )
     if (!attrsAreValid) return null
-    
-    // we include the meta hat class
-    attrs.className = withMetaHatClass(attrs.className)
 
     // if a URL has been given we escape it
     if (attrs.href) {
@@ -63,6 +59,7 @@ function HeadLink(props: linkSpecs_T) {
         }
     }
 
+    // we set the meta hat class
     return <link className={PAGE_HEAD_TAG_CLS} {...attrs} />
 }
 
