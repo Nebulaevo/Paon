@@ -85,7 +85,7 @@ function RouterSettingsProvider(props: RouterSettingsProviderProps_T) {
     })
 
     return <RouterSettingsContext value={ref} >
-        <LoadingStateProvider Loader={loaderOptions.Loader}>
+        <LoadingStateProvider DefaultLoader={loaderOptions.Loader}>
             { children }
         </LoadingStateProvider>
     </RouterSettingsContext>

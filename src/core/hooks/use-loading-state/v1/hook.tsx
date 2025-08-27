@@ -4,7 +4,7 @@ import type React from "react"
 
 type loadingStateContext_T = {
     isLoading: boolean,
-    Loader: React.ComponentType<{}>
+    DefaultLoader: React.ComponentType<{}>
 }
 
 type loadingSettersContext_T = {
@@ -14,7 +14,7 @@ type loadingSettersContext_T = {
 
 type LoadingStateProviderProps_T = {
     children: React.ReactNode,
-    Loader: React.ComponentType
+    DefaultLoader: React.ComponentType
 }
 
 type SynchronizedLoaderProps_T = {
@@ -27,7 +27,7 @@ type HideOnLoadingProps_T = {
 
 const LoadingStateContext = createContext<loadingStateContext_T>({
     isLoading: false,
-    Loader: () => 'Loading...'
+    DefaultLoader: () => 'Loading...'
 })
 
 const LoadingSettersContext = createContext<loadingSettersContext_T>({
@@ -53,7 +53,7 @@ function useLoadingSetters() {
  * when isLoading is true
 */
 function SynchronizedLoader(props: SynchronizedLoaderProps_T) {
-    const {isLoading, Loader: DefaultLoader} = useLoadingState()
+    const {isLoading, DefaultLoader} = useLoadingState()
     const Loader = props.Loader ?? DefaultLoader
     return <>{isLoading && <Loader/>}</>
 }
@@ -68,7 +68,7 @@ function HideOnLoading(props: HideOnLoadingProps_T) {
 
 /** Provider for LoadingStateContext and LoadingSettersContext */
 function LoadingStateProvider(props: LoadingStateProviderProps_T) {
-    const {children, Loader} = props
+    const {children, DefaultLoader} = props
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -81,7 +81,7 @@ function LoadingStateProvider(props: LoadingStateProviderProps_T) {
     }, [])
 
     const loadineStateValue = useMemo(() => {
-        return { isLoading: loading, Loader }
+        return { isLoading: loading, DefaultLoader }
     }, [loading])
 
     const loadingSettersValue = useMemo(() => {
