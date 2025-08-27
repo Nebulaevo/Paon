@@ -1,4 +1,5 @@
-# Core component: `<MetaHat />`
+[⬅️ back](/Readme.md)
+# Component: `<MetaHat />`
 
 Utility component allowing to insert page specific `<head>` tags: 
 - `<title>`
