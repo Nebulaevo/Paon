@@ -4,7 +4,7 @@ import Routes from '@core:routing/v1/routes'
 import Layout from './layout'
 import { pages, loaderOptions, errorBoundaryOptions } from './router'
 
-import './assets/css/index.css'
+import './assets/css/base.css'
 import './assets/css/fonts.css'
 import './app.scss'
 
