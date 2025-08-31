@@ -7,14 +7,13 @@ import script from "./script.js"
 
 
 async function run() {
-    try {
-        script()
-    } catch (e) {
-        if ( !isScriptClosureRequest(e) ) {
-            informUserOfHelpCommand( SCRIPT_NAME )
-            throw e
-        }
-    }
+    script()
+        .catch(err => {
+            if ( !isScriptClosureRequest(err) ) {
+                informUserOfHelpCommand( SCRIPT_NAME )
+                throw err
+            }
+        })
 }
     
 
