@@ -51,7 +51,7 @@ The site folder is scaffolded in `src/sites/` when we run the `add:site` command
 
 ### Root Files
 
-|    |    |
+| File | Description |
 | :- | :- | 
 | `entry-client.tsx` | Scripts in charge of rendering the app on the client. <br/> *ℹ️ Should not be modified* |
 | `entry-server.tsx` | Scripts in charge of exporting a function to render the component on the server. <br/> *ℹ️ Should not be modified* |

@@ -42,7 +42,7 @@ npm run site:add martin-music
 - If a website with the same name have already been created, the operation will fail
 - Site names are expected to be kebab-case and only alphanumerical, non allowed format will be refused
 
-|               |                                                       |
+| Site Name     |                                                       |
 | :------------ | :---------------------------------------------------- |
 | my-site-name  | ✅ Ok                                                 |
 | site2         | ✅ Ok                                                 |

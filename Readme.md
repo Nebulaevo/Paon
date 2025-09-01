@@ -25,7 +25,7 @@ It can be used in addition to any backend, and allows to have a local JavaScript
 
 ### References
 
-- [Command line interface](/documentation/references/dev-scripts.md)
+- [Command line interface](/documentation/references/cli.md)
 - [Routing](/documentation/references/routing.md)
 - [Handling loading state with **\<LoadingStateProvider\/\>**](/documentation/references/loading-context.md)
 - [Handling page head tags with **\<MetaHat\/\>**](/documentation/references/meta-hat.md)
