@@ -1,4 +1,8 @@
-[⬅️ back](/Readme.md)
+<style>table {width: 100%;}</style>
+
+[**🕮 Table of contents**](/Readme.md)
+
+### 🦚 References: 
 
 # Context: Loading State
 

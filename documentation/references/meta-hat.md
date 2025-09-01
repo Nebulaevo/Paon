@@ -1,4 +1,9 @@
-[⬅️ back](/Readme.md)
+<style>table {width: 100%;}</style>
+
+[**🕮 Table of contents**](/Readme.md)
+
+### 🦚 References: 
+
 # Component: `<MetaHat />`
 
 Utility component allowing to insert page specific `<head>` tags: 
