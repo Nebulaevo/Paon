@@ -1,3 +1,48 @@
+:root {
+    /* SENSIBLE DEFAULTS */
+    /* should be adjusted */
+    font-family: 'Nunito', system-ui, sans-serif;
+    line-height: 1.6;
+    letter-spacing: .05em;
+    font-weight: 400;
+    color: #333;
+}
+
+body {
+    display: flex;
+    min-width: 320px;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, thead, button {
+    font-family: 'Nunito Sans', system-ui, sans-serif;
+    line-height: 1.1em;
+    letter-spacing: normal;
+}
+
+p, li, figcaption {
+    /* limit the max line width to make it easier to read */
+    max-width: 70ch;
+}
+
+button {
+    padding: .6rem 1.2rem;
+    font-weight: 500;
+    border: 0 solid;
+    border-radius: 0;
+}
+
+a:focus,
+a:focus-visible,
+button:focus,
+button:focus-visible {
+    outline: 2px solid #333;
+}
+
+table {
+    text-align: left;
+}
+
 #root {
     flex: 1;
     display: flex;
@@ -74,5 +119,12 @@
     .title-2 {
         font-size: 1.4rem;
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    :root {
+        line-height: 1.5;
+        font-size: 15px;
     }
 }

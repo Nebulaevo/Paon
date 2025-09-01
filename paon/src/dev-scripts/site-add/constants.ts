@@ -68,10 +68,6 @@ const STARTER_FILES: { path: string, outputPath:string }[] = [
         outputPath: './assets/css/fonts.css',
     },
     {
-        path: './paon/ressources/site-starter-files/assets/css/base.css.txt',
-        outputPath: './assets/css/base.css',
-    },
-    {
         path: './paon/ressources/site-starter-files/assets/icons/favicon.ico',
         outputPath: './assets/icons/favicon.ico',
     },

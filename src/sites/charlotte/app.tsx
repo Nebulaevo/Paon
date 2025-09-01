@@ -4,7 +4,9 @@ import Routes from '@core:routing/v1/routes'
 import Layout from './layout'
 import { pages, loaderOptions, errorBoundaryOptions } from './router'
 
-import './assets/css/base.css'
+import '@core:assets/css/style-reset.css'
+import '@core:assets/css/sensible-defaults.css'
+
 import './assets/css/fonts.css'
 import './app.scss'
 
