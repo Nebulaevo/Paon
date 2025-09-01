@@ -1,5 +1,3 @@
-<style>table {width: 100%;}</style>
-
 [**🕮 Table of contents**](/Readme.md)
 
 ### 🦚 Getting Started: 
