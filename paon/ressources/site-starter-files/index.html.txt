@@ -6,9 +6,6 @@
         <link rel="icon" type="image/png" href="./assets/icons/favicon.png" />
         <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" />
-        
-        <!-- <meta name="initial-error-status" content="500" /> -->
-
     </head>
     <body>
         <div id="root"><!--app-html--></div>
