@@ -1,7 +1,7 @@
 🏗️ README IN CONSTRUCTION PLEASE DON'T JUDGE 🔧
 
 # 🦚 Paon Template Server
-**Easily integrate a moderne JavaScript frontend in an classical MVC architecture**
+**Easily integrate a React frontend in an classical MVC architecture**
 
 - 🌌 Built to handle multiple sites
 - ⚛️ Pre-configured for React + Typescript
@@ -37,7 +37,7 @@ Paon is a Node.js based solution to build and self host web application UIs.
 
 ## Why use it ?
 
-Paon is built primaraly to uncouple the frontend generation from the request handling cycle. 
+Paon is built primaraly to decouple the frontend UI generation from the request handling cycle. 
 
 If you would rather use a non-JavaScript backend to handle the request, database connections, caching...\
-But still want to build a React frontend, with modern frontend tools, assets bundling and server side rendering, Paon is made for you.
+But still want to use a React frontend, with modern frontend tools, assets bundling and server side rendering, Paon is made for you.

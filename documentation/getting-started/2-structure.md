@@ -49,19 +49,23 @@ The site folder is scaffolded in `src/sites/` when we run the `add:site` command
 
 ℹ️ In this guide, we are gonna use the site structure provided by Paon, though it's completely optionnal. If you wish to create your own structure you can modify `entry-server.tsx`, `entry-client.tsx` and `app.tsx` to render you own component tree.
 
-### Root Files
+### Core Files
+
+| File | Description | Can be modified ? |
+| :- | :- | - |
+| `entry-client.tsx` | Renders the app on the client | No |
+| `entry-server.tsx` | Exports a function rendering the app on the server | No |
+| `index.html` | Document in which we inject the app| Do not modify the tags included by default in `<body>`  |
+| `app.tsx` | Export the root `<App/>` component, and import global css stylesheets. | We can ajust global css imports, but the `<App/>` component should not be modified |
+
+### Routing Files
 
 | File | Description |
 | :- | :- | 
-| `entry-client.tsx` | Scripts in charge of rendering the app on the client. <br/> *ℹ️ Should not be modified* |
-| `entry-server.tsx` | Scripts in charge of exporting a function to render the component on the server. <br/> *ℹ️ Should not be modified* |
-| `app.tsx` | Export the root **`<App />`** component, and import global css stylesheets. <br/> *ℹ️ The App component should not be modified* | 
-| `app.scss` | Global stylesheet imported in `app.tsx` |
-| `index.html` | aaa <br/> bbb |
-| `layout.tsx` | aaa <br/> bbb |
-| `error.tsx` | aaa <br/> bbb |
-| `loader.tsx` | aaa <br/> bbb |
-| `router.tsx` | aaa <br/> bbb |
+| `layout.tsx` | Layout component |
+| `error.tsx` | Error component |
+| `loader.tsx` | Loading component |
+| `router.tsx` | Defines router settings |
 
 <br/>
 
