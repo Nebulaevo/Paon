@@ -1,0 +1,1 @@
+- Restrict the access to the server with simple tokens

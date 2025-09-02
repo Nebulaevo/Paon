@@ -17,7 +17,7 @@ async function server( executionMode: serverExectutionMode_T ) {
     await config.initFromConfigFile()
 
     const port = config.port
-    const host = config.accessibleFromExterior 
+    const host = config.allowExternalAccess 
         ? '0.0.0.0' // tells the OS to bind all available interfaces (localhost, or any remote device)
         : '127.0.0.1' // bind the server to lookback interface (remote devices can't connect)
 
