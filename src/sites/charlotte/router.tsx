@@ -13,7 +13,6 @@ import Error from "./error.tsx"
  * per path, and they should all be declarred here.
 */
 const lazyLoaders = {
-    Welcome: () => import('./pages/welcome/page.tsx'),
     Hello: () => import('./pages/hello/page.tsx')
 }
 
