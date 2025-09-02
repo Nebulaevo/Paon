@@ -5,7 +5,7 @@ import fs from 'node:fs/promises'
 import { consoleWarnMessage } from '#paon/utils/message-logging'
 
 import type { Dict_T } from "sniffly"
-import { isBool, isNumber } from "sniffly"
+import { isBool, isDict, isNumber } from "sniffly"
 
 
 type invalidKeyWarningMessageOptions_T = {
@@ -14,10 +14,6 @@ type invalidKeyWarningMessageOptions_T = {
     currentValue: unknown
 }
 
-type readingConfigFailedOptions_T = {
-    configFilePath: string,
-    error: unknown
-}
 
 /** Object representing the configuration of the Paon template server 
  * 
@@ -29,27 +25,27 @@ type readingConfigFailedOptions_T = {
 */
 class ServerConfig {
     
+    static CONFIG_PATH = 'paon/server.config.json' as const
+    static DEFAULT = {
+        port: 3000,
+    }
+
     port: number
-    accessibleFromExterior: boolean
 
     constructor() {
-        this.port = 3000
-        this.accessibleFromExterior = false
+        this.port = ServerConfig.DEFAULT.port
     }
 
     /** (async) extracts config settings from config file */
     async initFromConfigFile(): Promise<void> {
 
-        const CONFIG_FILE_PATH = 'paon/server.config.json'
 
-        try {
-            const file = await fs.readFile( CONFIG_FILE_PATH, { flag:'r', encoding: 'utf8' } )
-            const config: Dict_T<unknown> = JSON.parse( file )
-
+        const customConfig = await this.#getCustomConfig()
+        if (customConfig) {
             /* port
             determines the port of the server */
-            if ( config.port && isNumber(config.port, {positive:true}) ) {
-                this.port = config.port
+            if ( customConfig.port && isNumber(customConfig.port, {positive:true}) ) {
+                this.port = customConfig.port
             } else {
                 this.#invalidKeyWarningMessage({
                     keyName: 'port', 
@@ -57,27 +53,35 @@ class ServerConfig {
                     currentValue: this.port
                 })
             }
-
-            /* accessibleFromExterior
-            if false, the server is accessible only from localhost */
-            if ( isBool(config.accessibleFromExterior) ) {
-                this.accessibleFromExterior = config.accessibleFromExterior
-            } else {
-                this.#invalidKeyWarningMessage({
-                    keyName: 'accessibleFromExterior', 
-                    keyTypeName: 'boolean', 
-                    currentValue: this.accessibleFromExterior
-                })
-            }
-
-        } catch (e) {
-            this.#readingConfigFailed({
-                configFilePath: CONFIG_FILE_PATH,
-                error: e
-            })
         }
     }
 
+    /** returns the custom config hashmap if it exists and is valid */
+    async #getCustomConfig(): Promise<Dict_T<unknown> | undefined> {
+
+        const file = await this.#getCustomConfigFile()
+        if (!file) return undefined
+
+        try {
+            const config = JSON.parse( file )
+            return isDict(config) ? config : undefined
+
+        } catch (err) {
+            this.#invalidCustomConfigWarningMessage(err)
+            return undefined
+        }
+    }
+
+    /** returns the config file if it exists */
+    async #getCustomConfigFile(): Promise<string | undefined> {
+        try {
+            const file = await fs.readFile( ServerConfig.CONFIG_PATH, { flag:'r', encoding: 'utf8' } )
+            return file
+        } catch (_err) {
+            return undefined
+        }
+    }
+    
     /** (private) log warning message to the console if json contained invalid data */
     #invalidKeyWarningMessage({
             keyName, 
@@ -91,12 +95,9 @@ class ServerConfig {
     }
 
     /** (private) log warning message to the console if extracting json config failed */
-    #readingConfigFailed({
-        configFilePath,
-        error
-    }: readingConfigFailedOptions_T) {
-        let message = `Extraction of server config from file at ${configFilePath} failed with error ${error}, `
-        message += `default values are applied: [port] ${this.port}, [accessibleFromExterior] ${this.accessibleFromExterior}`
+    #invalidCustomConfigWarningMessage(error: Error | unknown) {
+        let message = `Extraction of server config from file at ${ServerConfig.CONFIG_PATH} failed with error ${error}, `
+        message += `default values are applied: [port] ${this.port}`
         
         consoleWarnMessage( 
             message,
