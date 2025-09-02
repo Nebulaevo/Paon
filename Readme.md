@@ -1,19 +1,19 @@
 🏗️ README IN CONSTRUCTION PLEASE DON'T JUDGE 🔧
 
 # 🦚 Paon Template Server
-**Easily integrate a React frontend in an classical MVC architecture**
+**Easily integrate a React frontend in a classic MVC architecture**
 
 - 🌌 Built to handle multiple sites
 - ⚛️ Pre-configured for React + Typescript
 - ⚡ Assets are bunlded and optimised with Vite
 - 🏗️ SSR or CSR rendering, per request, out of the box
 - 🔧 Dev tools to kick start a project
-- 🧩 Developped as a plug and play, framework agnostic, template engine.
+- 🧩 Developed as a plug and play, framework agnostic, template engine.
 
 Paon template server aims at seperating the frontend and the backend logic.
-It's a service handling the frontend part of multiple web applications, exposing an API serving website pages, effectively replacing the tempate engine in a classical MVC architecture.
+It's a service handling the frontend part of multiple web applications, exposing an API serving website pages, effectively replacing the tempate engine in a classic MVC architecture.
 
-It can be used in addition to any backend, and allows to have a local JavaScript environnement to use moderne frontend tools, without having to handle the whole request cycle using a JavaScript framework.
+It can be used in addition to any backend, and allows to have a local JavaScript environnement to use modern frontend tools, without having to handle the whole request cycle using a JavaScript framework.
 
 ## Table of contents
 
@@ -21,7 +21,9 @@ It can be used in addition to any backend, and allows to have a local JavaScript
 
 - [1. Installation & setup](/documentation/getting-started/1-setup.md)
 -  [2. Project structure](/documentation/getting-started/2-structure.md) 
--  [3. API: Page Requests](/documentation/getting-started/3-api.md) 
+-  [3. API : page requests](/documentation/getting-started/3-api.md) 
+- [4. ]()
+- [5. ]()
 
 ### References
 

@@ -56,7 +56,7 @@ The site folder is scaffolded in `src/sites/` when we run the `add:site` command
 | `entry-client.tsx` | Renders the app on the client | No |
 | `entry-server.tsx` | Exports a function rendering the app on the server | No |
 | `index.html` | Document in which we inject the app| Do not modify the tags included by default in `<body>`  |
-| `app.tsx` | Export the root `<App/>` component, and import global css stylesheets. | We can ajust global css imports, but the `<App/>` component should not be modified |
+| `app.tsx` | Export the root `<App/>` component, and import global css stylesheets. | We can ajust global css imports, but the `App` component should not be modified |
 
 ### Routing Files
 
