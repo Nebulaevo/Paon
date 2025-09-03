@@ -6,6 +6,7 @@ import type { Dirent } from 'node:fs'
 
 import { consoleErrorMessage } from '#paon/utils/message-logging'
 
+
 type direntIdentifier_T = RegExp | string
 
 type folderContainsOption_T = {
@@ -24,13 +25,7 @@ type filePathGetterOptions_T = {
 // keep a cached version of the root path
 let _ROOT_PATH:string = ''
 
-/** Small patch utility making sure the path isn't considered absolute on linux */
-function _ensureNoLeadingSlash(path: string) {
-    while (path.length>0 && path[0]=='/') {
-        path = path.substring(1)
-    }
-    return path
-}
+
 
 /** Returns absolute path to the root of the app */
 function getRootPath(): string {
@@ -131,7 +126,28 @@ function getSiteSsrManifestPath( siteName: string ): string {
     return getAbsolutePath( pathFromRoot )
 }
 
+function getSiteConfigRelativePath( siteName: string ): string {
+    siteName = siteName.toLowerCase()
+    return path.join(
+        'src', 'sites', siteName, 'site.config.json'
+    )
+}
 
+
+/** Returns the content of the given file or undefined */
+async function getFileContent( filePathFromRoot: string ): Promise<string | undefined> {
+
+    const absFilePath = getAbsolutePath( filePathFromRoot )
+
+    try {
+        const file = await fs.readFile(absFilePath, { flag:'r', encoding: 'utf8' })
+        return file
+
+    } catch (_err) {
+        // file not found
+        return undefined
+    }
+}
 
 /* ------------------------- Private Helpers ------------------------------- */
 
@@ -171,11 +187,22 @@ function _findRootPath() {
     _ROOT_PATH = rootPath
 }
 
+/** Small patch utility making sure the path isn't considered absolute on linux */
+function _ensureNoLeadingSlash(path: string) {
+    while (path.length>0 && path[0]=='/') {
+        path = path.substring(1)
+    }
+    return path
+}
+
+
 export {
     getRootPath,
     getAbsolutePath,
     findInFolder,
     getSiteIndexHtmlPath,
     getSiteSsrManifestPath,
-    getSiteEntryServerPath
+    getSiteEntryServerPath,
+    getSiteConfigRelativePath,
+    getFileContent
 }
