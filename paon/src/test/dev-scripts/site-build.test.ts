@@ -46,7 +46,7 @@ vi.mock("#paon/dev-scripts/helpers/prompt-user", () => {
 })
 
 // ---------------------------- CONSTANTS ---------------------------- 
-
+const ASSETS_BASE_URL = 'https://site.com/'
 const NON_EXISTING_SITE = 'the-missing-site'
 const EXISTING_VALID_SITE_1 = 'existing-site-1'
 const EXISTING_VALID_SITE_2 = 'other-site'
@@ -56,14 +56,17 @@ const SITES_FOLDER_JSON = {
     [EXISTING_VALID_SITE_1]: {
         'app.ts': 'app code...',
         'component.ts': 'component code...',
+        'site.config.json': `{ "assetsBaseUrl": "${ASSETS_BASE_URL}" }`
     },
     [EXISTING_VALID_SITE_2]: {
         'app.ts': 'app code...',
         'component.ts': 'component code...',
+        'site.config.json': `{ "assetsBaseUrl": ${ASSETS_BASE_URL} }`
     },
     [EXISTING_INVALID_SITE]: {
         'app.ts': 'app code...',
         'component.ts': 'component code...',
+        'site.config.json': `{ "assetsBaseUrl": ${ASSETS_BASE_URL} }`
     }
 }
 
@@ -109,7 +112,11 @@ describe('#site:build (dev-script)', () => {
 
         // checks that script tried to spawn a child process
         // with building command for given site
-        const buildSiteCommand = getSiteBuildCommand( EXISTING_VALID_SITE_1 )
+        const buildSiteCommand = getSiteBuildCommand({ 
+            siteName: EXISTING_VALID_SITE_1, 
+            assetsBaseUrl: ASSETS_BASE_URL
+        })
+
         expect( childProcess.spawn ).toHaveBeenCalledWith( 
             buildSiteCommand, [], { shell:true }
         )
@@ -135,7 +142,12 @@ describe('#site:build (dev-script)', () => {
 
         // checks that script tried to spawn a child process
         // with building command for given site
-        const buildSiteCommand = getSiteBuildCommand( EXISTING_VALID_SITE_1 )
+        
+        const buildSiteCommand = getSiteBuildCommand({ 
+            siteName: EXISTING_VALID_SITE_1, 
+            assetsBaseUrl: ASSETS_BASE_URL
+        })
+
         expect( childProcess.spawn ).toHaveBeenCalledWith( 
             buildSiteCommand, [], { shell:true }
         )
@@ -281,6 +293,41 @@ describe('#site:build (dev-script)', () => {
 
         // script should fail with a ScriptExecError
         expect(raisedInterutionError).toBeInstanceOf(ScriptExecError)
+    })
+
+    // CHECKS THAT BUILD COMMAND INCLUDES THE CUSTOM ASSET BASE URL
+
+    it("includes custom asset base url", async () => {
+
+        // (needs to be global for matchAll)
+        // pattern of the command setting up a custom asset base url
+        const pattern = new RegExp(`--base ${ASSETS_BASE_URL}`, 'g') 
+
+        // checks that script tried to spawn a child process
+        // with building command for given site
+        const buildSiteCommandA = getSiteBuildCommand({ 
+            siteName: EXISTING_VALID_SITE_1, 
+            assetsBaseUrl: ASSETS_BASE_URL
+        })
+
+        const buildSiteCommandB = getSiteBuildCommand({ 
+            siteName: EXISTING_VALID_SITE_1, 
+            assetsBaseUrl: '/'
+        })
+
+        const matches = buildSiteCommandA.matchAll(pattern)
+
+        const numberOfMatches = matches
+            ? Array.from(matches).length
+            : 0
+        
+        // we make sure changing the "assetsBaseUrl"
+        // changes the output
+        expect(buildSiteCommandA != buildSiteCommandB).toBe(true)
+
+        // we make sure the custom assetsBaseUrl is included twice
+        // (one for client & one for server build command)
+        expect(numberOfMatches).toEqual(2)
     })
 })
 

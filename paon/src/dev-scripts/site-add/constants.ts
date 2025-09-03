@@ -160,6 +160,10 @@ const STARTER_FILES: { path: string, outputPath:string }[] = [
         path: './paon/ressources/site-starter-files/router.tsx.txt',
         outputPath: './router.tsx',
     },
+    {
+        path: './paon/ressources/site-starter-files/site.config.json.txt',
+        outputPath: './site.config.json',
+    },
 ]
 
 export {

@@ -3,6 +3,7 @@
 import childProcess from 'node:child_process'
 import fs from 'node:fs/promises'
 
+import SiteConfig from '#paon/dev-scripts/helpers/site-config'
 import { consoleErrorMessage, consoleBlueMessage, consoleSucessMessage, consoleMessage } from '#paon/utils/message-logging'
 import { getAbsolutePath, getSiteIndexHtmlPath } from '#paon/utils/file-system'
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
@@ -30,7 +31,15 @@ async function script() {
     consoleBlueMessage( `${siteName} website`, {iconName:'globe'} )
     consoleBlueMessage( `Vite building...`, {iconName:'lightning'} )
 
-    const buildSiteCommand = getSiteBuildCommand( siteName )
+    // initializing siteConfig object
+    // to get assetsBaseUrl 
+    const siteConfig = new SiteConfig( siteName )
+    await siteConfig.initFromConfigFile()
+    
+    const buildSiteCommand = getSiteBuildCommand({
+        assetsBaseUrl: siteConfig.assetsBaseUrl, 
+        siteName 
+    })
 
     const buildingProcess = childProcess.spawn(
         buildSiteCommand,
