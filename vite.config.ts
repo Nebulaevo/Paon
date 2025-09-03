@@ -8,7 +8,7 @@ import svgr from 'vite-plugin-svgr'
 const rootPath = dirname( fileURLToPath( import.meta.url ) )
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig({    
     publicDir: false,
     plugins: [
         react(),
@@ -48,16 +48,7 @@ export default defineConfig({
         }
     },
     build: {
-        /* Why assetsInlineLimit have to be 0 ?
-        to prevent vite from tranforming svg urls to data uri
-        data uri doesn't work with:
-        <svg>
-            <use href="path/to/svg#icon"></use>
-        </svg>
-        */
-        
         emptyOutDir: false, // manually handling output dir beacause it contains multiple sites
-        assetsInlineLimit: 0, // otherwise it breaks svg 
         outDir: './dist/client',
         target: 'ES2015',
         copyPublicDir: false, // we don't use the public dir so we disable it
