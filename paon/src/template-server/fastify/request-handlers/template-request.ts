@@ -4,33 +4,60 @@ import type { ViteDevServer } from 'vite'
 import type { Dict_T } from 'sniffly'
 
 import { buildSsrReqData } from '#paon/template-server/data-models/ssr-request-data'
-import { collectRessources, collectSiteRessources } from "#paon/template-server/helpers/collect-ressources"
-import type { siteRessources_T, serverExectutionMode_T } from '#paon/template-server/helpers/types'
+import { collectRessourcesProd, collectSiteRessources } from "#paon/template-server/helpers/collect-ressources"
+import type { siteRessources_T } from '#paon/template-server/helpers/types'
 
 
-type routesDeclarationKwargs_T = {
-    siteNames: string[],
-    serverExecutionMode: serverExectutionMode_T,
-    vite?: ViteDevServer | undefined
+type devRouteDeclarationBase_T = {
+    serverExecutionMode: 'DEV',
+    siteRessources?: undefined,
+    vite: ViteDevServer,
 }
 
-type reqHandlerKwargs_T = {
-    siteName: string,
-    siteRessources?: Dict_T<siteRessources_T>,
-    serverExecutionMode: serverExectutionMode_T,
-    vite?: ViteDevServer
+type prodRouteDeclarationBase_T = {
+    serverExecutionMode: "PREVIEW" | "PROD",
+    siteRessources: Dict_T<siteRessources_T>,
+    vite?: undefined,
 }
+
+type devRoutesDeclarationsSettings_T = devRouteDeclarationBase_T 
+    & { siteNames: string[] }
+
+type prodRoutesDeclarationsSettings_T = prodRouteDeclarationBase_T 
+    & { siteNames: string[] }
+
+// 🤸 Type gymnastics: 
+// we force ts to seperate both possible states
+type routesDeclarationsSettings_T = 
+    devRoutesDeclarationsSettings_T
+    | prodRoutesDeclarationsSettings_T
+
+
+// 🤸 Type gymnastics: 
+// we force ts to seperate both possible states
+type routesDeclarationKwargs_T = 
+    Omit<devRoutesDeclarationsSettings_T, 'siteRessources'>
+    | Omit<prodRoutesDeclarationsSettings_T, 'siteRessources'>
+
+// 🤸 Type gymnastics: 
+// we force ts to seperate both possible states
+type reqHandlerKwargs_T = 
+    devRouteDeclarationBase_T & {siteName: string} 
+    | prodRouteDeclarationBase_T & {siteName: string} 
+
+
 
 /** returns a handler function for SSR template requests */
 function _buildSsrRequestHandler({
+        serverExecutionMode,
         siteName,
         siteRessources,
-        serverExecutionMode,
         vite
 }: reqHandlerKwargs_T ) {
     
     return async ( request:FastifyRequest, response:FastifyReply ) => {
         
+        // Extracting and validating POST data
         const requestData = buildSsrReqData(request.body)
         if ( !requestData ) {
             response.statusCode = 400
@@ -38,72 +65,95 @@ function _buildSsrRequestHandler({
         }
 
         try {
-            const { templateFragments, ssrManifestFile, entryServerPath } = siteRessources 
-                ? siteRessources[siteName]
-                : await collectSiteRessources({ siteName, serverExecutionMode, vite, pageUrl: requestData.url })
+            // Getting site base ressources
+            const { 
+                templateFragments, 
+                ssrManifestFile, 
+                entryServerPath 
+            } = siteRessources 
+                ? siteRessources[ siteName ]
+                : await collectSiteRessources(
+                    // 🤸 Type gymnastics: 
+                    // we have to force typescript to split the two possible types 
+                    // otherwise it blends them together
+                    serverExecutionMode === 'DEV' 
+                        ? { isDev: true, pageUrl: requestData.url, siteName, vite }
+                        : { isDev: false, siteName }
+                )
             
+            // Rendering the App
             const render = vite 
                 ? (await vite.ssrLoadModule(entryServerPath)).render
                 : (await import(entryServerPath)).render
-            
             const rendered = await render(requestData.appPropsObject(), ssrManifestFile)
             
-            const head = templateFragments.head 
-                + `<meta name="rendering-mode" content="SSR">`
-                + requestData.getInitialPagePropsAsJsonTag()
-                + (rendered.head ?? '')
-            
-            const body = templateFragments.body
-                .replace(`<!--app-html-->`, rendered.html ?? '')
-            
+            // Getting the document fragments
+            const head = templateFragments.assembleHeadFragment({
+                renderingMode: 'SSR',
+                requestData: requestData,
+                renderedMetas: rendered.head ?? ''
+            })
+            const body = templateFragments.assembleBodyFragment({
+                placeholder: '<!--app-html-->',
+                renderedApp: rendered.html ?? ''
+            })
+
+            // Returning JSON response
             response.type( 'application/json' )
-            return response.send({ head, body })
+            return response.send({head, body})
             
-        } catch (e) {
-            if (e instanceof Error) {
-                vite?.ssrFixStacktrace(e)
-                console.log( e.stack )
+        } catch (err) {
+            if (err instanceof Error) {
+                vite?.ssrFixStacktrace(err)
+                console.log( err.stack )
             }
             response.statusCode = 500
             return response.send('Request handling failed')
         }
-        
     }
 }
 
 /** returns a handler function for CSR template requests */
 function _buildCsrRequestHandler({
-    siteName,
-    siteRessources,
-    serverExecutionMode,
-    vite
+        serverExecutionMode,
+        siteName,
+        siteRessources,
+        vite
 }: reqHandlerKwargs_T ) {
-    return async (request: FastifyRequest, response: FastifyReply) => {
+    return async (_request: FastifyRequest, response: FastifyReply) => {
         
         try {
+            // Getting site base ressources
             const { templateFragments } = siteRessources 
-                ? siteRessources[siteName]
-                // REMARK: that function calls "vite.transformIndexHtml" with given pageUrl not sure what url is doing
-                // but it is only triggered in DEV server anyways so we are using "/"
-                : await collectSiteRessources({ siteName, serverExecutionMode, vite, pageUrl: '/' }) 
+                ? siteRessources[ siteName ]
+                : await collectSiteRessources(
+                    // 🤸 Type gymnastics: 
+                    // we have to force typescript to split the two possible types 
+                    // otherwise it blends them together
+                    serverExecutionMode === 'DEV' 
+                        ? { isDev: true, siteName, vite }
+                        : { isDev: false, siteName } // SHOULD NOT HAPPEN - but makes ts happy
+                )
             
-            // REMARKS
-            // for CSR, we shouldn't set 'app-props' so that the app shell
-            // can be cached and used for any page.
-            // app-props should be added only for SSR.
-            const head = templateFragments.head 
-                + `<meta name="rendering-mode" content="CSR">`
-            
-            const body = templateFragments.body
-                .replace(`<!--app-html-->`, '')
-            
+            // Getting the document fragments
+            // ℹ️ for CSR we want to return a neutral app shell so that 
+            // it can be used to generate any page 
+            const head = templateFragments.assembleHeadFragment({
+                renderingMode: 'CSR'
+            })
+            const body = templateFragments.assembleBodyFragment({
+                placeholder: '<!--app-html-->',
+                renderedApp: ''
+            })
+
+            // Returning JSON response
             response.type( 'application/json' )
-            return response.send({ head, body })
+            return response.send({head, body})
             
-        } catch (e) {
-            if (e instanceof Error) {
-                vite?.ssrFixStacktrace(e)
-                console.log( e.stack )
+        } catch (err) {
+            if (err instanceof Error) {
+                vite?.ssrFixStacktrace(err)
+                console.log( err.stack )
             }
             response.statusCode = 500
             return response.send('Request handling failed')
@@ -112,40 +162,53 @@ function _buildCsrRequestHandler({
 }
 
 /** Returns a function declaring 2 routes for each registered webiste
- * - one to generate an app shell for the given website (CSR)
- * - one to render a page server side with given context (SSR)
+ * - a GET route to generate an app shell for the given website (CSR)
+ * - a POST route to render a page server side with given context (SSR)
  */
-async function getRoutesDeclaration({
-    siteNames,
-    serverExecutionMode,
-    vite
-}: routesDeclarationKwargs_T ) {
-
-    // in PREVIEW and PROD modes we want to collect and cache all website ressources
-    // in DEV mode we want to always get the latest ressources
-    const siteRessources = serverExecutionMode === 'DEV' ? 
-        undefined 
-        : await collectRessources({ siteNames, serverExecutionMode })
+async function getRoutesDeclaration(kwargs: routesDeclarationKwargs_T) {
+    
+    // 🤸 Type gymnastics: 
+    // we have to force typescript to split the two possible types 
+    // otherwise it blends them together
+    const routeDeclarationSettings : routesDeclarationsSettings_T = 
+        kwargs.serverExecutionMode !== 'DEV'
+        // in PREVIEW and PROD modes we want to collect and cache all website ressources
+        ? { ...kwargs, siteRessources: await collectRessourcesProd(kwargs.siteNames)} 
+        // in DEV mode we want to always get the latest ressources
+        : { ...kwargs, siteRessources: undefined }
 
     return async function routes( fastify: FastifyInstance, options: FastifyPluginOptions ) {
+        const {
+            siteNames,
+            ...routeSettings
+        } = routeDeclarationSettings
+
         for ( const siteName of siteNames ) {
-            const requestHandlerArgs = {siteName, siteRessources, serverExecutionMode, vite}
+
+            // 🤸 Type gymnastics: 
+            // we have to force typescript to split the two possible types 
+            // otherwise it blends them together
+            const requestHandlerKwargs: reqHandlerKwargs_T = 
+                routeSettings.serverExecutionMode !== 'DEV'
+                ? { ...routeSettings, siteName }
+                : { ...routeSettings, siteName }
             
             // requests for CSR app shells
             fastify.route({
                 method: 'GET',
                 url: `/${siteName}/`,
-                handler: _buildCsrRequestHandler(requestHandlerArgs)
+                handler: _buildCsrRequestHandler(requestHandlerKwargs)
             })
             
             // requests for SSR rendered pages
             fastify.route({
                 method: 'POST',
                 url: `/${siteName}/`,
-                handler: _buildSsrRequestHandler(requestHandlerArgs)
+                handler: _buildSsrRequestHandler(requestHandlerKwargs)
             })
         }
     }
 }
 
 export default getRoutesDeclaration
+export type { routesDeclarationKwargs_T }

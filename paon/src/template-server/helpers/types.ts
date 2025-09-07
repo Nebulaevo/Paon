@@ -1,12 +1,8 @@
+import type { TemplateFragments } from '#paon/template-server/data-models/template-fragments'
 
-
-type templateFragments_T = {
-    head: string,
-    body: string
-}
 
 type siteRessources_T = {
-    templateFragments: templateFragments_T, 
+    templateFragments: TemplateFragments, 
     ssrManifestFile: string | undefined,
     entryServerPath: string
 }
