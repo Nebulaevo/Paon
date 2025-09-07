@@ -1,1 +1,26 @@
-- Restrict the access to the server with simple tokens
+
+# Todo
+
+## Restrict the access to the server with simple tokens
+
+Currently there are no systems in place to filter traffic, making it risky to expose the server.
+There should be at least a API token kind of auth mechanism preventing anyone from triggering a page render.
+
+
+## Links & EnhancedUrls
+
+BUG: putting `"<h1>test</h1>"` in the demo site input and clicking the link returns a 404.
+
+EXPLICATION:\
+The `/` caracter is not getting escaped, and if we escape the dynamic segment with `encodeURIComponent` it, it is un-escaped by the `URL` object generation for some reason.
+
+
+## Dev server Site ressources
+
+In the requests handlers in "DEV" mode, see if we can store the site ressources like for the "PROD" & "PREVIEW" mods,
+and use `fs.watch` to update them when they change ? (cuz only reason we re-compute them per request is to have an up to date version)
+
+
+## `viteServer.ssrLoadModule` is being deprecated in a next major
+
+Currently used in request handler for "DEV" server

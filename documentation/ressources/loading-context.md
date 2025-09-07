@@ -1,12 +1,12 @@
 [**🕮 Table of contents**](/Readme.md)
 
-### 🦚 References: 
+### 🦚 Ressources : 
 
-# Context: Loading State
+# Context : Loading State
 
 Multiple hooks and components allowing to handle a local loading state.
 
-## Context provider: `LoadingStateProvider`
+## Context provider : `LoadingStateProvider`
 
 Provides a loading state to a sub section of the components tree.
 

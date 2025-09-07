@@ -1,10 +1,10 @@
 [**🕮 Table of contents**](/Readme.md)
 
-### 🦚 References: 
+### 🦚 Ressources :
 
-# Component: `<MetaHat />`
+# Component : `<MetaHat />`
 
-Utility component allowing to insert page specific `<head>` tags: 
+Utility component allowing to insert page specific `<head>` tags : 
 - `<title>`
 - `<meta>`
 - `<link>`
@@ -89,9 +89,10 @@ when server side rendering a page, if the given context for the page includes a 
 
 ## Tags specifications
 
-`MetaHat` expects a list of tag specifications.
+`MetaHat` expects a list of tag specifications,
+each being a key/value pair object.
 
-### Tag: `title`
+### Tag: `title` 
 
 - `tagType` "TITLE"
 - `content` (string) - the page title

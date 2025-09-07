@@ -1,8 +1,8 @@
 [**🕮 Table of contents**](/Readme.md)
 
-### 🦚 References: 
+### 🦚 Ressources :
 
-# Routing
+# Router
 
 The routing logic provided in the default Paon frontend structure is 
 

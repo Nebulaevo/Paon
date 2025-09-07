@@ -15,6 +15,8 @@ It's a service handling the frontend part of multiple web applications, exposing
 
 It can be used in addition to any backend, and allows to have a local JavaScript environnement to use modern frontend tools, without having to handle the whole request cycle using a JavaScript framework.
 
+The Paon Template Server is based on the [bluwy/create-vite-extra : template-ssr-react-ts ](https://github.com/bluwy/create-vite-extra/tree/master/template-ssr-react-ts)
+
 ## Table of contents
 
 ### Getting started
@@ -25,12 +27,19 @@ It can be used in addition to any backend, and allows to have a local JavaScript
 - [4. ]()
 - [5. ]()
 
+### Ressources
+
+- [Handling loading state with `<LoadingStateProvider/>`](/documentation/ressources/loading-context.md)
+- [Handling page head tags with `<MetaHat/>`](/documentation/ressources/meta-hat.md)
+- [Router](/documentation/ressources/router.md)
+
 ### References
 
 - [Command line interface](/documentation/references/cli.md)
-- [Routing](/documentation/references/routing.md)
-- [Handling loading state with **\<LoadingStateProvider\/\>**](/documentation/references/loading-context.md)
-- [Handling page head tags with **\<MetaHat\/\>**](/documentation/references/meta-hat.md)
+- [Site files reference](/documentation/references/site-files.md)
+- [Data structures & configs](/documentation/references/data-structures.md)
+- [In production](/documentation/references/production.md)
+
 
 
 ## What is Paon ?
