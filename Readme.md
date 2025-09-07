@@ -21,11 +21,11 @@ It has been developed to play the role of a template engine in a classic MVC arc
 To achieve that it provides :
 - a dedicated Node.js environnement to develop frontends with React and TypeScript
 - assets optimisation & bundling
-- a server exposing an API endpoint allowing to get an CSR shell for a website, or render a page server side with the provided context
+- a server exposing an API endpoint allowing to request the app shell of a website for client site rendering, or to render a page server side with the provided context
 
 ## Why use it ?
 
-Paon is built primaraly to decouple the frontend UI generation from the request handling cycle.
+Paon is built primarily to decouple the frontend UI generation from the request handling cycle.
 
 If you would rather use a non-JavaScript backend to handle the requests, database connections, caching...\
 But still want to use a React frontend, with other modern frontend tools, assets bundling and server side rendering...\
