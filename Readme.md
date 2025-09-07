@@ -1,29 +1,45 @@
 🏗️ README IN CONSTRUCTION PLEASE DON'T JUDGE 🔧
 
 # 🦚 Paon Template Server
-**Easily integrate a React frontend in a classic MVC architecture**
+**A template engine using a dedicated JS envionnement to develop, optimise, host and provide an endpoint to render your website's UI on demand**
 
-- 🌌 Built to handle multiple sites
 - ⚛️ Pre-configured for React + Typescript
-- ⚡ Assets are bunlded and optimised with Vite
 - 🏗️ SSR or CSR rendering, per request, out of the box
-- 🔧 Dev tools to kick start a project
-- 🧩 Developed as a plug and play, framework agnostic, template engine.
+- 🧩 Developed as a plug and play, framework agnostic solution to handle your frontend
+- 🌌 Handle multiple sites from the same service
+- ⚡ Asset optimisation & bundling with Vite
+- 🔧 Command Line Interface to manage sites and start server
 
-Paon template server aims at seperating the frontend and the backend logic.
-It's a service handling the frontend part of multiple web applications, exposing an API serving website pages, effectively replacing the tempate engine in a classic MVC architecture.
+*The Paon Template Server is based on the [bluwy/create-vite-extra : template-ssr-react-ts ](https://github.com/bluwy/create-vite-extra/tree/master/template-ssr-react-ts)*
 
-It can be used in addition to any backend, and allows to have a local JavaScript environnement to use modern frontend tools, without having to handle the whole request cycle using a JavaScript framework.
 
-The Paon Template Server is based on the [bluwy/create-vite-extra : template-ssr-react-ts ](https://github.com/bluwy/create-vite-extra/tree/master/template-ssr-react-ts)
+## What is Paon ?
+
+At its core, Paon is a server that we can query to get the HTML code for a page.\
+It has been developed to play the role of a template engine in a classic MVC architecture.
+
+To achieve that it provides :
+- a dedicated Node.js environnement to develop frontends with React and TypeScript
+- assets optimisation & bundling
+- a server exposing an API endpoint allowing to get an CSR shell for a website, or render a page server side with the provided context
+
+## Why use it ?
+
+Paon is built primaraly to decouple the frontend UI generation from the request handling cycle.
+
+If you would rather use a non-JavaScript backend to handle the requests, database connections, caching...\
+But still want to use a React frontend, with other modern frontend tools, assets bundling and server side rendering...\
+Paon is made for you.
+
+
 
 ## Table of contents
 
 ### Getting started
 
 - [1. Installation & setup](/documentation/getting-started/1-setup.md)
--  [2. Project structure](/documentation/getting-started/2-structure.md) 
--  [3. API : page requests](/documentation/getting-started/3-api.md) 
+- [2. Project structure](/documentation/getting-started/2-structure.md) 
+- [3. API : page requests](/documentation/getting-started/3-api.md) 
 - [4. ]()
 - [5. ]()
 
@@ -38,17 +54,5 @@ The Paon Template Server is based on the [bluwy/create-vite-extra : template-ssr
 - [Command line interface](/documentation/references/cli.md)
 - [Site files reference](/documentation/references/site-files.md)
 - [Data structures & configs](/documentation/references/data-structures.md)
+- [Special meta tags](/documentation/references/special-meta-tags.md)
 - [In production](/documentation/references/production.md)
-
-
-
-## What is Paon ?
-
-Paon is a Node.js based solution to build and self host web application UIs.
-
-## Why use it ?
-
-Paon is built primaraly to decouple the frontend UI generation from the request handling cycle. 
-
-If you would rather use a non-JavaScript backend to handle the request, database connections, caching...\
-But still want to use a React frontend, with modern frontend tools, assets bundling and server side rendering, Paon is made for you.
