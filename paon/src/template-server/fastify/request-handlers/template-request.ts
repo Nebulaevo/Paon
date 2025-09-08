@@ -3,6 +3,7 @@ import type { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyRepl
 import type { ViteDevServer } from 'vite'
 import type { Dict_T } from 'sniffly'
 
+import { consoleMessage, consoleWarnMessage } from '#paon/utils/message-logging'
 import { buildSsrReqData } from '#paon/template-server/data-models/ssr-request-data'
 import { collectRessourcesProd, collectSiteRessources } from "#paon/template-server/helpers/collect-ressources"
 import type { siteRessources_T } from '#paon/template-server/helpers/types'
@@ -47,6 +48,47 @@ type reqHandlerKwargs_T =
 
 
 
+
+type requestLoggingInfos_T = {
+    mode:  'CSR' | 'SSR'
+    status?: number,
+    site: string,
+    page?: string,
+}
+
+/** helper logging requests 
+ * 
+ * @param kwargs.mode 'CSR' or 'SSR'
+ * 
+ * @param kwargs.status (number) status of the response
+ * 
+ * @param kwargs.site (string) name of the requested site
+ * 
+ * @param kwargs.page (string) only for SSR, url of the rendered page
+ * 
+*/
+function _logRequest(kwargs: requestLoggingInfos_T) {
+    const {
+        mode,
+        status = 200,
+        site,
+        page
+    } = kwargs
+
+    const isSSR = mode === 'SSR'
+    const method = isSSR ? 'POST' : 'GET'
+    const pageInfo = isSSR ? ` ${page ?? '-None-'}` : '' 
+    const loggingFunc = status < 300
+        ? consoleMessage
+        : consoleWarnMessage
+    
+    const timestamp = new Date().toUTCString()
+
+    loggingFunc(
+        `[${timestamp}] ${status} ${method} (${mode}) -> site:${site}${pageInfo}`
+    )
+}
+
 /** returns a handler function for SSR template requests */
 function _buildSsrRequestHandler({
         serverExecutionMode,
@@ -60,6 +102,8 @@ function _buildSsrRequestHandler({
         // Extracting and validating POST data
         const requestData = buildSsrReqData(request.body)
         if ( !requestData ) {
+            _logRequest({mode:'SSR', status:400, site:siteName})
+            
             response.statusCode = 400
             return response.send('POST data received were invalid')
         }
@@ -98,14 +142,18 @@ function _buildSsrRequestHandler({
                 renderedApp: rendered.html ?? ''
             })
 
+            _logRequest({mode:'SSR', site:siteName, page:requestData.url })
+
             // Returning JSON response
             response.type( 'application/json' )
             return response.send({head, body})
             
         } catch (err) {
+            _logRequest({mode:'SSR', status:500, site:siteName, page:requestData.url })
+
             if (err instanceof Error) {
                 vite?.ssrFixStacktrace(err)
-                console.log( err.stack )
+                consoleMessage( `${err.stack}` )
             }
             response.statusCode = 500
             return response.send('Request handling failed')
@@ -146,20 +194,25 @@ function _buildCsrRequestHandler({
                 renderedApp: ''
             })
 
+            _logRequest({mode:'CSR', site:siteName })
+
             // Returning JSON response
             response.type( 'application/json' )
             return response.send({head, body})
             
         } catch (err) {
+            _logRequest({mode:'CSR', status: 500, site:siteName })
+
             if (err instanceof Error) {
                 vite?.ssrFixStacktrace(err)
-                console.log( err.stack )
+                consoleMessage( `${err.stack}` )
             }
             response.statusCode = 500
             return response.send('Request handling failed')
         }
     }
 }
+
 
 /** Returns a function declaring 2 routes for each registered webiste
  * - a GET route to generate an app shell for the given website (CSR)
