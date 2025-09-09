@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { isArray } from 'sniffly'
 
 import asClientOnly from '@core:components/as-client-only/v1/wrapper'
 import { isExecutedOnClient } from '@core:utils/execution-context/v1/util'
@@ -31,6 +32,8 @@ function _clearMetaTags() {
 
 /** Takes a list of dictionnaries and renders according meta tags */
 function asMetaTags(headTags: headTagSpecs_T[], renderingMode: tagRenderingMode_T) {
+    if (!isArray(headTags)) return null
+
     let i = 0
     return headTags.map( tagProps => {
         i++
@@ -53,7 +56,7 @@ function asMetaTags(headTags: headTagSpecs_T[], renderingMode: tagRenderingMode_
 
 /** Component rendering page meta tags on the client side */
 function _MetaHatClientComponent({ headTags }: MetaHatProps_T ) {
-
+    
     // Hook in charge of manually removing the MetaHat json-ld tag
     // on component unmount or dependency change
     // as it is not handled by the new react meta hoisting feature
