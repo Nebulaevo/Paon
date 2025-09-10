@@ -24,17 +24,3 @@ and use `fs.watch` to update them when they change ? (cuz only reason we re-comp
 ## `viteServer.ssrLoadModule` is being deprecated in a next major (not too urgent)
 
 Currently used in request handler for "DEV" server
-
-## Mulitple `MetaHat` problem (or if tag list gets changed)
-
-At first render time (and everytime the tags changes), the MetaHat component clears existing tags controlled by an instance of MetaHat.
-
-**Problem is :**\
-if an instance of metahat have already been rendered, and we render a second one.
-It is gonna erase the tags of the first one, and probably cause errors because we would have deleted nodes react extects to extist.
-
-- find a way & fix
-    - singleton approche : after the first instance of MetaHat is rendered, all new instances just modify the list of tags of the singleton instance (context?) ?
-        - will still need to remove that `_clearMetaTags()`
-        - might be annoying, hooks can't be conditionnal
-- fix documentation
