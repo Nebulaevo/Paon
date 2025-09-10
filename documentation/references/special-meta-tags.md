@@ -7,8 +7,8 @@
 ## Initial props
 
 
-## Error status
+## Error status
 
 
-## Rendering mode
+## Rendering mode
 

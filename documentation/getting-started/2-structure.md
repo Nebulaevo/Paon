@@ -83,5 +83,5 @@ Those are core files in the default site structure, they have to be handled with
 
 <br/>
 
-| [⬅️ Installation & Setup](/documentation/getting-started/1-setup.md) | [API: Page Requests ➡️](/documentation/getting-started/3-api.md) |
+| [⬅️ Installation & setup](/documentation/getting-started/1-setup.md) | [Build a basic backend for the demo site ➡️](/documentation/getting-started/3-api.md) |
 | :--- | ----: |

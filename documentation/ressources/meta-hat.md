@@ -22,20 +22,23 @@ All tags set by the component are reset if the list of tags changes, if the comp
 
 On the client side, it is recommanded to render a `MetaHat` component at the root of the `Page` component, so that it is mounted/unmonted at the same time as the page it depends on.
 
-### A - Local Head Tags
+
+### Define Head Tags Locally : Static or Derived 
 
 Meta tags can be determined locally, either statically or derived from received page props.
+
+ℹ️ Head tags defined locally or derived will be rendered **only client side**.
 
 ```jsx
 import MetaHat from '@core:components/meta-hat/v1/component'
 
-// list of tags to be included for that page
+
 const staticHeadTag = [
-    { // title
+    { // Title tag spec
         tagType: 'TITLE',
         content: 'My Page Title'
     },
-    { // page description
+    { // Page description tag spec
         tagType: 'META',
         name: 'description',
         content: 'Description for my awesome page ...',
@@ -57,10 +60,11 @@ function MyPage(props) {
 }
 ```
 
-### B - Head Tags From Page Props
+### Get Head Tags from Page Props : `props.meta`
 
-Meta tags can be received as page props (from the backend server), in this case they should be in the "meta" key of the page context. 
-This way they will automatically be added to the rendered head fragment when performing SSR (see server side rendering section).
+If the page receives props, we should always use the `"meta"` key to pass on the page specific head tags.
+
+ℹ️ **Compatible with SSR** : using a `"meta"` prop to pass on the head tags for the `MetaHat` component allows the server rendering function to automatically include those tags in the head fragment when performing SSR (see [SSR POST data](/documentation/references/api-endpoint.md#ssr-post-data-format)).
 
 ```jsx
 import MetaHat from '@core:components/meta-hat/v1/component'
@@ -68,13 +72,8 @@ import MetaHat from '@core:components/meta-hat/v1/component'
 function MyPage(props) {
     ...
 
-    // trying to get head tags from page context
-    const headTags = Array.isArray(props.meta) 
-        ? props.meta
-        : []
-
     return <>
-        <MetaHat headTags={headTags} />
+        <MetaHat headTags={props.meta} />
         
         ...
     
@@ -82,15 +81,32 @@ function MyPage(props) {
 }
 ```
 
-## Server Side Rendering
-
-In the default `server-entry.tsx` provided:\
-when server side rendering a page, if the given context for the page includes a "meta" key with a list of valid tag specifications, those tags will be added to the rendered head fragment. 
-
 ## Tags specifications
 
 `MetaHat` expects a list of tag specifications,
 each being a key/value pair object.
+
+Example:
+```js
+[
+    { // Title tag spec
+        tagType: 'TITLE',
+        content: 'My Page Title'
+    },
+    { // Page description tag spec
+        tagType: 'META',
+        name: 'description',
+        content: 'Description for my awesome page ...',
+    },
+    { // Canonical URL
+        tagType: 'LINK',
+        rel: 'canonical',
+        href: 'https://my-site.com/page/',
+    },
+    ...
+
+]
+```
 
 ### Tag: `title` 
 

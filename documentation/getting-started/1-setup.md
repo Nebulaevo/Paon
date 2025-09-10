@@ -24,18 +24,20 @@ cd Paon/
 npm install
 ```
 
-3. Build the backend
+3. Build the core scripts
 ```bash
 npm run core:build
 ```
 
 ## Add a Website
 
-Let's create a first website, let's call it **martin-music**:
+Let's create a first website, let's call it **martin-music** :
 
 ```bash
 npm run site:add martin-music
 ```
+
+This will create a basic demo site to test our setup. 
 
 ### Website Name Rules
 

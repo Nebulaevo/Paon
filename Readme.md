@@ -1,10 +1,10 @@
 🏗️ README IN CONSTRUCTION PLEASE DON'T JUDGE 🔧
 
 # 🦚 Paon Template Server
-**A template engine using a dedicated JS envionnement to develop, optimise, host and provide an endpoint to render your website's UI on demand**
+**Template engine using a dedicated JS envionnement to develop, optimise, host and provide an endpoint to render your website's UI on demand**
 
 - ⚛️ Pre-configured for React + Typescript
-- 🏗️ SSR or CSR rendering, per request, out of the box
+- 🏗️ API endpoints for SSR or CSR rendering, per request
 - 🧩 Developed as a plug and play, framework agnostic solution to handle your frontend
 - 🌌 Handle multiple sites from the same service
 - ⚡ Asset optimisation & bundling with Vite
@@ -21,7 +21,7 @@ It has been developed to play the role of a template engine in a classic MVC arc
 To achieve that it provides :
 - a dedicated Node.js environnement to develop frontends with React and TypeScript
 - assets optimisation & bundling
-- a server exposing an API endpoint allowing to request the app shell of a website for client site rendering, or to render a page server side with the provided context
+- a server exposing an API endpoint allowing to request the app shell of a website for client side rendering, or to render a page server side with a provided context
 
 ## Why use it ?
 
@@ -39,7 +39,7 @@ Paon is made for you.
 
 - [1. Installation & setup](/documentation/getting-started/1-setup.md)
 - [2. Project structure](/documentation/getting-started/2-structure.md) 
-- [3. API : page requests](/documentation/getting-started/3-api.md) 
+- [3. Build a basic backend for the demo site](/documentation/getting-started/3-demo-site-backend.md) 
 - [4. ]()
 - [5. ]()
 
@@ -53,6 +53,7 @@ Paon is made for you.
 
 - [Command line interface](/documentation/references/cli.md)
 - [Site files reference](/documentation/references/site-files.md)
-- [Data structures & configs](/documentation/references/data-structures.md)
+- [Server config](/documentation/references/server-config.md)
+- [API endpoints specifications](/documentation/references/api-endpoint.md)
 - [Special meta tags](/documentation/references/special-meta-tags.md)
 - [In production](/documentation/references/production.md)

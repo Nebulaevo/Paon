@@ -5,16 +5,26 @@
 
 ## API: Page Requests
 
-The demo starter site includes 2 pages:
+To get started, let's try to setup the demo site provided.
+
+It includes 2 pages:
 - `/`
 - `hello/:name/` (**name** being a url parameter)
+
+### Creating Backend Requests Handlers
 
 Now, using the backend of your choice, create 2 routes matching the ones from the demonstration structure.\
 (we will be requesting the pages UI from those request handlers)
 
 ℹ️ The routes on the backend should always match the routes on the frontend
 
-ℹ️ By default, the Paon server starts on port **3000** and is only accessible locally (localhost), if you need to change those settings, for example if you need the server to be exposed to outside traffic, modify the file: `paon/server.config.json`
+#### Demo site: Route `/`
+
+
+
+### Create and API endpoint
+
+
 
 ### Requesting a Page
 
@@ -22,6 +32,7 @@ As Paon can handle multiple sites, to request a page we need to specify the site
 To render a page for **my-site-name** we will send a request to:\
 `127.0.0.1:3000/my-site-name/`
 
+ℹ️ By default, the Paon server starts on port **3000** and is only accessible locally (localhost), if you need to change those settings, for example if you need the server to be exposed to outside traffic, modify the file: `paon/server.config.json`
 
 #### Client Side Rendering
 
