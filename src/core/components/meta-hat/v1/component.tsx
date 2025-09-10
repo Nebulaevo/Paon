@@ -8,7 +8,7 @@ import { queryMetaHatTags, removeTags } from './internal/helpers'
 import Title, { type titleSpecs_T } from './internal/title'
 import Meta, { type metaSpecs_T } from './internal/meta'
 import HeadLink, { type linkSpecs_T } from './internal/link'
-import JsonLd, { useResetJsonLdOnUnmount, type jsonLdSpecs_T } from './internal/json_ld'
+import JsonLd, { type jsonLdSpecs_T } from './internal/json-ld'
 
 
 type headTagSpecs_T = 
@@ -54,21 +54,21 @@ function asMetaTags(headTags: headTagSpecs_T[], renderingMode: tagRenderingMode_
     })
 }
 
+let _isFirstRender = true
+
 /** Component rendering page meta tags on the client side */
 function _MetaHatClientComponent({ headTags }: MetaHatProps_T ) {
-    
-    // Hook in charge of manually removing the MetaHat json-ld tag
-    // on component unmount or dependency change
-    // as it is not handled by the new react meta hoisting feature
-    useResetJsonLdOnUnmount([headTags])
+
+    if (_isFirstRender) {
+        // before render we clear any eventual MetaHat tags
+        // ( if some were rendered server side )
+        _clearMetaTags()
+        _isFirstRender = false
+    }
 
     // we memoize the tags list so that '_clearMetaTags' 
     // does not run for every renders
     const tags = useMemo(() => {
-        // before render we clear any eventual MetaHat tags
-        // ( if some were rendered server side )
-        _clearMetaTags()
-
         return asMetaTags(headTags, 'HOIST')
     }, [headTags])
 

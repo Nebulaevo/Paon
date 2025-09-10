@@ -10,24 +10,28 @@ Utility component allowing to insert page specific `<head>` tags :
 - `<link>`
 - `<script type='application/ld+json'>`.
 
-All tags set by the component are reset if the list of tags changes, if the component is unmounted or if any other `MetaHat` component is rendered.
+All tags set by the component are reset if the list of tags changes or if if the component is unmounted.
 
 ℹ️ `MetaHat` is built around the new React feature automatically hoisting `title`, `meta` and `link` tags. (only `json+ld` tags are hoisted manually)
 
 
 ## How To Use
 
-`MetaHat` expects a list of hashmaps representing the desired head tags for the page\
-(informations about the supported head tags and expected specifications are detailed below).
+`<MetaHat />` takes a `"headTags"` prop expecting a list of key/value objects representing the desired head tags for the page.\
+ℹ️ informations about the supported head tags and expected specifications are detailed in the [tas specification section](#tags-specifications) below.
 
 On the client side, it is recommanded to render a `MetaHat` component at the root of the `Page` component, so that it is mounted/unmonted at the same time as the page it depends on.
+
+We recommand rendering only one instance of the `MetaHat` component at a time and handle head tags in a centralised way.\
+If you need : it's totally possible to have multiple rendered instances of the components at once, but in this case all their tags will be added to head.\
+If both instances render a title your document will have two titles, and the last one rendered will be usually used.
 
 
 ### Define Head Tags Locally : Static or Derived 
 
 Meta tags can be determined locally, either statically or derived from received page props.
 
-ℹ️ Head tags defined locally or derived will be rendered **only client side**.
+ℹ️ **Not compatible with SSR** : head tags defined locally or derived will be rendered only client side.
 
 ```jsx
 import MetaHat from '@core:components/meta-hat/v1/component'
