@@ -76,11 +76,7 @@ async function preloadPage(kwargs: pagePreLoadingKwargs_T) {
     }
     
 
-    if (promises) {
-        console.log('pre loading promises')
-        console.log(promises)
-        await Promise.all(promises)
-    }
+    if (promises) await Promise.all(promises)
 }
 
 export { markInitialComponentAsLoaded, preloadPage }

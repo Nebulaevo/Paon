@@ -53,7 +53,6 @@ function load(LazyComponent: LazyExoticComponent<any>): Promise<void> | undefine
                     root.unmount()
                     container.remove()
                     
-                    console.log('RESOLVING...')
                     resolve()
                 }
             }, 0)
@@ -119,8 +118,6 @@ function _wrapLazyComponentForRender(
         // hook that triggers cleanup and promise resolution
         // as soon as children are rendered
         useLayoutEffect(() => {
-            console.log('useLayoutEffect cleanup')
-            console.log('RENDER_COUNT : ' + RENDER_COUNT)
             cleanupAndResolveNextTick()
             // there is no need to clean the timer,
             // the function should not be prevented from running,
