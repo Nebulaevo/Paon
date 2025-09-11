@@ -24,3 +24,7 @@ and use `fs.watch` to update them when they change ? (cuz only reason we re-comp
 ## `viteServer.ssrLoadModule` is being deprecated in a next major (not too urgent)
 
 Currently used in request handler for "DEV" server
+
+## NPM package
+
+Turn Paon into an NPM package with a setup script
