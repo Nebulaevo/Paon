@@ -4,86 +4,129 @@
 
 # Command Line Interface
 
-## Managing websites
-
-### Add a site
-
-Register a new site called `martin-site`, and scaffolds a started website structure in a dedicated folder in `src/sites/`.
+## `help` Argument : Display Manual
 
 ```bash
-npm run site:add martin-site
+npm run site:add help
+
+# will print a short manual for the site:add command
 ```
+
+All following commands, except for `server` commands, will accepts a `help` argument and display a short manual directly in the console.
+
+
+
+## `site:` Managing Websites
+
+### Add a Site
+
+```bash
+npm run site:add my-cool-site
+```
+
+Register a new site called **"my-cool-site"**, and scaffolds the default site structure and a demo website in a dedicated folder : `src/sites/my-cool-site/`.
 
 ℹ️ To remove a site just delete the corresponding folder in `src/sites/`
 
-### Build & bundle ressources
+#### Website Name Rules :
+
+- If a website with the same name have already been created, the operation will fail
+- Site names are expected to be kebab-case and only alphanumerical, non allowed formats will be refused
+
+| Site Name     |                                                       |
+| :------------ | :---------------------------------------------------- |
+| my-site-name  | ✅ Ok                                                 |
+| site2         | ✅ Ok                                                 |
+| -my-site-name | 🚫 Cannot start or end with '-'                       |
+| my@-site-name | 🚫 Can only include alphanumerical characters and "-" |
+| my--site-name | 🚫 Cannot have multiple consecutive "-"               |
+
+
+### Build & Bundle Ressources
 
 This operation compiles `ts` code and optimises assets for production.
 
-#### For a specific site
+#### For a Specific Site
 
 ```bash
-npm run site:build martin-site
+npm run site:build my-cool-site
 ```
-Build and bundle ressources only for the site named `martin-site`
 
-#### For all registered sites
+Builds and bundles the ressources only for the site named `my-cool-site`
+
+#### For All Registered Sites
 
 ```bash
 npm run site:build-all
 ```
-Build and bundle ressources for all registered sites
 
-#### Clean all built ressources
+Builds and bundles the ressources for all registered sites
+
+### Clean All Built Ressources
 
 ```bash
 npm run site:clean-outdir
 ```
-Removes the content of the root `dist/` dir
 
-## Starting a server
+Deletes the content of the sites outdir (root `dist/` dir)
 
-### Dev server
+## `server:` Starting a Server
 
-Serves pages and assets directly from the `src` folder, and sets up hot module reload to allow for instant feedback on the modifications applied during the developpement phase.
+### Dev Server
 
 ```bash
 npm run server:dev
 ```
 
-### Preview server
+Will serve the lastest versions of your pages and assets directly from the unbuilt `src` folder.\
+And includes hot module reload in the pages.
 
-Serves pages and assets from the `dist` folder (built & bundled).
+### Preview Server
 
 ```bash
 npm run server:preview
 ```
 
-ℹ️ For the preview server to work, the ressources of the targetted site must have been built (using the `site:build site-name` or `site:build-all` command)
+Will serve built pages and bundled assets from the `dist` folder.
 
-### Production server
+ℹ️ It behaves exactly like the production server, the only difference is that it will accept to serve static assets.
 
-Serves only pages from the `dist` folder (built & bundled).
+ℹ️ For the preview server to work, the lastest ressources of the targetted site must have been built (using the `site:build` or `site:build-all` command)
 
-The production server does not serve static assets and ressources, 
-requests (from any site) to `/assets/...` should point to the `dist/client/assets/` folder.
+### Production Server
 
 ```bash
 npm run server
 ```
 
-ℹ️ For the production server to work, the ressources of the targetted site must have been built (using the `site:build` or `site:build-all` command)
+Will serve built pages from the `dist` folder, but does not handle static file requests: see [serving static assets in production](/documentation/references/production.md#serving-static-assets)
 
-## Paon Core
 
-### Building Paon
+ℹ️ For the production server to work, the lastest ressources of the targetted site must have been built (using the `site:build` or `site:build-all` command)
 
-aa
+## `core:`  Paon Core
 
-### Cleaning Paon outdir
+### Building Core Scripts
 
-aa
+```bash
+npm run core:build
+```
 
-### Running Paon tests
+This operation compiles the core scripts of Paon (server, cli scripts etc..) into JavaScript.
 
-aa
+### Cleaning Paon Outdir
+
+```bash
+npm run core:clean-outdir
+```
+
+This operation will delete all the core compiled scripts of Paon (server, cli scripts etc..).
+You need to run `npm run core:build` to compile them again.
+
+### Running Paon Tests
+
+```bash
+npm run core:test
+```
+
+Runs tests

@@ -39,19 +39,7 @@ npm run site:add martin-music
 
 This will create a basic demo site to test our setup. 
 
-### Website Name Rules
-
-- If a website with the same name have already been created, the operation will fail
-- Site names are expected to be kebab-case and only alphanumerical, non allowed format will be refused
-
-| Site Name     |                                                       |
-| :------------ | :---------------------------------------------------- |
-| my-site-name  | ✅ Ok                                                 |
-| site2         | ✅ Ok                                                 |
-| -my-site-name | 🚫 Cannot start or end with '-'                       |
-| my@-site-name | 🚫 Can only include alphanumerical characters and "-" |
-| my--site-name | 🚫 Cannot have multiple consecutive "-"               |
-
+See [rules about website names](/documentation/references/cli.md#add-a-site) for more informations.
 
 
 <br/><br/>
