@@ -51,7 +51,7 @@ We
 
 ## `site.config.json`
 
-
+Configurations for this site, see [site config file](/documentation/references/config-files.md#site-config) for more informations.
 
 ## `layout.tsx`
 

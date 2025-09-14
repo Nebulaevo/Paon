@@ -4,27 +4,15 @@
 
 # Command Line Interface
 
-## `help` Argument : Display Manual
-
-```bash
-npm run site:add help
-
-# will print a short manual for the site:add command
-```
-
-All following commands, except for `server` commands, will accepts a `help` argument and display a short manual directly in the console.
-
-
-
 ## `site:` Managing Websites
 
 ### Add a Site
 
 ```bash
-npm run site:add my-cool-site
+npm run site:add my-new-site
 ```
 
-Register a new site called **"my-cool-site"**, and scaffolds the default site structure and a demo website in a dedicated folder : `src/sites/my-cool-site/`.
+Register a new site called **"my-new-site"**, and scaffolds the default site structure and a demo website in a dedicated folder : `src/sites/my-new-site/`.
 
 ℹ️ To remove a site just delete the corresponding folder in `src/sites/`
 
@@ -49,10 +37,10 @@ This operation compiles `ts` code and optimises assets for production.
 #### For a Specific Site
 
 ```bash
-npm run site:build my-cool-site
+npm run site:build my-new-site
 ```
 
-Builds and bundles the ressources only for the site named `my-cool-site`
+Builds and bundles the ressources only for the site called `my-new-site`
 
 #### For All Registered Sites
 
@@ -72,14 +60,16 @@ Deletes the content of the sites outdir (root `dist/` dir)
 
 ## `server:` Starting a Server
 
+ℹ️ see [server config](/documentation/references/server-config.md)
+
+
 ### Dev Server
 
 ```bash
 npm run server:dev
 ```
 
-Will serve the lastest versions of your pages and assets directly from the unbuilt `src` folder.\
-And includes hot module reload in the pages.
+Will serve the lastest versions of your pages and assets directly from the `src` folder, with hot module replacement.
 
 ### Preview Server
 
@@ -87,7 +77,7 @@ And includes hot module reload in the pages.
 npm run server:preview
 ```
 
-Will serve built pages and bundled assets from the `dist` folder.
+Will serve pages and bundled assets from the `dist` folder.
 
 ℹ️ It behaves exactly like the production server, the only difference is that it will accept to serve static assets.
 
@@ -99,7 +89,7 @@ Will serve built pages and bundled assets from the `dist` folder.
 npm run server
 ```
 
-Will serve built pages from the `dist` folder, but does not handle static file requests: see [serving static assets in production](/documentation/references/production.md#serving-static-assets)
+Will serve pages from the `dist` folder, but does not handle static file requests: see [serving static assets in production](/documentation/references/production.md#serving-static-assets)
 
 
 ℹ️ For the production server to work, the lastest ressources of the targetted site must have been built (using the `site:build` or `site:build-all` command)
@@ -114,7 +104,7 @@ npm run core:build
 
 This operation compiles the core scripts of Paon (server, cli scripts etc..) into JavaScript.
 
-### Cleaning Paon Outdir
+### Cleaning Core Outdir
 
 ```bash
 npm run core:clean-outdir
@@ -123,10 +113,31 @@ npm run core:clean-outdir
 This operation will delete all the core compiled scripts of Paon (server, cli scripts etc..).
 You need to run `npm run core:build` to compile them again.
 
-### Running Paon Tests
+### Running Core Tests
 
 ```bash
 npm run core:test
 ```
 
 Runs tests
+
+## Display Command Manual with `help` Argument
+
+```bash
+npm run site:add help
+```
+
+Calling some commands with a `help` argument will display a short manual directly in the console.
+
+| Command               | Accepts `help` arg |
+| :------               | :----------------: |
+| `site:add`            | ✅                 |
+| `site:build`          | ✅                 |
+| `site:build-all`      | ✅                 |
+| `site:clean-outdir`   | ✅                 |
+| `server:dev`          | 🚫                 |
+| `server:preview`      | 🚫                 |
+| `server`              | 🚫                 |
+| `core:clean-outdir`   | ✅                 |
+| `core:build`          | 🚫                 |
+| `core:test`           | 🚫                 |

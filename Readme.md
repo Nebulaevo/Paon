@@ -37,11 +37,11 @@ Paon is made for you.
 
 ### Getting started
 
-- [1. Installation & setup](/documentation/getting-started/1-setup.md)
-- [2. Project structure](/documentation/getting-started/2-structure.md) 
-- [3. Build a basic backend for the demo site](/documentation/getting-started/3-demo-site-backend.md) 
-- [4. ]()
-- [5. ]()
+1. [Installation & setup](/documentation/getting-started/1-setup.md)
+2. [Project structure](/documentation/getting-started/2-structure.md) 
+3. [Build a basic backend for the demo site](/documentation/getting-started/3-demo-site-backend.md) 
+4. [... ]()
+5. [... ]()
 
 ### Ressources
 
@@ -53,7 +53,7 @@ Paon is made for you.
 
 - [Command line interface](/documentation/references/cli.md)
 - [Site files reference](/documentation/references/site-files.md)
-- [Server config](/documentation/references/server-config.md)
+- [JSON config files](/documentation/references/config-files.md)
 - [API endpoints specifications](/documentation/references/api-endpoint.md)
 - [Special meta tags](/documentation/references/special-meta-tags.md)
 - [In production](/documentation/references/production.md)
