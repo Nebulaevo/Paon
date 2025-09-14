@@ -28,3 +28,15 @@ Currently used in request handler for "DEV" server
 ## NPM package
 
 Turn Paon into an NPM package with a setup script
+
+## MetaHat : Title Visual Glitch
+
+When navigation triggers a loading state, MetaHat removes the title of the page too soon;
+
+Explanation :
+When page is unmounted to display loading comp, the title meta is removed.
+
+Solution :
+We should have a temporary title (in site.config.json ?) as a specific meta :\
+`<meta name="default-site-title" content="site.config.json['default-title']">`.
+That MetaHat would manually transform into a title on unmount, and remove on mount.
