@@ -16,7 +16,8 @@ import { getSiteConfigRelativePath } from '#paon/utils/file-system'
 class SiteConfig {
 
     static DEFAULT = {
-        assetsBaseUrl: '/'
+        assetsBaseUrl: '/',
+        
     } as const
 
     configFilePath: string

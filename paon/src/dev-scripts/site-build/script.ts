@@ -3,7 +3,7 @@
 import childProcess from 'node:child_process'
 import fs from 'node:fs/promises'
 
-import SiteConfig from '#paon/dev-scripts/helpers/site-config'
+import SiteConfig from '#paon/utils/site-config'
 import { consoleErrorMessage, consoleBlueMessage, consoleSucessMessage, consoleMessage } from '#paon/utils/message-logging'
 import { getAbsolutePath, getSiteIndexHtmlPath } from '#paon/utils/file-system'
 import { isAskingForHelp } from '#paon/dev-scripts/helpers/help-command'
