@@ -39,7 +39,9 @@ function asMetaTags(headTags: headTagSpecs_T[], renderingMode: tagRenderingMode_
         i++
         switch (tagProps.tagType) {
             case 'TITLE':
-                return <Title {...tagProps} key={i}/>
+                return renderingMode === 'RENDER'
+                    ? <Title.Rendered {...tagProps} key={i}/>
+                    : <Title.Hoisted {...tagProps} key={i}/>
             case 'META':
                 return <Meta {...tagProps} key={i}/>
             case 'LINK':
