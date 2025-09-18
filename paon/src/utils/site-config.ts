@@ -57,3 +57,4 @@ class SiteConfig {
 }
 
 export default SiteConfig
+export type { SiteConfig }
