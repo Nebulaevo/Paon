@@ -33,6 +33,18 @@ class HtmlDocument {
     /** internal document tree (parsed with parse5) */
     #document: HtmlNodeTypes.Document
 
+    /** Returns a meta tag as a string */
+    static buildMetaTag(nameValue:string, contentValue:string): string {
+        const documentFragment = parseHtmlFragment('<meta>')
+        const metaTag = documentFragment.childNodes[0] as HtmlNodeTypes.Element
+        metaTag.attrs = [
+            { name: 'name', value: nameValue },
+            { name: 'content', value: contentValue }
+        ]
+
+        return serializeHtmlContent(documentFragment)
+    }
+
     /** Renders the inner content of the node to a string */
     static renderHtmlContent(node: HtmlNodeTypes.ParentNode): string {
         return serializeHtmlContent(node)

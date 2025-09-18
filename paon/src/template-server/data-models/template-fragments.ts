@@ -52,8 +52,8 @@ class TemplateFragments {
      * 
      * Extracts the original `<head>` content and appends
      * request-specific tags before returning the final HTML string:
-     *  - Injects the "rendering-mode" meta (CSR / SSR)
-     *  - For SSR : injects the initial page props as json tag
+     * - Injects the "rendering-mode" meta (CSR / SSR)
+     * - For SSR : injects the initial page props as json tag
      * - For SSR : injects optionnal head fragment returned by the rendering function (`MetaHat`)
      * 
      * @param kwargs.renderingMode - "CSR" or "SSR" for the "rendering-mode" meta
@@ -69,11 +69,16 @@ class TemplateFragments {
             renderedMetas = ''
         } = kwargs
 
+        const renderingMeta = HtmlDocument.buildMetaTag(
+            'rendering-mode', 
+            renderingMode
+        )
+
         if (renderingMode === 'CSR') return this.#head
-            + this.#getRenderingModeTag(renderingMode)
+            + renderingMeta
 
         return this.#head
-            + this.#getRenderingModeTag(renderingMode)
+            + renderingMeta
             + requestData.getInitialPagePropsAsJsonTag()
             + renderedMetas
     }
@@ -95,11 +100,6 @@ class TemplateFragments {
 
         return this.#body
             .replace(placeholder, renderedApp)
-    }
-
-    /** Renders the "rendering-mode" meta */
-    #getRenderingModeTag( renderingMode: 'CSR' | 'SSR' ) {
-        return `<meta name="rendering-mode" content="${renderingMode}">`
     }
 
     /** Shortcut to throw an error because the document parsing has failed */
