@@ -29,7 +29,7 @@ Currently used in request handler for "DEV" server
 
 Turn Paon into an NPM package with a setup script
 
-## null deps in hooks:
+## null deps in hooks:
 
 Check that I did not set dependency lists that could be undefined as:
 ```tsx
@@ -47,7 +47,3 @@ function useDefaultTitleSetter(deps?:React.DependencyList) {
 # MetaHat new Title logic
 
 re-check new MetaHat title logic, and add it to MetaHat documentation
-
-# crypto - only works on https
-
-check if I use crypto lib anywhere, should be using something else as it does not work over http, and could lead to unknown problems down the line (also if I use it it's probably just for some random id with no security requirements)
