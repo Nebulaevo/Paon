@@ -27,12 +27,13 @@ function _isLastTitle() {
 
 /** Creates a title tag with the given content, 
  * adding it classes indicating that it's handled by MetaHat 
- * as well as a class linking it to its title component 
+ * as well as an id linking it to its title component 
 */
 function _createTitleTag(content: string, id: string) {
     const titleTag = document.createElement('title')
+    titleTag.classList.add(PAGE_HEAD_TAG_CLS)
+    titleTag.setAttribute('id', id)
     titleTag.textContent = content
-    titleTag.classList.add(PAGE_HEAD_TAG_CLS, id)
 
     // we use "prepend" so that the last title set is the active one
     // (first encountered title is used by the browser)
@@ -41,26 +42,27 @@ function _createTitleTag(content: string, id: string) {
 
 /** Removes the title tag linked to that component id */
 function _removeTitleTag(id: string) {
-    const selectedTitle = document.querySelector(
-        `head title.${PAGE_HEAD_TAG_CLS}.${id}`
-    )
-    selectedTitle 
-        ? removeTags([selectedTitle])
-        : undefined // do nothing
+    const selectedTitle = document.getElementById(id)
+    selectedTitle?.remove()
 }
 
 /** Marks the title tag linked to that component id as "hanging"
  * (only meant to stay in the document until another <Title> is rendered)
  */
 function _markTagAsHanging(id: string) {
-    const selectedTitle = document.querySelector(
-        `head title.${PAGE_HEAD_TAG_CLS}.${id}`
-    )
-    selectedTitle?.classList.add(HANGING_TITLE_CLASS)
+    const selectedTitle = document.getElementById(id)
+    if (selectedTitle) {
+        selectedTitle.classList.add(HANGING_TITLE_CLASS)
+
+        // we remove the id linking it to 
+        // a MetaHat component instance
+        // (as that id will be unregistered)
+        selectedTitle.removeAttribute('id')
+    }
 }
 
 /** Clears all eventual title tags marked as "hanging" */
-function _removeHangingTiles() {
+function _removeHangingTitles() {
     const hangingTitles = document.querySelectorAll(
         `head title.${PAGE_HEAD_TAG_CLS}.${HANGING_TITLE_CLASS}`
     )
@@ -72,14 +74,14 @@ function _useHangingTitle(content: string) {
 
     const [validatedContent, id] = useMemo(() => {
         const validatedContent = isString(content) ? content : ''
-        const id = 'title-' + UNIQUE_ID.get()
+        const id = UNIQUE_ID.get()
         return [validatedContent, id]
     }, [content])
 
     useEffect(() => {
         // On mount or on new content value :
         // we remove hanging titles 
-        _removeHangingTiles()
+        _removeHangingTitles()
 
         // and create a title tag linked to this component
         _createTitleTag(validatedContent, id)
@@ -98,7 +100,7 @@ function _useHangingTitle(content: string) {
                 // linked to the component
                 _removeTitleTag(id)
             }
-            
+
             // we unregister the id from the existing ids
             UNIQUE_ID.unregister(id)
         }

@@ -16,7 +16,9 @@ function getUniqueIdGenerator() {
     
     /** Returns a unique ID
      * 
-     * (by storing generated ids in a set)
+     * by storing generated ids in a set
+     * 
+     * (all ids are prefixed with 'id-' to insure it always starts with a letter)
      * 
      * @throws Error if while loop generating ids fails to create a unique id 20 times
      */
@@ -24,7 +26,7 @@ function getUniqueIdGenerator() {
         let id;
         let iter = 0
         do {
-            id = getSimpleRandomId() + '-' + getSimpleRandomId()
+            id = 'id-' + getSimpleRandomId() + '-' + getSimpleRandomId()
             iter ++
 
             if (iter > 20) throw new Error(
