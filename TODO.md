@@ -43,7 +43,3 @@ function useDefaultTitleSetter(deps?:React.DependencyList) {
     }, deps ) // <= HERE deps can be undefined and it shouldn't
 }
 ```
-
-# MetaHat new Title logic
-
-re-check new MetaHat title logic, and add it to MetaHat documentation
