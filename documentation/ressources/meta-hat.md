@@ -12,8 +12,8 @@ Utility component allowing to insert page specific `<head>` tags :
 
 All tags set by the component are reset if the list of tags changes or if if the component is unmounted.
 
-ℹ️ `MetaHat` is built around the new React feature automatically hoisting `title`, `meta` and `link` tags. (only `json+ld` tags are hoisted manually)
-
+ℹ️ `meta` and `link` tags uses the new React feature hoisting head tags automatically, whereas `title` and `json+ld` tags are hoisted manually.\
+(`title` is supported by the new React feature but we sometimes need the tag to persiste after the component unmounts)
 
 ## How To Use
 
@@ -24,7 +24,7 @@ On the client side, it is recommanded to render a `MetaHat` component at the roo
 
 We recommand rendering only one instance of the `MetaHat` component at a time and handle head tags in a centralised way.\
 If you need : it's totally possible to have multiple rendered instances of the components at once, but in this case all their tags will be added to head.\
-If both instances render a title your document will have two titles, and the last one rendered will be usually used.
+If both instances render a title your document will have two titles (the last one rendered will be usually used).
 
 
 ### Define Head Tags Locally : Static or Derived 
