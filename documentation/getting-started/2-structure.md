@@ -53,11 +53,11 @@ The site folder is scaffolded in `src/sites/` when we run the `add:site` command
 
 | Folders | Description |
 | :- | :- |
-| `api/` | For fetching functions |
-| `assets/` | For static assets |
-| `components/` | For components |
-| `hooks/` | For hooks |
-| `hooks/` | For page Components |
+| `api/` | Fetching functions |
+| `assets/` | Static assets |
+| `components/` | Components |
+| `hooks/` | Hooks |
+| `pages/` | Page components |
 
 
 ### 📄 Structural Files
@@ -83,5 +83,5 @@ Those are core files in the default site structure, they have to be handled with
 
 <br/>
 
-| [⬅️ Installation & setup](/documentation/getting-started/1-setup.md) | [Build a basic backend for the demo site ➡️](/documentation/getting-started/3-api.md) |
+| [⬅️ Installation & setup](/documentation/getting-started/1-setup.md) | [Build a basic backend for the demo site ➡️](/documentation/getting-started/3-demo-site-backend.md) |
 | :--- | ----: |

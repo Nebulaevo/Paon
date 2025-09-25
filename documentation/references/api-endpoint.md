@@ -69,7 +69,7 @@ It is possible to include page specific head tags in the rendered head fragment,
 The `"meta"` key is expected to contain an array of [head tag specifications](/documentation/ressources/meta-hat.md#tags-specifications).\
 ⚙️ Under the hood we will use it as a prop and render a [`<MetaHat/>`](/documentation/ressources/meta-hat.md) component.
 
-**For coherence reasons :** Make also sure that the Page component uses the same `"meta"` prop to render `<MetaHat/>` at the page component root : see [MetaHat : get head tags from page props](/documentation/ressources/meta-hat.md#get-head-tags-from-page-props--propsmeta)
+**For coherence reasons :** Make also sure that the Page component uses the same `"meta"` prop to render a `<MetaHat/>` component at the page component root : see [MetaHat : get head tags from page props](/documentation/ressources/meta-hat.md#get-head-tags-from-page-props--propsmeta)
 
 
 SSR POST Data Example :

@@ -13,7 +13,7 @@ type ErrorBoundaryProps_T = {
 }
 
 /** Classic error boundary class with:
- * - optional error handling handler (props.errorHandlingFunc) 
+ * - optional error handling function (props.errorHandlingFunc) 
  * - custom error fallback page (props.Fallback)
  * */
 class ErrorBoundary extends React.Component<ErrorBoundaryProps_T, {hasError: boolean, error: unknown}> {
@@ -54,6 +54,5 @@ export {
 
 export type { 
     ErrorBoundaryProps_T, 
-
     ErrorFallbackComp_T
 }

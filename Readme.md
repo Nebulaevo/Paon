@@ -45,8 +45,9 @@ Paon is made for you.
 
 ### Ressources
 
-- [Handling loading state with `<LoadingStateProvider/>`](/documentation/ressources/loading-context.md)
-- [Handling page head tags with `<MetaHat/>`](/documentation/ressources/meta-hat.md)
+- [Handling loading state with `<LoadingStateProvider>`](/documentation/ressources/loading-context.md)
+- [Hanlding errors with `<ErrorBoundary>` and `ErrorStatus`](/documentation/ressources/error-handling.md)
+- [Handling page head tags with `<MetaHat>`](/documentation/ressources/meta-hat.md)
 - [Router](/documentation/ressources/router.md)
 
 ### References

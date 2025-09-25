@@ -18,36 +18,25 @@ This function is called with [`requestData`](/documentation/references/data-stru
 
 ## `index.html`
 
-This HTML document is used as a base for the document fragments.
+HTML document used both as an entry point for bundling, 
+and a base structure from which to extract content of body and head fragments.
 
+Can be used to set static elements, in `<head>` or `<body>` (do not remove the default content of `<body>`).
 
-### head
-
-
-
-### body
-
-
-
-### For Server Side Rendering
-
-We replace the `<!--app-html-->` placeholder with the rendered React app :
+ℹ️ For SSR, we replace the `<!--app-html-->` placeholder in `<body>` by the rendered React app :
 ```html
 <div id="root"><!--app-html--></div>
 <script type="module" src="./entry-client.tsx"></script>
 ```
 
-### For Client Side Rendering
-
-We 
-
 ## `app.tsx`
 
-
+Defines the root `<App>` component of the React app.\
+It imports global ressources and sets up the [Router](/documentation/ressources/router.md).
 
 ## `app.scss`
 
-
+Stylesheet imported by the root `<App>` component : by default, this is where the base style for the application is defined.
 
 ## `site.config.json`
 
@@ -55,11 +44,13 @@ Configurations for this site, see [site config file](/documentation/references/c
 
 ## `layout.tsx`
 
+Component rendering the application frame, surrounding the Routes component.
 
+ℹ️ The Layout component must accept and render its children, as it is responsible for rendering the Routes component.
 
 ## `error.tsx`
 
-
+Fallback component displayed if a Page component triggered an error.
 
 ## `loader.tsx`
 

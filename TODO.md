@@ -43,3 +43,22 @@ function useDefaultTitleSetter(deps?:React.DependencyList) {
     }, deps ) // <= HERE deps can be undefined and it shouldn't
 }
 ```
+
+
+## Clean Types Mess
+
+- Gather common types like props into namespaces
+
+```tsx
+function Input(props: Input.Props) {
+  return <input {...props} />
+}
+
+namespace Input {
+  export type Props = React.InputHTMLAttributes<HTMLInputElement>
+}
+
+export default Input
+```
+
+(remark : if Input comp is a const with an arrow function it will not work)
