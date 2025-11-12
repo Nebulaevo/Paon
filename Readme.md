@@ -43,13 +43,6 @@ Paon is made for you.
 4. [... ]()
 5. [... ]()
 
-### Ressources
-
-- [Handling loading state with `<LoadingStateProvider>`](/documentation/ressources/loading-context.md)
-- [Hanlding errors with `<ErrorBoundary>` and `ErrorStatus`](/documentation/ressources/error-handling.md)
-- [Handling page head tags with `<MetaHat>`](/documentation/ressources/meta-hat.md)
-- [Router](/documentation/ressources/router.md)
-
 ### References
 
 - [Command line interface](/documentation/references/cli.md)
@@ -58,3 +51,13 @@ Paon is made for you.
 - [API endpoints specifications](/documentation/references/api-endpoint.md)
 - [Special meta tags](/documentation/references/special-meta-tags.md)
 - [In production](/documentation/references/production.md)
+
+### Ressources
+
+- [Router](/documentation/ressources/router.md)
+- [Extended URLs](/documentation/ressources/extended-urls.md)
+- [Json data fetching](/documentation/ressources/fetch-json-data.md)
+- [Handling loading state with `<LoadingStateProvider>`](/documentation/ressources/loading-context.md)
+- [Hanlding errors with `<ErrorBoundary>` and `ErrorStatus`](/documentation/ressources/error-handling.md)
+- [Handling page head tags with `<MetaHat>`](/documentation/ressources/meta-hat.md)
+

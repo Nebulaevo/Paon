@@ -52,9 +52,30 @@ Component rendering the application frame, surrounding the Routes component.
 
 Fallback component displayed if a Page component triggered an error.
 
+ℹ️ See [error handling ressources](/documentation/ressources/error-handling.md) for more info
+
+
 ## `loader.tsx`
 
-
+Component to be displayed on navigation loading
 
 ## `router.tsx`
 
+File defining all the Router settings that are imported by the root `app.tsx` file to build the client side router.
+
+### pages
+
+Defines the paths available for the application
+
+
+
+### loader options
+
+Defines the behaviour of the loader component
+
+
+
+### error boundary options
+
+Defines the props used to set up the error boundaries around the Page components.\
+(see [error handling ressources](/documentation/ressources/error-handling.md) for more information.)

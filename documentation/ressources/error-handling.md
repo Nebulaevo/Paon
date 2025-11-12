@@ -40,7 +40,7 @@ function ParentComponent( props ) {
 }
 ```
 
-### The `Fallback` component
+### The `Fallback` Component
 
 Component to be displayed when the error boundary is triggered.
 
