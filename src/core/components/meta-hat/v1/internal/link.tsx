@@ -1,4 +1,4 @@
-import {isAbsoluveUrl, AbsoluteURL, RelativeURL } from '@core:utils/url/v1/utils'
+import { XUrl, RelativeUrl } from 'url-toolbox'
 
 import { PAGE_HEAD_TAG_CLS, checkStringAttrs } from './helpers'
 
@@ -42,12 +42,11 @@ function HeadLink(props: linkSpecs_T) {
     const attrsAreValid = checkStringAttrs( attrs, ALLOWED_ATTRS as any as string[] )
     if (!attrsAreValid) return null
 
-    // if a URL has been given we escape it
     if (attrs.href) {
         try {
-            const url = isAbsoluveUrl(attrs.href)
-                ? new AbsoluteURL(attrs.href, undefined, {onPurifyFail:'ERROR'})
-                : new RelativeURL(attrs.href, {onPurifyFail:'ERROR'})
+            const url = URL.canParse(attrs.href)
+                ? new XUrl(attrs.href, undefined, {allowedProtocols: ['http', 'https']})
+                : new RelativeUrl(attrs.href)
 
             attrs.href = url.toString()
 

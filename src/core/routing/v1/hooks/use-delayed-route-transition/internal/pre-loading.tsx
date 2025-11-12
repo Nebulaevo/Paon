@@ -1,4 +1,5 @@
-import { RelativeURL } from "@core:utils/url/v1/utils"
+import { RelativeUrl } from "url-toolbox"
+
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
 import type { pageData_T } from "@core:routing/v1/hooks/use-router-settings/hook"
 import type { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
@@ -12,7 +13,7 @@ import {
 
 
 type pagePreLoadingKwargs_T = {
-    url: RelativeURL,
+    url: RelativeUrl,
     pageData?: pageData_T,
     getPagePropsHook: ReturnType<typeof usePageProps>['getPageProps']
 }
@@ -20,11 +21,13 @@ type pagePreLoadingKwargs_T = {
 
 let INITIAL_COMPONENT_MARKED_AS_LOADED = false
 
+/** Function running only at initial page load, 
+ * marking the current page component as loaded if it's a lazy component */
 function markInitialComponentAsLoaded(kwargs: Omit<findingPageDataMatchKwargs_T, 'url'>) {
     if (isExecutedOnClient() && !INITIAL_COMPONENT_MARKED_AS_LOADED) {
         INITIAL_COMPONENT_MARKED_AS_LOADED = true
 
-        const url = new RelativeURL(window.location.href)
+        const url = new RelativeUrl(window.location.href)
         
         const pageData = findMatchingPageData({...kwargs, url})
         if (pageData?.importComponent) {

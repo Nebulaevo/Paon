@@ -1,12 +1,12 @@
 import {isDict, type Dict_T} from "sniffly"
+import { RelativeUrl } from "url-toolbox"
 
-import { RelativeURL } from "@core:utils/url/v1/utils"
 import { fetchJsonData } from "@core:utils/fetch-json-data/v1/utils"
 
 
-async function fetchApi( _currentUrl: RelativeURL, abortController:AbortController ) {
+async function fetchApi( _currentUrl: RelativeUrl, abortController:AbortController ) {
 
-    const fetchUrl = new RelativeURL('/api/')
+    const fetchUrl = new RelativeUrl('/api/')
     
     return fetchJsonData<Dict_T<unknown>>(
         fetchUrl, 

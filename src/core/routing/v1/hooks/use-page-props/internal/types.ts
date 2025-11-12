@@ -1,6 +1,6 @@
 import type { Dict_T } from "sniffly"
+import type { RelativeUrl } from "url-toolbox"
 
-import type { RelativeURL } from "@core:utils/url/v1/utils"
 import type { ErrorStatus } from "@core:utils/error-status/v1/utils"
 import type { pagePropsGetterFunc_T } from '@core:routing/v1/hooks/use-router-settings/hook'
 
@@ -27,7 +27,7 @@ type propsFetchingOperationTuple_T = [
 ]
 
 type PagePropsContext_T = {
-    getPageProps: (relativeUrl:string | RelativeURL, fetcher:pagePropsGetterFunc_T) => propsFetchingOperationTuple_T,
+    getPageProps: (relativeUrl:string | RelativeUrl, fetcher:pagePropsGetterFunc_T) => propsFetchingOperationTuple_T,
     silentlyResetPageProps: () => void,
     abortPendingPagePropsRequest: () => void
 }

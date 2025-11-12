@@ -1,19 +1,12 @@
 import React, { useMemo, AnchorHTMLAttributes } from "react"
 import { useLocation, Link as WouterLink } from "wouter"
+import { XUrl, RelativeUrl, type ExtendedUrl_T } from "url-toolbox"
+import { isString } from "sniffly"
 
-import { 
-    isAbsoluveUrl,
-    RelativeURL, 
-    AbsoluteURL, 
-    type EnhancedURL_T 
-} from "@core:utils/url/v1/utils"
 
 type linkTypes_T = 'RELATIVE' | 'ABSOLUTE' | 'AUTO'
 
-type LinkProps_T = AnchorHTMLAttributes<HTMLAnchorElement> & {
-    linkType?: linkTypes_T,
-    children: React.ReactNode,
-}
+type HtmlAnchorAttributes_T = AnchorHTMLAttributes<HTMLAnchorElement>
 
 const LINK_CLASSES = {
     NONE: '',
@@ -22,31 +15,36 @@ const LINK_CLASSES = {
     PARTIAL_MATCH: 'link-partial-match'
 } as const
 
-/** Builds a custom enhanced URL object from the given URL */
-function _toEnhancedUrl(url:string | undefined, linkType: 'ABSOLUTE'): AbsoluteURL | undefined
-function _toEnhancedUrl(url:string | undefined, linkType: 'RELATIVE'): RelativeURL | undefined
-function _toEnhancedUrl(url:string | undefined, linkType: 'AUTO' | linkTypes_T): EnhancedURL_T | undefined
-function _toEnhancedUrl(url:string | undefined, linkType: linkTypes_T): EnhancedURL_T | undefined {
-    if (!url || url.length===0) return undefined
+/** Builds a custom extended URL object from the given URL */
+function _toExtendedUrl(url: string | URL , linkType: 'ABSOLUTE'): XUrl | undefined
+function _toExtendedUrl(url: string | URL, linkType: 'RELATIVE'): RelativeUrl | undefined
+function _toExtendedUrl(url: string | URL, linkType: 'AUTO' | linkTypes_T): ExtendedUrl_T | undefined
+function _toExtendedUrl(url: string | URL, linkType: linkTypes_T): ExtendedUrl_T | undefined {
+    
+    if (isString(url) && url.trim()==='') return undefined
     
     if (linkType==="AUTO") {
-        linkType = isAbsoluveUrl(url) ? 'ABSOLUTE' : 'RELATIVE'
+        linkType = URL.canParse(url) ? 'ABSOLUTE' : 'RELATIVE'
     }
-    const EnhancedUrlClass = linkType == 'ABSOLUTE' ? AbsoluteURL : RelativeURL
 
-    return EnhancedUrlClass.parse(
-        url, undefined, {onPurifyFail:'ERROR'}
-    ) ?? undefined
+    if (linkType==="ABSOLUTE") {
+        if (url instanceof XUrl) return url
+        return XUrl.parse(url) ?? undefined
+
+    } else { // "RELATIVE"
+        if (url instanceof RelativeUrl) return url
+        return RelativeUrl.parse(url) ?? undefined
+    }
 }
 
-function _getRelativeLinkStatusClass(linkUrlObj?:RelativeURL, currentUrlObj?:RelativeURL): string {
+function _getRelativeLinkStatusClass(linkUrl?:RelativeUrl, currentUrl?:RelativeUrl): string {
     const {NONE, MATCH, PARTIAL_MATCH, BROKEN} = LINK_CLASSES
 
-    if (!linkUrlObj) return BROKEN
+    if (!linkUrl) return BROKEN
     
-    if (currentUrlObj) {
-        const linkPathname = linkUrlObj.pathname
-        const currentPathname = currentUrlObj.pathname
+    if (currentUrl) {
+        const linkPathname = linkUrl.as.normalisedPathname
+        const currentPathname = currentUrl.as.normalisedPathname
 
         if (currentPathname===linkPathname) return MATCH
         else if (currentPathname.startsWith(linkPathname)) return PARTIAL_MATCH
@@ -55,10 +53,17 @@ function _getRelativeLinkStatusClass(linkUrlObj?:RelativeURL, currentUrlObj?:Rel
     return NONE
 }
 
-/** Wrapper around Wouter's Link component:
- * - adding url purification (returns a `<span>` with class **link-broken** if url couldn't be parsed)
- * */
-function Link(props: LinkProps_T) {
+/** Wrapper around Wouter's Link component 
+ * 
+ * 🛠️ internally, provided href is converted to a `XUrl` or a `RelativeUrl` instance.
+*/
+function Link(
+    props: Omit<HtmlAnchorAttributes_T, 'href'> & {
+        href: string | URL | ExtendedUrl_T,
+        linkType?: linkTypes_T,
+        children: React.ReactNode,
+    }
+) {
     
     const { 
         linkType='AUTO', 
@@ -67,9 +72,9 @@ function Link(props: LinkProps_T) {
         className='',
         ...htmlAnchorAttributes 
     } = props
-
+    
     const url = useMemo(
-        () => _toEnhancedUrl(href, linkType),
+        () => _toExtendedUrl(href, linkType),
         [href, linkType]
     )
     
@@ -93,11 +98,18 @@ function Link(props: LinkProps_T) {
 }
 
 /** Wrapper around Wouter's Link component for internal links:
- * - adding url purification (returns a `<span>` with class **link-broken** if url couldn't be parsed)
  * - forcing relative url
  * - adding classes **link-active** or **link-partial-match** if the link url matches the current location.
+ * - if url is invalid, returns a span with class **link-broken**
+ * 
+ * 🛠️ internally, provided href is converted to a `RelativeUrl` instance
  */
-function RelativeLink(props: Omit<LinkProps_T, 'linkType'>) {
+function RelativeLink(
+    props: Omit<HtmlAnchorAttributes_T, 'href'> & {
+        href: string | URL | ExtendedUrl_T,
+        children: React.ReactNode,
+    }
+) {
     const { 
         href, 
         className='', 
@@ -106,9 +118,9 @@ function RelativeLink(props: Omit<LinkProps_T, 'linkType'>) {
     } = props
 
     const [ location ] = useLocation()
-    const currentUrl = _toEnhancedUrl(location, 'RELATIVE')
+    const currentUrl = RelativeUrl.parse(location) ?? undefined
     const url = useMemo(
-        () => _toEnhancedUrl(href, 'RELATIVE'),
+        () => _toExtendedUrl(href, 'RELATIVE'),
         [href]
     )
     

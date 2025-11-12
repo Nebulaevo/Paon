@@ -1,7 +1,7 @@
 import type React from "react"
 import type { Dict_T } from "sniffly"
+import type { RelativeUrl } from "url-toolbox"
 
-import type { RelativeURL } from "@core:utils/url/v1/utils"
 import type { ErrorBoundaryProps_T } from "@core:components/error-boundary/v1/component"
 
 
@@ -10,7 +10,7 @@ type pageAsyncLoadFunc_T = () => Promise<{
     default: React.ComponentType<Dict_T<any>>;
 }>
 
-type pagePropsGetterFunc_T = (currentUrl: RelativeURL, abortController: AbortController) => Promise<Dict_T<unknown>>
+type pagePropsGetterFunc_T = (currentUrl: RelativeUrl, abortController: AbortController) => Promise<Dict_T<unknown>>
 
 type lazyPageComponent_T = React.LazyExoticComponent<
     React.ComponentType<Dict_T<any>>

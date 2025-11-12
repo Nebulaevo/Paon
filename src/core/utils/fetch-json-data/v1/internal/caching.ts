@@ -1,13 +1,13 @@
 import { isNumber } from "sniffly";
+import { RelativeUrl, type ExtendedUrl_T } from "url-toolbox";
 
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util";
-import { type EnhancedURL_T, RelativeURL } from "@core:utils/url/v1/utils";
 
 import type { staleWhileRevalidateOpts_T } from './types'
 
  
 type setCacheEntryKwargs_T = {
-    url: EnhancedURL_T,
+    url: ExtendedUrl_T,
     response: Response
 }
 
@@ -81,18 +81,19 @@ function _canUseCache() {
 
 /** Formats a cache key
  * 
- * (caches API uses relative URL, 
+ * (caches API internally uses relative URL, 
  * so we use a small trick to have unique keys for external urls)
  */
-function _formatCacheKey(url: EnhancedURL_T): string {
-    const targetUrl = url.asId()
-    if (url instanceof RelativeURL) return targetUrl
+function _formatCacheKey(url: ExtendedUrl_T): string {
+    const targetUrl = url.as.normalised({hash: false})
+    if (url instanceof RelativeUrl) return targetUrl
 
-    // Remark: we do not need to run the purifier for this
-    const urlKey = new RelativeURL('/', {onPurifyFail: 'IGNORE'}) 
-    urlKey.searchParams.set('externalUrl', targetUrl)
+    // we create a dummy relative url 
+    // with the absolute url in the url search query
+    const externalUrlKey = new RelativeUrl('/__absolute_url_cache_key__/') 
+    externalUrlKey.search = { externalUrl: targetUrl }
     
-    return urlKey.asId()
+    return externalUrlKey.as.normalised({hash: false})
 }
 
 /** Creates or updates a cache entry for given url */
@@ -120,7 +121,7 @@ async function set(kwargs: setCacheEntryKwargs_T) {
  * (if an entry is found but it exceeds the maxAgeS and the staleEntryMaxAgeS we delete that cache entry)
 */
 async function get<DataType_T>(
-    url: EnhancedURL_T, 
+    url: ExtendedUrl_T, 
     options?: getCacheEntryOpts_T<DataType_T>
 ): Promise<cacheSearchResult_T> {
 
@@ -161,11 +162,11 @@ async function get<DataType_T>(
 }
 
 /** Deletes the corresponding cache entry if it exists */
-async function remove(url: EnhancedURL_T) {
+async function remove(url: ExtendedUrl_T) {
     if (!_canUseCache()) return
 
     const cache = await caches.open(_CACHE_NAME)
-    await cache.delete(url.asId())
+    await cache.delete( _formatCacheKey(url) )
 }
 
 export default {

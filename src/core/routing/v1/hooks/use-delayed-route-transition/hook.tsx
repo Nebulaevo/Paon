@@ -1,8 +1,8 @@
 import { useCallback } from "react"
 import { useRouter, type BaseLocationHook } from "wouter"
 import { useBrowserLocation } from "wouter/use-browser-location"
+import { RelativeUrl } from "url-toolbox"
 
-import { RelativeURL } from "@core:utils/url/v1/utils"
 import { useLoadingSetters } from "@core:hooks/use-loading-state/v1/hook"
 import { useRouterSettings } from  "@core:routing/v1/hooks/use-router-settings/hook"
 import { usePageProps } from "@core:routing/v1/hooks/use-page-props/hook"
@@ -50,22 +50,17 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
         const [ to ] = args // url we are navigating to
 
         // No error handling: if it fails it should all crash
-        const currentUrl = new RelativeURL(window.location.href)
+        const currentUrl = new RelativeUrl(window.location.href)
 
         // ℹ️ Remark:
         // As opposed to currentUrl, 
         // we do not trust targetUrl to be valid
-        const targetUrl = RelativeURL.parse(
-            to instanceof URL ? to.toString() : to, 
-            undefined,
-            {onPurifyFail:'ERROR'}
-        )
-        
+        const targetUrl = RelativeUrl.parse(to)
         // if parsing of target url failed we cancel the navigation attempt
         if (!targetUrl) return
 
-        const targetUrlId = targetUrl.asId({includeHash:true})
-        const currentUrlId = currentUrl.asId({includeHash:true})
+        const targetUrlId = targetUrl.as.normalised()
+        const currentUrlId = currentUrl.as.normalised()
         
         // Preventing double history entries
         // - if that taget url is already being scheduled for navigation: we ignore
@@ -89,7 +84,9 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
         // we only trigger delayed navigation for new
         // relative URL pathname 
         // (search changes have to be handled by page)
-        if (currentUrl.normalizedPath!==targetUrl.normalizedPath){
+        const currentPathNormalised = currentUrl.as.normalisedPathname
+        const targetPathNormalised = targetUrl.as.normalisedPathname
+        if (currentPathNormalised!==targetPathNormalised){
             const timer = setTimeout(() => {
                 if (navigationTarget.is(targetUrl)) {
                     activateLoading()

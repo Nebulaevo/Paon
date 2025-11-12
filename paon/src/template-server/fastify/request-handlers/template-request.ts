@@ -4,7 +4,7 @@ import type { ViteDevServer } from 'vite'
 import type { Dict_T } from 'sniffly'
 
 import { consoleMessage, consoleWarnMessage } from '#paon/utils/message-logging'
-import { buildSsrReqData } from '#paon/template-server/data-models/ssr-request-data'
+import SsrRequestData from '#paon/template-server/data-models/ssr-request-data'
 import { collectRessourcesProd, collectSiteRessources } from "#paon/template-server/helpers/collect-ressources"
 import type { siteRessources_T } from '#paon/template-server/helpers/types'
 
@@ -100,14 +100,14 @@ function _buildSsrRequestHandler({
     return async ( request:FastifyRequest, response:FastifyReply ) => {
         
         // Extracting and validating POST data
-        const requestData = buildSsrReqData(request.body)
+        const requestData = SsrRequestData.from(request.body)
         if ( !requestData ) {
             _logRequest({mode:'SSR', status:400, site:siteName})
             
             response.statusCode = 400
             return response.send('POST data received were invalid')
         }
-
+        
         try {
             // Getting site base ressources
             const { 

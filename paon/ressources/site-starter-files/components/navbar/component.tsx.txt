@@ -1,5 +1,7 @@
-import { RelativeLink } from "@core:routing/v1/link"
 import { useCallback, useState } from "react"
+import { RelativeUrl } from "url-toolbox"
+
+import { RelativeLink } from "@core:routing/v1/link"
 
 import FeatherSVG from '../../assets/icons/peacock-feather.svg?react'
 import './style.scss'
@@ -10,13 +12,22 @@ function NavBar() {
     const [value, setValue] = useState('')
 
     const handleChange = useCallback(
-        (ev: React.ChangeEvent<HTMLInputElement>) => setValue(ev.target.value), 
-        []
+        (ev: React.ChangeEvent<HTMLInputElement>) => {
+            // ignores '/' & '\' for compatibility with WSGI/ASGI server
+            // (WSGI/ASGI server uses a decoded URL)
+            const escapedValue = ev.target.value
+                .trim()
+                .replace(/[\\\/]/g, '')
+
+            setValue(escapedValue)
+        }, []
     )
 
-    const name = value 
-        ? encodeURIComponent(value)
-        : 'World'
+    const helloUrl = new RelativeUrl()
+    helloUrl.pathname = [ 
+        'hello',  
+        value !== '' ? value : 'World'
+    ]
 
     return <nav className='top-nav'>
         <RelativeLink href='/' className='home-link'>
@@ -30,7 +41,10 @@ function NavBar() {
             <label htmlFor='name-input'>Let's say hello to ...</label>
             <div className="input-container">
                 <input value={value} onChange={handleChange} placeholder="Name" id='name-input'/>
-                <RelativeLink href={`/hello/${name}/`} className="paon-primary-btn">🡒</RelativeLink>
+                <RelativeLink 
+                    href={ helloUrl } 
+                    className="paon-primary-btn"
+                >🡒</RelativeLink>
             </div>
         </div>
     </nav>

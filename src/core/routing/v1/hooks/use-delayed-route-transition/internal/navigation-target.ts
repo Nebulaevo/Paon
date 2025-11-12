@@ -1,5 +1,7 @@
+import type { RelativeUrl } from "url-toolbox"
+
 import { isExecutedOnClient } from "@core:utils/execution-context/v1/util"
-import type { RelativeURL } from "@core:utils/url/v1/utils"
+
 
 /** 🔧 BUG FIX: 
  * Taking into account active navigation target into navigation handling.
@@ -10,10 +12,16 @@ import type { RelativeURL } from "@core:utils/url/v1/utils"
  */
 const NAVIGATION_TARGET: {target?: string}= {target:undefined}
 
+/** Returns a normalised representation of the url */
+function _toTargetId(targetUrl: RelativeUrl) {
+    return targetUrl.as.normalised()
+}
+
 /** Saves the url of the current navigation target */
-function set(targetUrl:RelativeURL) {
+function set(targetUrl: RelativeUrl) {
     if (isExecutedOnClient()) {
-        NAVIGATION_TARGET.target = targetUrl.asId({includeHash:true})
+        const targetId =  _toTargetId(targetUrl)
+        NAVIGATION_TARGET.target = targetId
     }
 }
 
@@ -28,9 +36,9 @@ function exists() {
 }
 
 /** Returns true if the given url is the same as current target */
-function is(targetUrl:RelativeURL) {
+function is(targetUrl: RelativeUrl) {
     if (!exists()) return false
-    return NAVIGATION_TARGET.target === targetUrl.asId({includeHash:true})
+    return NAVIGATION_TARGET.target === _toTargetId(targetUrl)
 }
 
 /** Module allowing to keep track of the active navigation target */

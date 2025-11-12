@@ -1,4 +1,4 @@
-import type { EnhancedURL_T } from "@core:utils/url/v1/utils"
+import type { ExtendedUrl_T } from 'url-toolbox'
 
 import caching from './internal/caching'
 import shortcuts from "./internal/shortcuts"
@@ -16,7 +16,7 @@ type fetchJsonDataOpts_T<DataType_T> = {
 }
 
 type accessAttemptKwargs_T<DataType_T> = {
-    url: EnhancedURL_T, 
+    url: ExtendedUrl_T, 
     requestInit: RequestInit, 
     fetchJsonOpts: fetchJsonOpts_T<DataType_T>
 }
@@ -127,14 +127,14 @@ async function _secondaryAccessAttempt<DataType_T>(
 }
 
 
-/** Wrapper around `fetch` focused on receiving json data, including multiple features:
+/** `fetch` wrapper focused on receiving json data, including multiple features:
  * - ⚙️ Secure parsing of received json data (throws an error if data is unsafe)
  * - ⚙️ Custom data validation for every access (throws an error if data does not satisfy provided validators)
  * - ⚙️ Granular control over caching strategy per request, using the browser's Cache API.
  * - ⚙️ Custom number of retries and timeout duration per request
  * 
  * 
- * @param url (Enhanced URL) target of the fetch request
+ * @param url (XUrl or RelativeUrl) target of the fetch request
  * 
  * @param opts object with 2 keys `requestInit` and `fetchJsonOpts`
  * 
@@ -154,7 +154,7 @@ async function _secondaryAccessAttempt<DataType_T>(
  * 
  * > `retries` (default: 2x) : Number of retries within the set timeout
  * 
- * > `cache` (optionnal): Options object defining the caching strategy
+ * > `cache` (default: 'CACHE_FIRST'): Options object defining the caching strategy
  * 
  * }
  * 
@@ -175,7 +175,7 @@ async function _secondaryAccessAttempt<DataType_T>(
  * }
  */
 async function fetchJsonData<DataType_T>(
-    url: EnhancedURL_T, 
+    url: ExtendedUrl_T, 
     opts: fetchJsonDataOpts_T<DataType_T>,
 ): Promise<DataType_T> {
 

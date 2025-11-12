@@ -22,7 +22,6 @@
         "site:clean-outdir": "node ./paon/dist/dev-scripts/site-clean-outdir/run.js"
     },
     "dependencies": {
-        "@braintree/sanitize-url": "^7.1.1",
         "fastify": "^5.2.1",
         "htmlescape": "^1.1.1",
         "parse5": "^8.0.0",

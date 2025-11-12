@@ -1,4 +1,5 @@
-import type { EnhancedURL_T } from '@core:utils/url/v1/utils'
+import type { ExtendedUrl_T } from 'url-toolbox'
+
 import { ErrorStatus } from '@core:utils/error-status/v1/utils'
 
 import caching from './caching'
@@ -10,7 +11,7 @@ import type {
 
 
 type shortcutKwargs_T<DataType_T> = {
-    url: EnhancedURL_T,
+    url: ExtendedUrl_T,
     requestInit: RequestInit, 
     fetchJsonOpts: fetchJsonOpts_T<DataType_T>
 }
@@ -40,6 +41,8 @@ async function _refreshCacheEntryTask<DataType_T>(
 
     const abortController = new AbortController()
 
+    // We call the already defined helper with forced values
+    // to update the cache in the background 
     const {data, fetchError} = await networkCallWithCacheUpdate<DataType_T>({
         url,
 

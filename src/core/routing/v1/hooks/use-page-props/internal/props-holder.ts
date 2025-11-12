@@ -1,9 +1,9 @@
 import { parse as secureJsonParse } from 'secure-json-parse'
+import { RelativeUrl } from 'url-toolbox'
 import { isDict } from "sniffly"
 
 import { ErrorStatus } from '@core:utils/error-status/v1/utils'
 import { isExecutedOnServer } from '@core:utils/execution-context/v1/util'
-import { RelativeURL } from '@core:utils/url/v1/utils'
 import { getExpiryDate, hasExpired } from '@core:utils/date/v1/expiry-dates'
 import type { pagePropsGetterFunc_T } from '@core:routing/v1/hooks/use-router-settings/hook'
 
@@ -14,8 +14,8 @@ import type {
 
 
 
-type requestSendingKwargs = {
-    relativeUrl: RelativeURL,
+type requestSendingKwargs_T = {
+    relativeUrl: RelativeUrl,
     fetcher: pagePropsGetterFunc_T
 }
 
@@ -56,6 +56,8 @@ class PropsHolder {
             return
         }
 
+        const initialOwnerUrl = new RelativeUrl(window.location.href) // No error handling: if it fails it should all crash
+
         let parsedJson: pageProps_T | undefined
         try {
             const jsonString = document.getElementById('initial-page-props')?.textContent
@@ -69,20 +71,21 @@ class PropsHolder {
                 : undefined
             
         } catch (_err) {
-            this.#ownerUrlId = new RelativeURL(window.location.href).asId() // No error handling: if it fails it should all crash
+            // if json parsing fails
+            this.#ownerUrlId = this.#asUrlId(initialOwnerUrl)
             this.#expiryDate = getExpiryDate(3*1000) // 3sec
             this.#pendingPromise = undefined
             this.#result = [
                 'ERROR',
                 new ErrorStatus(
-                    ErrorStatus.UNSAFE
+                    ErrorStatus.DEFAULT
                 )
             ]
         }
 
         if (isDict(parsedJson)) {
             // if initial props are provided we use it for the initial page component
-            this.#ownerUrlId = new RelativeURL(window.location.href).asId() // No error handling: if it fails it should all crash
+            this.#ownerUrlId = this.#asUrlId(initialOwnerUrl)
             this.#expiryDate = getExpiryDate(5*60*1000) // 5min
             this.#pendingPromise = undefined
             this.#result = ['SUCCESS', parsedJson]
@@ -100,8 +103,8 @@ class PropsHolder {
     }
 
     /** Returns true if given relative url is the page owning the current page props entry */
-    propsOwnerIs(relativeUrl: RelativeURL): boolean {
-        return this.#ownerUrlId === relativeUrl.asId()
+    propsOwnerIs(relativeUrl: RelativeUrl): boolean {
+        return this.#ownerUrlId === this.#asUrlId(relativeUrl)
     }
 
     /** Returns true if expiry date for the current page props entry have not been reached yet */
@@ -149,6 +152,11 @@ class PropsHolder {
         }
     }
 
+    /** Returns a normalised representation of a relative url, wihtout the hash */
+    #asUrlId(relativeUrl: RelativeUrl) {
+        return relativeUrl.as.normalised({hash: false})
+    }
+
     /** Returns a fresh internal instance of `AbortController` */
     #getAbortController() {
         this.#abortController = new AbortController()
@@ -163,7 +171,7 @@ class PropsHolder {
     /** Sends a request through the provided fetcher to get page props 
      * and stores the data in `this.result`
     */
-    sendPagePropsRequest(kwargs: requestSendingKwargs) {
+    sendPagePropsRequest(kwargs: requestSendingKwargs_T) {
 
         if (isExecutedOnServer()) {
             throw new Error('PropsHolder.sendPagePropsRequest should not be called on the server')
@@ -176,15 +184,12 @@ class PropsHolder {
 
         const abortController = this.#getAbortController()
 
-        this.#ownerUrlId = relativeUrl.asId()
+        this.#ownerUrlId = this.#asUrlId(relativeUrl)
         this.#expiryDate = undefined // the fetch promise expiry time should only be handled by the request timeout
 
         // we create a dedicated copy of the current URL obj 
         // that can be freely mutated by the fetcher function
-        const fetchingUrl = new RelativeURL(
-            relativeUrl.toString(),
-            { 'onPurifyFail': 'IGNORE' } // we do not re-sanatize
-        )
+        const fetchingUrl = new RelativeUrl(relativeUrl)
 
         this.#pendingPromise = fetcher(fetchingUrl, abortController)
             .then(data => {

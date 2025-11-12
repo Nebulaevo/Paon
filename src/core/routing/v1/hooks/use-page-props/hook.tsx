@@ -1,6 +1,6 @@
 import { createContext, use, useCallback, useMemo, useRef } from "react"
+import { RelativeUrl } from "url-toolbox"
 
-import { RelativeURL } from "@core:utils/url/v1/utils"
 import { isExecutedOnServer } from "@core:utils/execution-context/v1/util"
 import { ErrorStatus } from "@core:utils/error-status/v1/utils"
 import type { pagePropsGetterFunc_T } from '@core:routing/v1/hooks/use-router-settings/hook'
@@ -17,7 +17,7 @@ import type {
  * (data entries are hold in a private `ref` because that hook is not meant to trigger re-renders)
 */
 const PagePropsContext = createContext<PagePropsContext_T>({
-    getPageProps: (_relativeUrl:string | RelativeURL, _fetcher:pagePropsGetterFunc_T) => ['READY', ['SUCCESS', {}]],
+    getPageProps: (_relativeUrl:string | RelativeUrl, _fetcher:pagePropsGetterFunc_T) => ['READY', ['SUCCESS', {}]],
     silentlyResetPageProps: () => {},
     abortPendingPagePropsRequest: () => {}
 })
@@ -61,19 +61,20 @@ function PagePropsProvider(props: PagePropsProviderProps_T) {
         new PropsHolder(ssrProps)
     )
 
-    const getPageProps = useCallback((relativeUrl:string | RelativeURL, fetcher:pagePropsGetterFunc_T): propsFetchingOperationTuple_T => { 
+    const getPageProps = useCallback((relativeUrl:string | RelativeUrl, fetcher:pagePropsGetterFunc_T): propsFetchingOperationTuple_T => { 
         const { current: propsHolder } = pagePropsRef
         
-        // sanitizing and encoding url
-        if (!(relativeUrl instanceof RelativeURL)) {
+        // if given relativeUrl is a string
+        // we convert it to a RelativeUrl
+        if (!(relativeUrl instanceof RelativeUrl)) {
             try {
-                relativeUrl = new RelativeURL(relativeUrl, {onPurifyFail:'ERROR'})
+                relativeUrl = new RelativeUrl(relativeUrl)
             } catch (err) {
                 // if relativeUrl parsing fails we return an error response
                 console.error(err)
                 
                 // we manually return expected tuple because 'current' object 
-                // needs a 'owner' ID built from RelativeURL instance
+                // needs a 'owner' ID built from RelativeUrl instance
                 return ['READY', ['ERROR', new ErrorStatus(ErrorStatus.OPERATION_FAILED)]]
             }
         }

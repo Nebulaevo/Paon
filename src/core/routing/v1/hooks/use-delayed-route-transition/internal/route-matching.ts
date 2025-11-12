@@ -1,17 +1,17 @@
 import { matchRoute, type Parser } from "wouter"
+import type { RelativeUrl } from "url-toolbox"
 
-import { RelativeURL } from "@core:utils/url/v1/utils"
 import type { RouterSettings_T, pageData_T } from "@core:routing/v1/hooks/use-router-settings/hook"
 
 
 type findingPageDataMatchKwargs_T = {
-    url: RelativeURL,
+    url: RelativeUrl,
     pages: RouterSettings_T['pages'],
     parser: Parser,
 }
 
 /** Finds the pageData entry (route) matching the given url
- * (mainly using Wouter's `matchRoute` function)
+ * (using Wouter's `matchRoute` function)
  * 
  * @param kwargs.url a ReltiveURL instance that have to be matched
  * 
@@ -22,28 +22,26 @@ type findingPageDataMatchKwargs_T = {
  * @returns a "pageData" dictionary, or undefined if not found
  */
 function findMatchingPageData(kwargs:findingPageDataMatchKwargs_T): pageData_T | undefined {
-    const { pages, parser } = kwargs
+    const { pages, url, parser } = kwargs
 
-    // 🔧 Bug fix: matchRoute expects pathname not a full relative URL
+    // Remark 1: 
+    // matchRoute expects pathname not a full relative URL
     // if search or hash is present, the route matching will give incorrect results
     // 
-    // 🔧 Bug fix 2: We need to decode the pathname before trying 
-    // to match it with the routes patterns, as it may contain encoded characters.
-    // Remark: 
-    // This method is a naive simple fix allowing to have special characters in URLs.
-    // It will fail if pageData pattern is an encoded URL like "/oth%C3%A9r/:id/",
-    // but there is very little reason to have that kind of pattern, 
-    // and the router patterns are static so we just do not handle that case.
-    const decodedTargetPathname = decodeURI(kwargs.url.pathname)
-
+    // Remark 2: 
+    // with current implementation, urls containing special characters like : "/othér/:id/" will work,
+    // but urls contains encoded characters like : "/oth%C3%A9r/:id/" will fail.
+    // but there is very little reason to support that kind of pattern, 
+    // and as the router patterns are static, we just don't need to handle that case.
+    
     for ( const pageData of pages ) {
-        // Remark: 
-        // the last argument (loose: boolean) allows for partial match (used for nested routes matching)
-        // and in our case should stay false because we want a full match
         const [ match ] = matchRoute(
             parser, 
             pageData.path,
-            decodedTargetPathname, 
+            url.pathname,
+            // Remark: 
+            // the last argument (loose: boolean) allows for partial match (used for nested routes matching)
+            // and in our case should stay false because we want a full match
             false // false -> not 'loose' 
         )
         if (match) return pageData
