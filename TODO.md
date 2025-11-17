@@ -6,6 +6,10 @@
 Currently there are no systems in place to filter traffic, making it risky to expose the server.
 There should be at least a API token kind of auth mechanism preventing anyone from triggering a page render.
 
+## Fetch Json Util - No Cache
+
+Allow the cache (get / set) to be bypassed if the function has maxAge of 0.
+
 
 ## Dev server Site ressources
 
