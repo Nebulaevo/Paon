@@ -14,7 +14,7 @@ Quick overview of the important folder and files in a Paon project, and the defa
     *Folder containing all the frontend logic* 
 
     - **`core/`**\
-        *Contains scripts & assets necessary for the default Paon site structure (rendering function, routing logic...)* 
+        *Contains scripts & assets necessary for the default Paon site structure (rendering function, structural components, routing...)* 
 
     - **`shared/`**\
         *Shared folder, where we can store common ressources for multiple registered sites* 
@@ -30,7 +30,7 @@ Quick overview of the important folder and files in a Paon project, and the defa
     - **`client/assets/`**\
         *This folder contains all the client assets for all built websites*
 
-        *In production, the content of this folder should be served for any request under the `/assets/...` path, for any of the registered websites (Paon prod server does not serve static assets).*
+        *In [production](/documentation/references/production.md), the content of this folder should be served for any request under the `/assets/...` path, for any of the registered websites (Paon prod server does not serve static assets).*
     
     - ...
 
@@ -47,7 +47,7 @@ Quick overview of the important folder and files in a Paon project, and the defa
 
 The site folder is scaffolded in `src/sites/` when we run the `add:site` command.
 
-ℹ️ In this guide, we are gonna use the site structure provided by Paon, though it's completely optionnal. If you wish to create your own structure you can modify `entry-server.tsx`, `entry-client.tsx` and `app.tsx` to render you own component tree.
+ℹ️ In this guide, we are gonna use the default site structure provided when creating a new site, though it's completely optionnal. If you wish to create your own structure you can modify `entry-server.tsx`, `entry-client.tsx` or `app.tsx` to render you own component tree.
 
 ### 📁 Folder Convensions
 
@@ -55,22 +55,22 @@ The site folder is scaffolded in `src/sites/` when we run the `add:site` command
 | :- | :- |
 | `api/` | Fetching functions |
 | `assets/` | Static assets |
-| `components/` | Components |
-| `hooks/` | Hooks |
+| `components/` | React Components |
+| `hooks/` | React Hooks |
 | `pages/` | Page components |
 
 
 ### 📄 Structural Files
 
-Those are core files in the default site structure, they have to be handled with care or they might break the site.
+Those are core files in the default site structure, they have to be handled with care otherwise they might break the site.
 
-| Files | Description | Can be modified ? |
-| :- | :- | - |
-| [`entry-client.tsx`](/documentation/references/site-files.md#entry-clienttsx) | Renders the app on the client | No |
-| [`entry-server.tsx`](/documentation/references/site-files.md#entry-servertsx) | Exports a function rendering the app on the server | No |
-| [`index.html`](/documentation/references/site-files.md#indexhtml) | Document in which we inject the app | Do not modify the tags included by default in `<body>`  |
-| [`app.tsx`](/documentation/references/site-files.md#apptsx) | Export the root `<App/>` component, and import global css stylesheets. | We can ajust global css imports, but the `App` component should not be modified |
-| [`site.config.json`](/documentation/references/site-files.md#siteconfigjson) | Site specific configuration | Yes |
+| Files | Description |
+| :- | :- |
+| [`entry-client.tsx`](/documentation/references/site-files.md#entry-clienttsx) | Script  executed client side to set up the app |
+| [`entry-server.tsx`](/documentation/references/site-files.md#entry-servertsx) | Exports the `render` function in charge of performing the server side rendering of the app |
+| [`index.html`](/documentation/references/site-files.md#indexhtml) | Entry point when rendering any page (CSR or SSR) |
+| [`app.tsx`](/documentation/references/site-files.md#apptsx) | Defines the root `App` component of the application |
+| [`site.config.json`](/documentation/references/site-files.md#siteconfigjson) | Site specific configuration |
 
 ### 📄 Routing Files
 
@@ -79,7 +79,7 @@ Those are core files in the default site structure, they have to be handled with
 | [`layout.tsx`](/documentation/references/site-files.md#layouttsx) | Layout component |
 | [`error.tsx`](/documentation/references/site-files.md#errortsx) | Error component |
 | [`loader.tsx`](/documentation/references/site-files.md#loadertsx) | Loading component |
-| [`router.tsx`](/documentation/references/site-files.md#routertsx) | Defines router settings |
+| [`router.tsx`](/documentation/references/site-files.md#routertsx) | Defines routes, and routing settings settings |
 
 <br/>
 

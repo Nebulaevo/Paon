@@ -19,3 +19,6 @@ Paths for our applications are defined in an array.
 
 ## Error Boundary Options
 
+## Providing Page Components with Props
+
+If a Page component needs props, it should define a `propsFetcher`, and 

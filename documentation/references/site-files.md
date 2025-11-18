@@ -6,33 +6,36 @@
 
 ## `entry-client.tsx`
 
-Script executed on the client triggering the client side rendering or the hydration of the app.
+Script performing the rendering, or hydration of the app on the client side.
 
-⚙️ The rendering mode is included in the html document in a `<meta>` called `"rendering-mode"`, its content is either `"CSR"` or `"SSR"`.
+⚙️ The rendering mode is injected in a `"rendering-mode"` meta tag when generating the HTML document and is either `"CSR"` or `"SSR"`.
 
 ## `entry-server.tsx`
 
-It exports a `render( requestData )` function used to render the component tree on the server.
+It exports a `render( requestData )` function performing the server side rendering of the application.
 
 This function is called with [`requestData`](/documentation/references/data-structures.md#requestdata) as argument.
 
 ## `index.html`
 
-HTML document used both as an entry point for bundling, 
-and a base structure from which to extract content of body and head fragments.
+HTML document used as the entry point to render the application (client & server side).
 
-Can be used to set static elements, in `<head>` or `<body>` (do not remove the default content of `<body>`).
+ℹ️ Any modifications to the content of the `head` or `body` sections will affect all generated pages for that website
 
-ℹ️ For SSR, we replace the `<!--app-html-->` placeholder in `<body>` by the rendered React app :
+ℹ️ Do not remove or modify the "root" tag in `body`, or Paon won't be able to insert the app :
 ```html
 <div id="root"><!--app-html--></div>
+```
+
+ℹ️ Make sure to always execute the "entry-client.tsx" script at the end of body to performe client side setup of the app :
+```html
 <script type="module" src="./entry-client.tsx"></script>
 ```
 
 ## `app.tsx`
 
 Defines the root `<App>` component of the React app.\
-It imports global ressources and sets up the [Router](/documentation/ressources/router.md).
+setting up the [Router](/documentation/ressources/router.md), the default site structure and importing global CSS
 
 ## `app.scss`
 
@@ -46,7 +49,7 @@ Configurations for this site, see [site config file](/documentation/references/c
 
 Component rendering the application frame, surrounding the Routes component.
 
-ℹ️ The Layout component must accept and render its children, as it is responsible for rendering the Routes component.
+ℹ️ The Layout component must accept a children prop and render it (as it's responsible for rendering the Routes component).
 
 ## `error.tsx`
 
@@ -61,7 +64,10 @@ Component to be displayed on navigation loading
 
 ## `router.tsx`
 
-File defining all the Router settings that are imported by the root `app.tsx` file to build the client side router.
+File defining all the Router settings.
+(imported in `app.tsx` file to setup the router component.)
+
+see [Router](/documentation/ressources/router.md) for more details.
 
 ### pages
 
@@ -71,7 +77,7 @@ Defines the paths available for the application
 
 ### loader options
 
-Defines the behaviour of the loader component
+Defines the loading behaviour on navigation
 
 
 
