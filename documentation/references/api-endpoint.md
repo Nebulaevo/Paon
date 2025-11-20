@@ -1,4 +1,4 @@
-[**🕮 Table of contents**](/Readme.md)
+[🕮 Table of contents](/Readme.md#documentation)
 
 ### 🦚 References : 
 
@@ -61,6 +61,8 @@ It's a key/value pair object with 2 keys:
     }
 }
 ```
+
+⚠️ All means of getting props for a page component should return the same data : [read more](/documentation/references/conventions-and-expected-structure.md#all-means-of-providing-page-props-should-be-cohenrent)
 
 #### `context.meta` : Rendering Page Specific Head Tags
 

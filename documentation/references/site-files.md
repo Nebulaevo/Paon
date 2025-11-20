@@ -1,4 +1,4 @@
-[**🕮 Table of contents**](/Readme.md)
+[🕮 Table of contents](/Readme.md#documentation)
 
 ### 🦚 References : 
 
@@ -35,7 +35,7 @@ HTML document used as the entry point to render the application (client & server
 ## `app.tsx`
 
 Defines the root `<App>` component of the React app.\
-setting up the [Router](/documentation/ressources/router.md), the default site structure and importing global CSS
+setting up the [Router](/documentation/ressources/routing.md), the default site structure and importing global CSS
 
 ## `app.scss`
 
@@ -67,7 +67,7 @@ Component to be displayed on navigation loading
 File defining all the Router settings.
 (imported in `app.tsx` file to setup the router component.)
 
-see [Router](/documentation/ressources/router.md) for more details.
+see [Router](/documentation/ressources/routing.md) for more details.
 
 ### pages
 

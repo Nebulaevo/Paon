@@ -1,4 +1,4 @@
-[🕮 Table of contents](/Readme.md)
+[🕮 Table of contents](/Readme.md#documentation)
 
 ### 🦚 Getting Started: 
 
@@ -53,7 +53,7 @@ The site folder is scaffolded in `src/sites/` when we run the `add:site` command
 
 | Folders | Description |
 | :- | :- |
-| `api/` | Fetching functions |
+| `api/` | API Fetching functions |
 | `assets/` | Static assets |
 | `components/` | React Components |
 | `hooks/` | React Hooks |

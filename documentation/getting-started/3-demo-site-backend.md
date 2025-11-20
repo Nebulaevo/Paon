@@ -1,4 +1,4 @@
-[🕮 Table of contents](/Readme.md)
+[🕮 Table of contents](/Readme.md#documentation)
 
 ### 🦚 Getting Started: 
 
@@ -7,7 +7,7 @@
 
 We are going to see how to interact with the Paon server from a backend application.
 
-For demonstration purposes, we are gonna build a simple backend that serves the demo site UI scaffolded when we created the `martin-music` site in the [installation & setup guide](/documentation/getting-started/1-setup.md).
+For demonstration purposes, we are going to build a simple backend that serves the demo site UI scaffolded when we created the `martin-music` site in the [installation & setup guide](/documentation/getting-started/1-setup.md).
 
 ## Sending a Requests to the Paon Server
 
@@ -20,59 +20,14 @@ npm run server:dev
 
 By default, it will start a Paon server listening on `localhost:3000` (can be modified in [server config](/documentation/references/config-files.md#server-config)) 
 
-### Site Endpoints
+### API Endpoints
 
-To request a page of the `martin-music` webiste from Paon, we need to send a request to the site's dedicated rendering endpoint (`/SITE_NAME/`) :
+📄 Read [API endpoints documentation](/documentation/references/api-endpoint.md)
 
+As the name given to our current site was `martin-music`, the endpoints will be at :
 ```
 http://localhost:3000/martin-music/
 ```
-
-ℹ️ The endpoint will return a `404`, if the given site name is not one of the registered sites.
-
-The response for any page request is a JSON object with two keys:
-- `head` (string) : HTML document fragment that should be inserted in the document's head
-- `body` (string) : HTML document fragment that should be inserted in the document's body
- 
-
-
-#### Request the app's shell (CSR)
-
-```
-GET http://localhost:3000/martin-music/
-```
-
-By sending a `GET` request to the endpoint, we can get the app shell of the website.\
-That app shell can be returned for any page, and will automaticallly render the according page client side.
-
-The app shell can also be used to render error pages by including an `error-status` meta (see [error status meta tag](/documentation/references/special-meta-tags.md#error-status))
-
-#### Render a Page for Given Context and URL (SSR)
-
-```
-POST http://localhost:3000/martin-music/
-```
-
-```json
-// Post data example
-{ 
-    // url that should be rendered
-    "url": "/", 
-    // props that will be given to the page component
-    "context": {
-        "user": "john",
-        "age": 34
-    }
-}
-```
-To request a server side rendered page, we need to send a `POST` request and provide as POST data a json object with two keys :
-- `url` (string) : the url we want to render
-- `context` (JSON object) : the props that will be provided to the page component.
-
-
-⚠️ Page components that expects props can get them from 2 different sources. Either they are passed as SSR context, or provided by a `propsFetcher` request to an API endpoint.\
-It's important that both methods return the same props, otherwise it can lead to inconsistent pages :\
-A page initially rendered with SSR (getting props from SSR context) would be different from same page at the same URL, after client side navigation (rendered client side, and fetching its props).
 
 ## Serve the Demo Site Through a Backend App 
 
@@ -111,11 +66,11 @@ And providing the following post data :
 }
 ```
 
-Then insert the given head and body fragments in the corresponding sections in a HTML document and return the page.
+Then insert the head and body fragments received in the corresponding sections in a HTML document and return the page.
 
 #### Hello Page Route : `/hello/:name/`
 
-The hello page, is going to be rendered client side.\
+The hello page is going to be rendered client side.\
 We can get the app shell by sending this request :
 ```
 GET http://localhost:3000/martin-music/
@@ -130,8 +85,7 @@ As our home page component expects props, it registers a `propsFetcher` function
 This function is attempting to fetch the props from an API endpoint at:
 - `/api/`
 
-So we need to add an `/api/` endpoint in our backend, that returns the props for our home page component (the value returned should be the same value as the one given to the home page component as context when doing SSR) :
-
+So we need to add an `/api/` endpoint in our backend, that returns the props for our home page component.
 ```json
 {
     "url" : "/",
@@ -142,22 +96,32 @@ So we need to add an `/api/` endpoint in our backend, that returns the props for
 }
 ```
 
+The value returned should be the same value as the one given to the home page component as context when doing SSR (see [page props coherence](/documentation/references/conventions-and-expected-structure.md#all-means-of-providing-page-props-should-be-cohenrent))
+
+
 ### Proxy Asset & Dev Server Requests
 
-In `production` mode, the Paon server doesn't serve static assets.
+In `production` mode, the Paon server doesn't serve static assets (see [serving static assets in production](/documentation/references/production.md#serving-static-assets)).
 
 But for convenience reasons, it does serve them in `dev` or `preview` modes.
 
-For that reason, in dev mode, the backend server should accept requests :
-- starting with `/assets/`
-- starting with `/src/`
-- starting with `/node_modules/`
-- `/@react-refresh` (exact match)
+For that reason, in dev mode, the backend server should accept all requests :
+- Starting with `/assets/`\
+*\* used by PREVIEW server to fetch assets*
+
+- Starting with `/src/`\
+*\* used by DEV server to fetch assets*
+
+- Starting with `/node_modules/`\
+*\* used by DEV server to fetch dependencies*
+
+- `/@react-refresh` (exact match)\
+*\* used by DEV server for hot module reload*
 
 and simply forward them to the Paon server and return its response.
 
 Example :\
-If we receive a request for `/src/assets/js/script.ts`
+If our backend app receive a request for `/src/assets/js/script.ts`
 we should forward the request to `http://localhost:3000/src/js/script.ts` and return the response.
 
 
@@ -165,18 +129,20 @@ we should forward the request to `http://localhost:3000/src/js/script.ts` and re
 
 If everything is set up correctly, the basic demo site should work.
 
-There are some tests you can do to insure everything is working as expected :
+There are some tests you can do to ensure everything is working as expected :
 
 1. Check that home page (`/`) is rendered server side on initial load, and that the props received by the page are the ones provided when sending the SSR request (you can display received props by clicking the "show props" button on the home page).
 
-2. Check if client side navigation to home page (`/`) page works, and uses the props provided by the API (`/api/`)
+2. Check that filling the input and clicking on the arrow triggeres a client side navigation to the hello page for the given name.
 
-3. Check that hello page (`/hello/you/`) is rendered client side on initial load, and that the dynamic part of the path works.
+3. Check if client side navigation back to home page (`/`) page works, and uses the props provided by the API endpoint at `/api/`.
 
-4. Check that filling the input and clicking on the arrow triggeres a client side navigation to the hello page for the given name.
+4. Check that the hello page (`/hello/you/`) is rendered client side on initial load, and that the dynamic part of the path works.
 
+5. Check the hot module reload by modify the component at:\
+`/src/sites/martin-music/pages/hello/component.tsx`.
 
 <br/>
 
-| [⬅️ Project Structure](/documentation/getting-started/2-structure.md) |  |
+| [⬅️ Project Structure](/documentation/getting-started/2-structure.md) | [Table of contents ➡️](/Readme.md) |
 | :--- | ----: |

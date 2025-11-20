@@ -1,4 +1,4 @@
-[**🕮 Table of contents**](/Readme.md)
+[🕮 Table of contents](/Readme.md#documentation)
 
 ### 🦚 Getting Started: 
 
@@ -45,5 +45,5 @@ See [rules about website names](/documentation/references/cli.md#add-a-site) for
 <br/><br/>
 
 
-| [🕮 Table of contents](/Readme.md) | [Project Structure ➡️](/documentation/getting-started/2-structure.md) |
+| [🕮 Table of contents](/Readme.md#documentation) | [Project Structure ➡️](/documentation/getting-started/2-structure.md) |
 | :--- | ----: |

@@ -1,30 +1,29 @@
-🏗️ README IN CONSTRUCTION PLEASE DON'T JUDGE 🔧
+🏗️ v0.10 - Current version is a proof of concept that still needs to be refined.
 
 # 🦚 Paon Template Server
-**Template engine using a dedicated JS envionnement to develop, optimise, host and provide an endpoint to render your website's UI on demand**
+**A React.js Template Processor**
 
-- ⚛️ Pre-configured for React + Typescript
+- ⚛️ Build frontends with React + Typescript
 - 🏗️ API endpoints for SSR or CSR rendering, per request
 - 🧩 Developed as a plug and play, framework agnostic solution to handle your frontend
-- 🌌 Handle multiple sites from the same service
+- 🌌 Monorepo structure handling multiple sites from the same service
 - ⚡ Asset optimisation & bundling with Vite
-- 🔧 Command Line Interface to manage sites and start server
-
-*The Paon Template Server is based on the [bluwy/create-vite-extra : template-ssr-react-ts ](https://github.com/bluwy/create-vite-extra/tree/master/template-ssr-react-ts)*
+- 🔧 Command Line Interface to manage sites and server
 
 
 ## What is Paon ?
 
-At its core, Paon is a server that we can query to get the HTML code for a page.\
+Paon is a solution for handling multiple sites frontend logic, to achieve that it:
+- Provides tools for developement (dev server, hot module reload...)
+- Bundles and optimises your code for production.
+- Provides a server exposing an API endpoint allowing to request the app shell of a website for client side rendering, or to render a page server side with a provided context
+
 It has been developed to play the role of a template engine in a classic MVC architecture.
 
-To achieve that it provides :
-- a dedicated Node.js environnement to develop frontends with React and TypeScript
-- assets optimisation & bundling
-- a server exposing an API endpoint allowing to request the app shell of a website for client side rendering, or to render a page server side with a provided context
+*Example production structure graph*
+![diagram](/documentation/img/Paon%20Infrastructure.png)
 
 ## Why use it ?
-
 Paon is built primarily to decouple the frontend UI generation from the request handling cycle.
 
 If you would rather use a non-JavaScript backend to handle the requests, database connections, caching...\
@@ -33,15 +32,13 @@ Paon is made for you.
 
 
 
-## Table of contents
+## Documentation
 
 ### Getting started
 
 1. [Installation & setup](/documentation/getting-started/1-setup.md)
 2. [Project structure](/documentation/getting-started/2-structure.md) 
 3. [Build a basic backend for the demo site](/documentation/getting-started/3-demo-site-backend.md) 
-4. [... ]()
-5. [... ]()
 
 ### References
 
@@ -50,11 +47,12 @@ Paon is made for you.
 - [JSON config files](/documentation/references/config-files.md)
 - [API endpoints specifications](/documentation/references/api-endpoint.md)
 - [Special meta tags](/documentation/references/special-meta-tags.md)
+- [Conventions and expected structure](/documentation/references/conventions-and-expected-structure.md)
 - [In production](/documentation/references/production.md)
 
 ### Ressources
 
-- [Router](/documentation/ressources/router.md)
+- [Routing](/documentation/ressources/router.md)
 - [Extended URLs](/documentation/ressources/extended-urls.md)
 - [Json data fetching](/documentation/ressources/fetch-json-data.md)
 - [Handling loading state with `<LoadingStateProvider>`](/documentation/ressources/loading-context.md)
