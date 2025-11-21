@@ -52,7 +52,7 @@ Paon is made for you.
 
 ### Ressources
 
-- [Routing](/documentation/ressources/router.md)
+- [Routing](/documentation/ressources/routing.md)
 - [Extended URLs](/documentation/ressources/extended-urls.md)
 - [Json data fetching](/documentation/ressources/fetch-json-data.md)
 - [Handling loading state with `<LoadingStateProvider>`](/documentation/ressources/loading-context.md)

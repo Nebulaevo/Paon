@@ -4,9 +4,9 @@
 
 # API endpoints
 
-The Paon server defines 2 endopoints for each registered site :
-- one for Client Side Rendering
-- one for Server Side Rendering
+The Paon server defines 2 endpoints for each registered site :
+- `GET /site-name/` for Client Side Rendering
+- `POST /site-name/` for Server Side Rendering
 
 ℹ️ We will assume that the Paon server runs on the same server, on localhost, and listens on port 3000.
 
@@ -44,11 +44,11 @@ POST http://localhost:3000/my-site-name/
 By sending a **POST** request to `/my-site-name/` we get the HTML fragments of a page, rendered with the context provided in the POST data.
 
 
-### SSR POST Data Format
+### SSR POST Data : Format
 
-It's a key/value pair object with 2 keys:
+It's a key-value pair object with 2 keys:
 - `url` : the url of the page we want to render
-- `context` : a key/value pair object that will be provided to the page component as props.
+- `context` : a key-value pair object that will be provided to the page component as props.
 
 ```JSON5
 { // POST Data for SSR page request
@@ -62,17 +62,16 @@ It's a key/value pair object with 2 keys:
 }
 ```
 
-⚠️ All means of getting props for a page component should return the same data : [read more](/documentation/references/conventions-and-expected-structure.md#all-means-of-providing-page-props-should-be-cohenrent)
+⚠️ All means of getting props for a page component should return the same data: [read more](/documentation/references/conventions-and-expected-structure.md#all-means-of-providing-page-props-should-be-cohenrent)
 
-#### `context.meta` : Rendering Page Specific Head Tags
+### SSR POST Data : Special `context.meta` Key
+
+📄 See : [provide page metas through props](/documentation/references/conventions-and-expected-structure.md#provide-page-metas-through-props).
 
 It is possible to include page specific head tags in the rendered head fragment, thanks to the special `"meta"` key in the context object.
 
 The `"meta"` key is expected to contain an array of [head tag specifications](/documentation/ressources/meta-hat.md#tags-specifications).\
 ⚙️ Under the hood we will use it as a prop and render a [`<MetaHat/>`](/documentation/ressources/meta-hat.md) component.
-
-**For coherence reasons :** Make also sure that the Page component uses the same `"meta"` prop to render a `<MetaHat/>` component at the page component root : see [MetaHat : get head tags from page props](/documentation/ressources/meta-hat.md#get-head-tags-from-page-props--propsmeta)
-
 
 SSR POST Data Example :
 ```JSON5

@@ -14,7 +14,7 @@ Script performing the rendering, or hydration of the app on the client side.
 
 It exports a `render( requestData )` function performing the server side rendering of the application.
 
-This function is called with [`requestData`](/documentation/references/data-structures.md#requestdata) as argument.
+This function is called with a [`requestData`](/documentation/references/data-structures.md#requestdata) type argument.
 
 ## `index.html`
 
@@ -22,7 +22,7 @@ HTML document used as the entry point to render the application (client & server
 
 ℹ️ Any modifications to the content of the `head` or `body` sections will affect all generated pages for that website
 
-ℹ️ Do not remove or modify the "root" tag in `body`, or Paon won't be able to insert the app :
+ℹ️ Do not remove or modify the "root" tag in `body` (including the placeholder comment), or Paon won't be able to insert the app :
 ```html
 <div id="root"><!--app-html--></div>
 ```
@@ -64,24 +64,19 @@ Component to be displayed on navigation loading
 
 ## `router.tsx`
 
-File defining all the Router settings.
+File defining all the Router settings.\
 (imported in `app.tsx` file to setup the router component.)
 
-see [Router](/documentation/ressources/routing.md) for more details.
+see [Router documentation](/documentation/ressources/routing.md) for more details.
 
 ### pages
 
 Defines the paths available for the application
 
-
-
-### loader options
+### loaderOptions
 
 Defines the loading behaviour on navigation
 
+### errorBoundaryOptions
 
-
-### error boundary options
-
-Defines the props used to set up the error boundaries around the Page components.\
-(see [error handling ressources](/documentation/ressources/error-handling.md) for more information.)
+Defines the props used to set up the error boundaries around the Page components.

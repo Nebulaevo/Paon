@@ -23,3 +23,35 @@ A page initially rendered with SSR (getting props from SSR context) would be dif
 
 The `propsFetcher` function provided for a route is in charge of fetching the page props from an API for the current Page Component.
 
+## Provide Page Metas Through Props
+
+⚠️ This is the only way to include metas in both the SSR and CSR versions of your page.
+
+To provide page metas (title, meta, link, json-ld) through props, you should :
+
+1. Use the [reserved `meta` prop](/documentation/references/api-endpoint.md#ssr-post-data--special-contextmeta-key) to provide the tags.\
+*\* Allows for metas to automatically be added to the head fragment when performing SSR (renders a `<MetaHat>` component)*
+
+2. The tags should be provided as an array of [head tag specifications](/documentation/ressources/meta-hat.md#tags-specifications).\
+*\* Allows for metas to automatically be added to the head fragment when performing SSR (renders a `<MetaHat>` component)*
+
+3. The page component should render a [`<MetaHat>`](/documentation/ressources/meta-hat.md) component at its root.\
+*\* It ensure coherence by rendering the same metas client side*
+
+Here is an example page component
+```jsx
+import MetaHat from '@core:components/meta-hat/v1/component'
+
+function MyPage( props ) {
+    ...
+
+    // gets headTags prop from props.meta
+    // and renders a MetaHat tag at the root level of the component
+    return <>
+        <MetaHat headTags={props.meta} />
+        
+        ...
+    
+    </>
+}
+```
