@@ -10,7 +10,7 @@ import Error from "./error.tsx"
  * 
  * Remark:
  * there should be only one instance of import function
- * per path, and they should all be declarred here.
+ * per component, and they should all be declarred here.
 */
 const lazyLoaders = {
     Hello: () => import('./pages/hello/page.tsx')
