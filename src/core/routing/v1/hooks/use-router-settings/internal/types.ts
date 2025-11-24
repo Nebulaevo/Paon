@@ -59,15 +59,16 @@ type suspenseFallbackLoaderOpts_T = {
 }
 
 type pagePreFetchLoaderOpts_T = {
-    deactivate: boolean,
+    displayLoader: boolean,
+    hidePageOnLoad: boolean,
     timeoutMs: number,
 }
 
 /** Loading behavior settings for the router */
 type loaderOptions_T = {
     Loader: React.ComponentType<{}>,
-    suspenseFallbackLoaderOpts: suspenseFallbackLoaderOpts_T,
-    pagePreFetchLoaderOpts: pagePreFetchLoaderOpts_T
+    suspenseFallbackOpts: suspenseFallbackLoaderOpts_T,
+    pagePreFetchOpts: pagePreFetchLoaderOpts_T
 }
 
 // REMARK:
@@ -75,8 +76,8 @@ type loaderOptions_T = {
 // would not make sub-dictionary partial.
 type partialLoaderOptions_T = {
     Loader?: loaderOptions_T['Loader'],
-    suspenseFallbackLoaderOpts?: Partial<loaderOptions_T['suspenseFallbackLoaderOpts']>,
-    pagePreFetchLoaderOpts?: Partial<loaderOptions_T['pagePreFetchLoaderOpts']>
+    suspenseFallbackOpts?: Partial<loaderOptions_T['suspenseFallbackOpts']>,
+    pagePreFetchOpts?: Partial<loaderOptions_T['pagePreFetchOpts']>
 }
 
 /** Error boundary behaviour settings for the routes */

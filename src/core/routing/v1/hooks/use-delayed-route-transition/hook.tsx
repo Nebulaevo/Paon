@@ -91,7 +91,7 @@ const useDelayedRouteTransition: BaseLocationHook = (opts: useBrowserLocationOpt
                 if (navigationTarget.is(targetUrl)) {
                     activateLoading()
                 }
-            }, loaderOptions.pagePreFetchLoaderOpts.timeoutMs)
+            }, loaderOptions.pagePreFetchOpts.timeoutMs)
 
             navigationTarget.set(targetUrl)
 

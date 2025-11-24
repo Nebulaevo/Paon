@@ -11,11 +11,12 @@ import type {
 function getDefaultLoaderOptions(): loaderOptions_T {
     return {
         Loader: () => 'Loading', 
-        suspenseFallbackLoaderOpts: {
+        suspenseFallbackOpts: {
             deactivate: false
         },
-        pagePreFetchLoaderOpts: {
-            deactivate: false,
+        pagePreFetchOpts: {
+            displayLoader: true,
+            hidePageOnLoad: true,
             timeoutMs: 500, // 500 ms
         }
     }
@@ -31,19 +32,19 @@ function formatLoaderOptions( partialOptions:RouterSettingsProviderProps_T['load
     const defaultOptions = getDefaultLoaderOptions()
     
     const Loader = partialOptions?.Loader ?? defaultOptions.Loader
-    const suspenseFallbackLoaderOpts = {
-        ...defaultOptions.suspenseFallbackLoaderOpts, 
-        ...partialOptions?.suspenseFallbackLoaderOpts
+    const suspenseFallbackOpts = {
+        ...defaultOptions.suspenseFallbackOpts, 
+        ...partialOptions?.suspenseFallbackOpts
     }
-    const pagePreFetchLoaderOpts = {
-        ...defaultOptions.pagePreFetchLoaderOpts, 
-        ...partialOptions?.pagePreFetchLoaderOpts
+    const pagePreFetchOpts = {
+        ...defaultOptions.pagePreFetchOpts, 
+        ...partialOptions?.pagePreFetchOpts
     }
     
     return {
         Loader, 
-        suspenseFallbackLoaderOpts, 
-        pagePreFetchLoaderOpts
+        suspenseFallbackOpts, 
+        pagePreFetchOpts
     }
 }
 

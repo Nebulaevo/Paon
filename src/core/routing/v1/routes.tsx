@@ -1,3 +1,4 @@
+import { Fragment } from "react"
 import { Route as WouterRoute, Switch } from "wouter"
 
 import ThrowError from "@core:components/throw-error/v1/component"
@@ -53,8 +54,13 @@ function Routes() {
         errorBoundaryOptions 
     } = useRouterSettings()
     
+    const OptionalLoader = 
+    loaderOptions.pagePreFetchOpts.displayLoader
+        ? SynchronizedLoader
+        : Fragment
+
     return <>
-        <SynchronizedLoader/>
+        <OptionalLoader/>
         <Switch>
             {pages.map(pageData => {
                 return _getRoute({

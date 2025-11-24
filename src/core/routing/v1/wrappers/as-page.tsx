@@ -29,7 +29,7 @@ type asSuspendedPageKwargs_T = {
 function _asSuspendedComponent(kwargs:asSuspendedPageKwargs_T) {
     const { Component, loaderOptions } = kwargs
 
-    const FallbackLoader = loaderOptions.suspenseFallbackLoaderOpts.deactivate
+    const FallbackLoader = loaderOptions.suspenseFallbackOpts.deactivate
         ? Fragment
         : loaderOptions.Loader
     
@@ -84,10 +84,10 @@ function asPage( kwargs:asPageKwargs_T ) {
         loaderOptions,
     })
     
-    // only "hide on load" if page prefetch loader is activated
-    const OptionalHideOnLoad = loaderOptions.pagePreFetchLoaderOpts.deactivate
-        ? Fragment
-        : HideOnLoading
+    const OptionalHideOnLoad = 
+        loaderOptions.pagePreFetchOpts.hidePageOnLoad
+            ? HideOnLoading
+            : Fragment
 
     const Page = () => {
         return <OptionalHideOnLoad>

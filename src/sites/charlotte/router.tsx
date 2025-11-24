@@ -47,7 +47,7 @@ const errorBoundaryOptions: RouterProps_T['errorBoundaryOptions'] = {
 /** Settings defining route transition loading behaviour */
 const loaderOptions: RouterProps_T['loaderOptions'] = {
     Loader: Loader,
-    pagePreFetchLoaderOpts: {
+    pagePreFetchOpts: {
         timeoutMs: 500
     }
 }
