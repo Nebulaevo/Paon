@@ -21,7 +21,7 @@ A page initially rendered with SSR (getting props from SSR context) would be dif
 
 ## propsFetcher Function
 
-The `propsFetcher` function provided for a route is in charge of fetching the page props from an API for the current Page Component.
+Any page component accepting props should define a `propsFetcher` function that will be in charge of fetching the component props from an API endpoint.
 
 ## Provide Page Metas Through Props
 
