@@ -1,15 +1,21 @@
 
 # Todo
 
+
 ## Restrict the access to the server with simple tokens
 
 Currently there are no systems in place to filter traffic, making it risky to expose the server.
 There should be at least a API token kind of auth mechanism preventing anyone from triggering a page render.
 
-## Fetch Json Util - No Cache
+## Fetch Json Util - No Cache
 
 Allow the cache (get / set) to be bypassed if the function has maxAge of 0.
 
+## Add regex path support to Custom Router
+
+Regex paths are a good way to solve compatibility issues between backend side routing and frontend.
+
+Otherwise they can have small differences in the way they define paths.
 
 ## Dev server Site ressources
 
@@ -119,3 +125,8 @@ This means that dynamic url params are not accessible outside of the `Route` com
 Align behaviour of safe json parsing everywhere.
 
 currently server is set to 'remove' and fetchJsonData is set to 'error'. We might want to choose a side and stick to it ('remove' ?)
+
+## Coherence on var ending with Options / Opts: 
+
+rename all var ending with "Options" to end with "Opts" for coherence reasons.
+
