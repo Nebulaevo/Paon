@@ -40,9 +40,9 @@ function NavBar() {
         <div className='hello-link-container'>
             <label htmlFor='name-input'>Let's say hello to ...</label>
             <div className="input-container">
-                <input value={value} onChange={handleChange} placeholder="Name" id='name-input'/>
+                <input value={value} onChange={handleChange} placeholder="Name" id='name-input' autoComplete="off"/>
                 <RelativeLink 
-                    href={ helloUrl } 
+                    href={ helloUrl }
                     className="paon-primary-btn"
                 >🡒</RelativeLink>
             </div>
