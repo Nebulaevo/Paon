@@ -16,7 +16,6 @@ function NavBar() {
             // ignores '/' & '\' for compatibility with WSGI/ASGI server
             // (WSGI/ASGI server uses a decoded URL)
             const escapedValue = ev.target.value
-                .trim()
                 .replace(/[\\\/]/g, '')
 
             setValue(escapedValue)
