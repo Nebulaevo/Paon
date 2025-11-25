@@ -10,7 +10,7 @@ import type {
 /** Returns default loading options (to be combined with the partial settings provided) */
 function getDefaultLoaderOptions(): loaderOptions_T {
     return {
-        Loader: () => 'Loading', 
+        Loader: () => <p>Loading</p>, 
         suspenseFallbackOpts: {
             deactivate: false
         },

@@ -2,7 +2,7 @@ import React, {JSX} from "react"
 
 import DefaultErrorFallback from './internal/default-error-fallback'
 
-type ErrorFallbackComp_T = (props?:{ error:unknown }) => JSX.Element
+type ErrorFallbackComp_T = (props: { error:unknown }) => JSX.Element
 type errorHandlingFunc_T = (error:unknown, errorInfo:React.ErrorInfo) => any
 
 type ErrorBoundaryProps_T = {

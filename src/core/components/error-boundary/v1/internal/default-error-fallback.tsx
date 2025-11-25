@@ -3,8 +3,7 @@ import { ErrorStatus } from '@core:utils/error-status/v1/utils'
 
 
 /** Default Error Fallback component */
-const DefaultErrorFallback: ErrorFallbackComp_T = (props) => {
-    const { error } = props ?? {}
+const DefaultErrorFallback: ErrorFallbackComp_T = ({ error }) => {
     let title: string = 'Oops'
     let message: string = 'Something went wrong..'
 
