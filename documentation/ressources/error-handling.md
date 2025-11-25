@@ -40,20 +40,20 @@ function ParentComponent( props ) {
 }
 ```
 
-### The `Fallback` Component
+### Prop: `Fallback`
 
 Component to be displayed when the error boundary is triggered.
 
-Must accept an `"error"` prop that will receive the thrown error.
+It can accept an `"error"` prop that will receive the thrown error.
 
 ```jsx
-
 function ErrorUI({ error }) {
-    return "Oops... Something went wrong !"
+    console.error(error)
+    return <div>"Oops... Something went wrong !"</div>
 }
 ```
 
-### `errorHandlingFunc` (Optionnal)
+### Prop: `errorHandlingFunc` (Optionnal)
 
 Function called when an error is thrown.
 

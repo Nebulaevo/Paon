@@ -55,3 +55,75 @@ function MyPage( props ) {
     </>
 }
 ```
+
+## Errors
+
+To raise an error with a "meaning" we use [`ErrorStatus`](/documentation/ressources/error-handling.md#errorstatus-class).
+
+Example:
+```js
+throw new ErrorStatus('404')
+throw new ErrorStatus('OPERATION_FAILED')
+...
+```
+
+This simplifies error handling in the error boundary fallback component by having a set amount of error "categories" :
+- `"400"`
+- `"401"`
+- `"403"`
+- `"404"`
+- `"500"`
+- `"OPERATION_FAILED"`
+- ...
+
+which can be handled in the error fallback as :
+
+```js
+import { ErrorStatus } from '@core:utils/error-status/v1/utils'
+
+function ErrorFallback({error}) {
+    let title = 'Oops'
+    let message = 'Something went wrong..'
+
+    if (error instanceof ErrorStatus) {
+        switch (error.status) {
+            case '500':
+                title = '500'
+                message = 'Server Error'
+                break
+
+            case '404':
+                title = '404'
+                message = 'Not Found'
+                break
+            
+            case '403':
+                title = '403'
+                message = 'Forbidden'
+                break
+
+            case '401':
+                title = '401'
+                message = 'Unauthorized'
+                break
+            
+            case '400':
+                title = '400'
+                message = 'Bad Request'
+                break
+            
+            case 'OPERATION_FAILED':
+                title = 'Oops'
+                message = 'Operation Failed'
+                break
+        }
+    }
+
+    return <div>
+        <h1>{ title }</h1>
+        <p>{ message }</p>
+    </div>
+}
+```
+
+⚠️ Error thrown outside of page components will not be captured by the error boundary (in the root layout for example)
