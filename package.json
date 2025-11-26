@@ -27,6 +27,7 @@
         "parse5": "^8.0.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+        "secure-json-parse": "^4.1.0",
         "serialize-javascript": "^6.0.2",
         "sniffly": "^1.0.2",
         "url-toolbox": "^1.0.2",
