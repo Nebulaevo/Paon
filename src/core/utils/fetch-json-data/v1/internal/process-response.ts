@@ -2,7 +2,7 @@ import { parse as secureJsonParse } from 'secure-json-parse'
 
 import type { validatorFunc_T } from './types'
 
-/** Helper runing each validation function with the current data 
+/** Helper running each validation function with the current data 
  * and thowing a TypeError if one of them returns `false`
 */
 function _runValidators(data:unknown, dataValidators: validatorFunc_T[]) {
@@ -14,9 +14,9 @@ function _runValidators(data:unknown, dataValidators: validatorFunc_T[]) {
     }
 }
 
-/** Helper converting the response body into json with `secure-json-parse.parse` 
+/** Converting the response body into json with `secure-json-parse.parse` 
  * 
- * (it will throw an error if json data is judged un-safe (proto or constructor poisoning) )
+ * (it will remove any proto or constructor poisoning attempts from the resulting object)
  * 
  * (makes sure not to consume the original response's body stream)
 */
@@ -43,7 +43,7 @@ async function _secureParseJsonResponse(response: Response) {
 /** Helper converting Response body into json in a safe way, before running optionnal validators on the data 
  * 
  * @throws
- * - will raise an error if json parsing finds attempts at proto or constructor poisoning
+ * - will raise an error if json parsing fails (invalid json string)
  * - will raise an error if one of the optionnally provided validators returns `false`
 */
 async function processReponse<DataType_T>(

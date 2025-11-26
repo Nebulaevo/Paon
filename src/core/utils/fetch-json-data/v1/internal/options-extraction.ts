@@ -78,7 +78,7 @@ function extractFetchJsonOpts<DataType_T>(opts?: partialFetchJsonOpts_T<DataType
     }
 }
 
-/** Function setting up defaults and forceing values before returning the requestInit object */
+/** Function setting up defaults and forcing values before returning the requestInit object */
 function extractRequestInit(requestInit: RequestInit | undefined, abortController: AbortController) {
     if (!requestInit) requestInit = {}
 

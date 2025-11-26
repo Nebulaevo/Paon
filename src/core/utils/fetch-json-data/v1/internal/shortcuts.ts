@@ -86,7 +86,7 @@ function _cacheGetErrorCallback(err:unknown): Awaited<ReturnType<typeof caching.
 /** Shortcut performing a simple cache lookup for the given url.
  * 
  * @throws
- * - will raise an error if json parsing finds attempts at proto or constructor poisoning
+ * - will raise an error if json parsing fails (invalid json string)
  * - will raise an error if one of the optionnally provided validators returns `false`
  * (if stored data is considered invalid or unsafe the cache entry is removed)
  * 
@@ -141,7 +141,7 @@ async function simpleCacheLookup<DataType_T>(
  * - if entry is stale and over the limit, it is not returned and removed from the cache
  * 
  * @throws
- * - will raise an error if json parsing finds attempts at proto or constructor poisoning
+ * - will raise an error if json parsing fails (invalid json string)
  * - will raise an error if one of the optionnally provided validators returns `false`
  * (if stored data is considered invalid or unsafe the cache entry is removed)
  * 
@@ -206,7 +206,7 @@ async function staleWhileRevalidateCacheLookup<DataType_T>(
  * @throws
  * - can raise `fetch` related errors `ErrorStatus` and `AbortError` (all other fetching related errors 
  * are caught and stored to be re-thrown if both data access attempts fail)
- * - will raise an error if json parsing finds attempts at proto or constructor poisoning
+ * - will raise an error if json parsing fails (invalid json string)
  * - will raise an error if one of the optionnally provided validators returns `false`
  * (if stored data is considered invalid or unsafe the cache entry is removed)
  * 

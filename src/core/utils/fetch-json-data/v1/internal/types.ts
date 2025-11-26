@@ -54,7 +54,7 @@ type partialCachingOpts_T<DataType_T> =
     | partialStaleWhileRevalidateOpts_T<DataType_T>
     | partialInvalidateAndFetchOpts
 
-// FETCH X OPTS
+// FETCH JSON OPTS
 
 type fetchJsonOpts_T<DataType_T> = {
     cache: cachingOpts_T<DataType_T>

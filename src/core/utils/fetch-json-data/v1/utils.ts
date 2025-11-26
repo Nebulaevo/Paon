@@ -38,7 +38,7 @@ function _throwIfAborted(abortController: AbortController) {
  * @throws
  * - **fetch errors** : except for `ErrorStatus` and `AbortError`, all fetching related errors 
  * are caught and stored to be re-thrown if both data access attempts fail
- * - **json parsing errors** : parsing an unsafe object will throw an error
+ * - **json parsing errors** : if string is not valid json
  * - **validation errors** : if a provided validation function returns false an error will be thrown
  * 
  * @returns 
@@ -87,7 +87,7 @@ async function _primaryAccessAttempt<DataType_T>(
  * @throws
  * - **fetch errors** : except for `ErrorStatus` and `AbortError`, all fetching related errors 
  * are caught and stored to be re-thrown if both data access attempts fail
- * - **json parsing errors** : parsing an unsafe object will throw an error
+ * - **json parsing errors** : if string is not valid json
  * - **validation errors** : if a provided validation function returns false an error will be thrown
  * 
  * @returns 
@@ -128,7 +128,7 @@ async function _secondaryAccessAttempt<DataType_T>(
 
 
 /** `fetch` wrapper focused on receiving json data, including multiple features:
- * - ⚙️ Secure parsing of received json data (throws an error if data is unsafe)
+ * - ⚙️ Secure parsing of fetched JSON data (safely removes proto / constructor poisoning attempts)
  * - ⚙️ Custom data validation for every access (throws an error if data does not satisfy provided validators)
  * - ⚙️ Granular control over caching strategy per request, using the browser's Cache API.
  * - ⚙️ Custom number of retries and timeout duration per request
