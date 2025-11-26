@@ -120,12 +120,6 @@ This means that dynamic url params are not accessible outside of the `Route` com
 -> make a custom `useParams` hook using that global store or context (because context used by Wouter's version isn't exported)
 
 
-## Safe Json parsing
-
-Align behaviour of safe json parsing everywhere.
-
-currently server is set to 'remove' and fetchJsonData is set to 'error'. We might want to choose a side and stick to it ('remove' ?)
-
 ## Coherence on var ending with Options / Opts: 
 
 rename all var ending with "Options" to end with "Opts" for coherence reasons.
