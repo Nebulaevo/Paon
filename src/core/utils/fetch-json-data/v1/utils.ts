@@ -140,8 +140,9 @@ async function _secondaryAccessAttempt<DataType_T>(
  * 
  * @param opts.requestInit 
  * 'RequestInit' options object provided to built-in fetch function but 
- * excluding `signal` key because it is automatically populated from 
- * `fetchJsonOpts.abortController` set in `fetchJsonOpts`
+ * excluding `signal` key.\
+ * Signal is populated automatically, but we can provide a custom 
+ * `AbortController` in the `fetchJsonOpts`.
  * 
  * @param opts.fetchJsonOpts
  * = {
