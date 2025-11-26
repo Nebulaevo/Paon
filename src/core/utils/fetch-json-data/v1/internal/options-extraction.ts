@@ -22,7 +22,7 @@ function _extractCachingOptions<DataType_T>(cachingOpts?: partialCachingOpts_T<D
 
     // we make sure maxAgeS is not negative
     let {
-        maxAgeS = 4*60*60 // default: 4 hours
+        maxAgeS = 1*60*60 // default: 1 hours
     } = cachingOpts
     maxAgeS = isNumber(maxAgeS, {min:0}) ? maxAgeS : 0
 
@@ -34,7 +34,7 @@ function _extractCachingOptions<DataType_T>(cachingOpts?: partialCachingOpts_T<D
 
         // we make sure staleEntryMaxAgeS is not negative
         let {
-            staleEntryMaxAgeS = 2*24*60*60, // default: 2 days
+            staleEntryMaxAgeS = 1*24*60*60, // default: 1 days
         } = cachingOpts
         staleEntryMaxAgeS = isNumber(staleEntryMaxAgeS, {min:0}) 
             ? staleEntryMaxAgeS 

@@ -166,9 +166,9 @@ async function _secondaryAccessAttempt<DataType_T>(
  * >    - 'STALE_WHILE_REVALIDATE' : can return stale data (if they are under the given age threshold) and refreshes the cache in the background (custom callback can be called once data is refreshed)
  * >    - 'INVALIDATE_AND_FETCH' : invalidates the data in cache and fetches
  * 
- * > `maxAgeS` (default 4h) : for all strategies except 'INVALIDATE_AND_FETCH', it defines the maximum age acceptable before a cache entry is stale
+ * > `maxAgeS` (default 1h) : for all strategies except 'INVALIDATE_AND_FETCH', it defines the maximum age acceptable before a cache entry is stale
  * 
- * > `staleEntryMaxAgeS` (default 4h) : only for 'STALE_WHILE_REVALIDATE', it defines the maximum age acceptable for stale entries
+ * > `staleEntryMaxAgeS` (default 1 day) : only for 'STALE_WHILE_REVALIDATE', it defines the maximum age acceptable for stale entries
  * 
  * > `cacheRefreshCallback` (optionnal) : only for 'STALE_WHILE_REVALIDATE', callback called with the new data once the stale cache entry is refreshed
  *
