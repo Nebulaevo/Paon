@@ -136,7 +136,7 @@ async function _secondaryAccessAttempt<DataType_T>(
  * 
  * @param url (XUrl or RelativeUrl) target of the fetch request
  * 
- * @param opts object with 2 keys `requestInit` and `fetchJsonOpts`
+ * @param opts (optional) object with 2 keys `requestInit` and `fetchJsonOpts`
  * 
  * @param opts.requestInit 
  * 'RequestInit' options object provided to built-in fetch function but 
@@ -176,11 +176,11 @@ async function _secondaryAccessAttempt<DataType_T>(
  */
 async function fetchJsonData<DataType_T>(
     url: ExtendedUrl_T, 
-    opts: fetchJsonDataOpts_T<DataType_T>,
+    opts?: fetchJsonDataOpts_T<DataType_T>,
 ): Promise<DataType_T> {
-
-    const fetchJsonOpts = extractFetchJsonOpts<DataType_T>(opts.fetchJsonOpts)
-    const requestInit = extractRequestInit(opts.requestInit, fetchJsonOpts.abortController)
+    
+    const fetchJsonOpts = extractFetchJsonOpts<DataType_T>(opts?.fetchJsonOpts)
+    const requestInit = extractRequestInit(opts?.requestInit, fetchJsonOpts.abortController)
 
     // first attempt at retreiving the data
     // (depending on cache strategy)
