@@ -7,7 +7,7 @@
 ## Router
 
 The provided Router is an extended version of the [Wouter Router](https://github.com/molefrog/wouter), that have been modified to :
-- Preform delayed route transition (pre-loading the route and fething data before triggering the navigation)
+- Perform delayed route transition (pre-loading the route and fetching data before triggering the navigation)
 - Prevent duplicated history entries
 
 ### Router Props
@@ -29,6 +29,8 @@ Expected structure for a "page" object :
 Here's a basic example defining two routes, a lazy import function and a page props fetcher :
 ```jsx
 import { fetchJsonData } from "@core:utils/fetch-json-data/v1/utils"
+
+import HomePage from './pages/home/page.tsx'
 
 /** lazy imported components 
  * 
@@ -83,7 +85,7 @@ Defines routes loading behaviours.
 
 ℹ️ Loaders are defined in two places around the page components :
 1. At the routes level :\
-    it is displayed by the router if a navigation exceeds a given duration.
+    it is displayed by the router if the route pre-loading on navigation exceeds a given duration.
 
 2. As fallback in suspense boundaries:\
     It's a secondary loader, displayed if the page isn't ready at render time. 
@@ -121,7 +123,8 @@ see also : [loading state handling documentation](/documentation/ressources/load
 
 #### `errorBoundaryOptions` prop (optional)
 
-Error Boundary component props, read [error boundary documentation](/documentation/ressources/error-handling.md#errorboundary-component) for more informations.
+Error Boundary component props (`Fallback` and optional `errorHandlingFunc`).\
+Read [error boundary documentation](/documentation/ressources/error-handling.md#errorboundary-component) for more informations.
 
 #### `ssrProps` and `ssrPath` props (optional)
 
@@ -169,8 +172,10 @@ Wrapper around [Wouter](https://github.com/molefrog/wouter)'s Link component for
 - it forces any given URL to a relative URL
 - adds different classes depending on the link state (active, broken ...)
 
+ℹ️ Uses Extended URLs from [url-toolbox package](https://github.com/Nebulaevo/url-toolbox), read doc for more informations.
+
 It accept as props any HTML anchor tag attribute.\
-And `href` is extended to accept values of type `string`, `URL`, [`Extended_URL`](https://github.com/Nebulaevo/url-toolbox) or `undefined` (will result in a default `'/'` url).
+And `href` is extended to accept values of type `string`, `URL`, `ExtendedURL` or `undefined` (will result in a default `'/'` url).
 
 🛠️ internally, provided href is converted to a `RelativeUrl` instance.
 

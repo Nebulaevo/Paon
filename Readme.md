@@ -53,7 +53,6 @@ Paon is made for you.
 ### Ressources
 
 - [Routing](/documentation/ressources/routing.md)
-- [Extended URLs](/documentation/ressources/extended-urls.md)
 - [Json data fetching](/documentation/ressources/fetch-json-data.md)
 - [Handling loading state with `<LoadingStateProvider>`](/documentation/ressources/loading-context.md)
 - [Hanlding errors with `<ErrorBoundary>` and `ErrorStatus`](/documentation/ressources/error-handling.md)
