@@ -1,7 +1,7 @@
 🏗️ v0.10 - Current version is a proof of concept that still needs to be refined.
 
 # 🦚 Paon Template Server
-**A React.js Template Processor**
+**A Node.js Application for MVC Template Processing**
 
 - ⚛️ Build frontends with React + Typescript
 - 🏗️ API endpoints for SSR or CSR rendering, per request
