@@ -12,6 +12,10 @@ type networkFirstOpts_T = {
     maxAgeS: number,
 }
 
+type networkOnlyOpts_T = {
+    strategy: 'NETWORK_ONLY'
+}
+
 type staleWhileRevalidateOpts_T<DataType_T> = {
     strategy: 'STALE_WHILE_REVALIDATE',
     maxAgeS: number,
@@ -26,6 +30,7 @@ type invalidateAndFetchOpts_T = {
 type cachingOpts_T<DataType_T> =
     cacheFirstOpts_T 
     | networkFirstOpts_T 
+    | networkOnlyOpts_T
     | staleWhileRevalidateOpts_T<DataType_T> 
     | invalidateAndFetchOpts_T
 
@@ -44,15 +49,12 @@ type partialStaleWhileRevalidateOpts_T<DataType_T> =
     Partial<Omit<staleWhileRevalidateOpts_T<DataType_T>, 'strategy'>>
     & {strategy: 'STALE_WHILE_REVALIDATE'}
 
-type partialInvalidateAndFetchOpts = 
-    Partial<Omit<invalidateAndFetchOpts_T, 'strategy'>>
-    & {strategy: 'INVALIDATE_AND_FETCH'}
-
 type partialCachingOpts_T<DataType_T> = 
     partialCacheFirstOpts_T
     | partialNetworkFirstOpts_T
+    | networkOnlyOpts_T // (only strategy key)
     | partialStaleWhileRevalidateOpts_T<DataType_T>
-    | partialInvalidateAndFetchOpts
+    | invalidateAndFetchOpts_T // (only strategy key)
 
 // FETCH JSON OPTS
 
@@ -86,7 +88,6 @@ export type {
     partialCacheFirstOpts_T,
     partialNetworkFirstOpts_T,
     partialStaleWhileRevalidateOpts_T,
-    partialInvalidateAndFetchOpts,
     partialCachingOpts_T,
 
     fetchJsonOpts_T,

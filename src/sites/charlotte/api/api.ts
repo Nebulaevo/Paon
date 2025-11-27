@@ -15,8 +15,7 @@ async function fetchApi( _currentUrl: RelativeUrl, abortController:AbortControll
                 abortController: abortController,
                 dataValidators: [ (data: unknown) => isDict(data) ],
                 cache: {
-                    strategy: 'NETWORK_FIRST',
-                    maxAgeS: 0, // 0s
+                    strategy: 'NETWORK_ONLY',
                 }
             }
         }

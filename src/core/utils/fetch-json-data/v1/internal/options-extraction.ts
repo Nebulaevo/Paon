@@ -15,7 +15,10 @@ import type {
 function _extractCachingOptions<DataType_T>(cachingOpts?: partialCachingOpts_T<DataType_T>): cachingOpts_T<DataType_T> {
     cachingOpts = cachingOpts ?? {}
     
-    if (cachingOpts.strategy === 'INVALIDATE_AND_FETCH') {
+    if (
+        cachingOpts.strategy === 'INVALIDATE_AND_FETCH'
+        || cachingOpts.strategy === 'NETWORK_ONLY'
+    ) {
         const { strategy } = cachingOpts
         return {strategy}
     }

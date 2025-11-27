@@ -108,7 +108,9 @@ async function simpleCacheLookup<DataType_T>(
         fetchJsonOpts
     } = kwargs
 
-    if (fetchJsonOpts.cache.strategy==='INVALIDATE_AND_FETCH') {
+    // safeguard to make TS happy
+    const { strategy } = fetchJsonOpts.cache
+    if (strategy==='INVALIDATE_AND_FETCH' || strategy==='NETWORK_ONLY') {
         throw new Error('fetch json data: shortcuts functions used inproperly')
     }
 
@@ -163,6 +165,7 @@ async function staleWhileRevalidateCacheLookup<DataType_T>(
         fetchJsonOpts
     } = kwargs
 
+    // safeguard to make TS happy
     if (fetchJsonOpts.cache.strategy!=='STALE_WHILE_REVALIDATE'){
         throw new Error('fetch json data: shortcuts functions used inproperly')
     }
@@ -201,7 +204,8 @@ async function staleWhileRevalidateCacheLookup<DataType_T>(
     return {data, fetchError: undefined}
 }
 
-/** Shortcut performing a network call and caching the result.
+/** Shortcut performing a network call and caching the result.\
+ * (Ignores the cache update for `"NETWORK_ONLY"` cache strategy)
  * 
  * @throws
  * - can raise `fetch` related errors `ErrorStatus` and `AbortError` (all other fetching related errors 
@@ -276,7 +280,8 @@ async function networkCallWithCacheUpdate<DataType_T>(
         ? await processReponse<DataType_T>(response, fetchJsonOpts.dataValidators)
         : undefined
 
-    if (response) { 
+    const isNetworkOnly = fetchJsonOpts.cache.strategy==='NETWORK_ONLY'
+    if (response && !isNetworkOnly) {
         // we "fire and forget" the async task
         // updating the cache entry
         caching.set({url, response})

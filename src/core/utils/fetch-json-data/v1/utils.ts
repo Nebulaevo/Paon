@@ -71,7 +71,7 @@ async function _primaryAccessAttempt<DataType_T>(
             url, requestInit, fetchJsonOpts
         })
 
-    } else { // 'NETWORK_FIRST' or 'INVALIDATE_AND_FETCH'
+    } else { // 'NETWORK_FIRST', 'NETWORK_ONLY' or 'INVALIDATE_AND_FETCH'
         if (strategy==='INVALIDATE_AND_FETCH') {
             await caching.remove(url)
         }
@@ -110,8 +110,12 @@ async function _secondaryAccessAttempt<DataType_T>(
     
     const {strategy} = fetchJsonOpts.cache
 
-    if (strategy==='INVALIDATE_AND_FETCH'){
-        // invalidate and fetch does not have a second attempt
+    if (
+        strategy==='INVALIDATE_AND_FETCH'
+        || strategy==='NETWORK_ONLY'
+    ){
+        // 'invalidate and fetch' & 'network only' 
+        // does not have a second access actions
         return {data: undefined, fetchError: undefined}
 
     } else if (strategy==='NETWORK_FIRST') {
@@ -164,6 +168,7 @@ async function _secondaryAccessAttempt<DataType_T>(
  * > `strategy` (default: 'CACHE_FIRST') can be:
  * >    - 'CACHE_FIRST'
  * >    - 'NETWORK_FIRST'
+ * >    - 'NETWORK_ONLY' : ignores the cache completely
  * >    - 'STALE_WHILE_REVALIDATE' : can return stale data (if they are under the given age threshold) and refreshes the cache in the background (custom callback can be called once data is refreshed)
  * >    - 'INVALIDATE_AND_FETCH' : invalidates the data in cache and fetches
  * 
