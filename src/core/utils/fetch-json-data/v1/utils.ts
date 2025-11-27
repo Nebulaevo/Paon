@@ -192,7 +192,8 @@ async function fetchJsonData<DataType_T>(
     // (depending on cache strategy)
     const primaryAccessResult = await _primaryAccessAttempt<DataType_T>({url, requestInit, fetchJsonOpts})
     if (primaryAccessResult.data) {
-        // we need to manually check if an abortSignal was sent
+        // For abort signal that could be triggered from outside:
+        // -> we need to manually check if an abortSignal was sent
         // because cache lookups will not pick it up
         _throwIfAborted(fetchJsonOpts.abortController)
         return primaryAccessResult.data
@@ -202,7 +203,8 @@ async function fetchJsonData<DataType_T>(
     // (depending on cache strategy)
     const secondaryAccessResult = await _secondaryAccessAttempt<DataType_T>({url, requestInit, fetchJsonOpts})
     if (secondaryAccessResult.data){
-        // we need to manually check if an abortSignal was sent
+        // For abort signal that could be triggered from outside:
+        // -> we need to manually check if an abortSignal was sent
         // because cache lookups will not pick it up
         _throwIfAborted(fetchJsonOpts.abortController)
         return secondaryAccessResult.data
