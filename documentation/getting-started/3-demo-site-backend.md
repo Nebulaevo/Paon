@@ -46,7 +46,7 @@ For our demo site, those routes are:
 - `/`
 - `/hello/:name/` ( where **:name** is a dynamic url segment )
 
-#### Home Page Route : `/`
+#### 🟆 Home Page Route : `/`
 
 For this demo app, we will choose to render the home page server side.\
 We can request a rendered page by sending this request :
@@ -68,7 +68,7 @@ And providing the following post data :
 
 Then insert the head and body fragments received in the corresponding sections in a HTML document and return the page.
 
-#### Hello Page Route : `/hello/:name/`
+#### 🟆 Hello Page Route : `/hello/:name/`
 
 The hello page is going to be rendered client side.\
 We can get the app shell by sending this request :
@@ -144,5 +144,5 @@ There are some tests you can do to ensure everything is working as expected :
 
 <br/>
 
-| [⬅️ Project Structure](/documentation/getting-started/2-structure.md) | [Table of contents ➡️](/Readme.md) |
+| [⬅️ Project Structure](/documentation/getting-started/2-structure.md) | [Table of contents ➡️](/Readme.md#documentation) |
 | :--- | ----: |

@@ -57,7 +57,7 @@ const data = await fetchJsonData(
 
 Options regarding additional features:
 
-#### `timeoutS`
+#### 🟆 `timeoutS`
 
 Maximum duration for a `fetchJsonData` call, before the operation is aborted.
 
@@ -81,7 +81,7 @@ const data = await fetchJsonData(
 )
 ```
 
-#### `retries`
+#### 🟆 `retries`
 
 Maximum number of retries of the fetch operation, within the time limit.
 
@@ -108,7 +108,7 @@ const data = await fetchJsonData(
 )
 ```
 
-#### `abortController`
+#### 🟆 `abortController`
 
 abortController instance allowing to cancel the operation from the exterior.
 
@@ -135,7 +135,7 @@ const data = await fetchJsonData(
 )
 ```
 
-#### `dataValidators`
+#### 🟆 `dataValidators`
 
 Array of validator functions allowing to validate the data on every access.
 
@@ -164,12 +164,12 @@ const data = await fetchJsonData(
 ```
 
 
-#### `cache`
+#### 🟆 `cache`
 
 Options object allowing to define a caching strategy.\
 (available keys in the options object depends on the choosen strategy).
 
-ℹ️ By default, if no caching options is provided we use `'CACHE_FIRST'` with a 1h cache entry lifetime.
+ℹ️ By default, if nothing is provided the strategy is `'CACHE_FIRST'` with a 1h cache entry lifetime.
 
 
 **1. Cache First**
@@ -181,7 +181,21 @@ Keys:
 - `maxAgeS`: positive number (optional, default 1h)\
     Age limit before the entry is considered "stale"
 
+Example:
 ```js
+import { fetchJsonData } from '@core:utils/fetch-json-data/v1/utils'
+
+const data = await fetchJsonData(
+    "https://some-site.com/api/?user=12",
+    {
+        fetchJsonOpts: {
+            cache: {
+                strategy: "CACHE_FIRST",
+                maxAgeS: 12*60*60 // 12h
+            }
+        }
+    }
+)
 ```
 
 **2. Network First**
@@ -193,7 +207,21 @@ Keys:
 - `maxAgeS`: positive number (optional, default 1h)\
     Age limit before the entry is considered "stale"
 
+Example:
 ```js
+import { fetchJsonData } from '@core:utils/fetch-json-data/v1/utils'
+
+const data = await fetchJsonData(
+    "https://some-site.com/api/?user=12",
+    {
+        fetchJsonOpts: {
+            cache: {
+                strategy: "NETWORK_FIRST",
+                maxAgeS: 12*60*60 // 12h
+            }
+        }
+    }
+)
 ```
 
 **3. Network Only**
@@ -203,7 +231,20 @@ Only checks the network, without updating the cache.
 Keys:
 - `strategy`: literal string - `"NETWORK_ONLY"`
 
+Example:
 ```js
+import { fetchJsonData } from '@core:utils/fetch-json-data/v1/utils'
+
+const data = await fetchJsonData(
+    "https://some-site.com/api/?user=12",
+    {
+        fetchJsonOpts: {
+            cache: {
+                strategy: "NETWORK_ONLY"
+            }
+        }
+    }
+)
 ```
 
 **4. Stale While Revalidate**
@@ -221,7 +262,25 @@ Keys:
 - `cacheRefreshCallback`: function (optional)\
     Callback function called once the data have been updated, if the returned data was "stale".
 
+Example:
 ```js
+import { fetchJsonData } from '@core:utils/fetch-json-data/v1/utils'
+
+const data = await fetchJsonData(
+    "https://some-site.com/api/?user=12",
+    {
+        fetchJsonOpts: {
+            cache: {
+                strategy: "STALE_WHILE_REVALIDATE",
+                maxAgeS: 12*60*60, // 12h,
+                staleEntryMaxAgeS: 7*24*60*60, // 1 week
+                cacheRefreshCallback: ( data ) => {
+                    console.log('cache entry has been updated')
+                }
+            }
+        }
+    }
+)
 ```
 
 **5. Invalidate and Fetch**
@@ -231,5 +290,19 @@ Removes corresponding cache entry, fetches data from the network and updates the
 Keys:
 - `strategy`: literal string - `"INVALIDATE_AND_FETCH"`
 
+
+Example:
 ```js
+import { fetchJsonData } from '@core:utils/fetch-json-data/v1/utils'
+
+const data = await fetchJsonData(
+    "https://some-site.com/api/?user=12",
+    {
+        fetchJsonOpts: {
+            cache: {
+                strategy: "INVALIDATE_AND_FETCH"
+            }
+        }
+    }
+)
 ```

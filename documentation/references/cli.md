@@ -16,7 +16,7 @@ Register a new site called **"my-new-site"**, and scaffolds the default site str
 
 ℹ️ To remove a site just delete the corresponding folder in `src/sites/`
 
-#### Website Name Rules :
+#### 🟆 Website Name Rules :
 
 - If a website with the same name have already been created, the operation will fail
 - Site names are expected to be kebab-case and only alphanumerical, non allowed formats will be refused
@@ -34,7 +34,7 @@ Register a new site called **"my-new-site"**, and scaffolds the default site str
 
 This operation compiles `ts` code and optimises assets for production.
 
-#### For a Specific Site
+#### 🟆 For a Specific Site
 
 ```bash
 npm run site:build my-new-site
@@ -42,7 +42,7 @@ npm run site:build my-new-site
 
 Builds and bundles the ressources only for the site called `my-new-site`
 
-#### For All Registered Sites
+#### 🟆 For All Registered Sites
 
 ```bash
 npm run site:build-all

@@ -13,7 +13,7 @@ The provided Router is an extended version of the [Wouter Router](https://github
 ### Router Props
 
 
-#### `pages` prop
+#### 🟆 `pages` prop
 
 Array of key-value pair objects defining the routes of the application.
 
@@ -79,7 +79,7 @@ const pages = [
 ]
 ```
 
-#### `loaderOptions` prop (optional)
+#### 🟆 `loaderOptions` prop (optional)
 
 Defines routes loading behaviours.
 
@@ -121,12 +121,12 @@ const loaderOptions = {
 ```
 see also : [loading state handling documentation](/documentation/ressources/loading-context.md)
 
-#### `errorBoundaryOptions` prop (optional)
+#### 🟆 `errorBoundaryOptions` prop (optional)
 
 Error Boundary component props (`Fallback` and optional `errorHandlingFunc`).\
 Read [error boundary documentation](/documentation/ressources/error-handling.md#errorboundary-component) for more informations.
 
-#### `ssrProps` and `ssrPath` props (optional)
+#### 🟆 `ssrProps` and `ssrPath` props (optional)
 
 - `ssrPath` : relative URL string of the page we want to render.
 
