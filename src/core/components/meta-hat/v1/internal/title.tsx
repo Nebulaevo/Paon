@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { isString } from 'sniffly'
 
-import { getUniqueIdGenerator } from '@core:utils/id/v1/utils'
+import { getUniqueSeqId } from '@core:utils/id/v1/utils'
 
 import { PAGE_HEAD_TAG_CLS, removeTags } from './helpers'
 
@@ -16,9 +16,6 @@ type titleSpecs_T = {
  * (only meant to stay in the document until another <Title> is rendered)
 */
 const HANGING_TITLE_CLASS = 'hanging-title-tag'
-
-/** utils to generate unique ids */
-const UNIQUE_ID = getUniqueIdGenerator()
 
 function _isLastTitle() {
     const titleTags = document.getElementsByTagName('title')
@@ -69,21 +66,22 @@ function _removeHangingTitles() {
     removeTags(hangingTitles)
 }
 
-/** Custom Hook taking care of creating and deleting the title tags in the document's head */
+/** Custom Hook taking care of creating and deleting the title tags in the document's head 
+ * 
+ * ℹ️ Makes sure not to delete the last title tag before another one is rendered.
+ * (last title is marked as "hanging" until another one is rendered)
+*/
 function _useHangingTitle(content: string) {
-
-    const [validatedContent, id] = useMemo(() => {
-        const validatedContent = isString(content) ? content : ''
-        const id = UNIQUE_ID.get()
-        return [validatedContent, id]
-    }, [content])
 
     useEffect(() => {
         // On mount or on new content value :
         // we remove hanging titles 
         _removeHangingTitles()
 
-        // and create a title tag linked to this component
+        // Then we create a new title tag with a 
+        // unique id linking it to this hook callback
+        const id = getUniqueSeqId()
+        const validatedContent = isString(content) ? content : ''
         _createTitleTag(validatedContent, id)
 
         return () => {
@@ -91,18 +89,16 @@ function _useHangingTitle(content: string) {
             if (_isLastTitle()) {
                 // if there is only one title left
                 // we mark the title tag currently 
-                // linked to the component as "hanging"
+                // linked to the current hook callback 
+                // as "hanging"
                 _markTagAsHanging(id)
 
             } else {
                 // if there are multiple titles left
                 // we simply remove the tag currently 
-                // linked to the component
+                // linked to the current hook callback 
                 _removeTitleTag(id)
             }
-
-            // we unregister the id from the existing ids
-            UNIQUE_ID.unregister(id)
         }
     }, [content])
 }
