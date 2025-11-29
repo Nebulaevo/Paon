@@ -8,7 +8,7 @@ Quick overview of the important folder and files in a Paon project, and the defa
 
 ## Global structure
 
-ℹ️ For simpicity, we are only gonna talk about the files and folders that are relevant.
+ℹ️ For simpicity, we are only going to talk about the files and folders that are relevant.
 
 - **`src/`**\
     *Folder containing all the frontend logic* 
@@ -47,7 +47,8 @@ Quick overview of the important folder and files in a Paon project, and the defa
 
 The site folder is scaffolded in `src/sites/` when we run the `add:site` command.
 
-ℹ️ In this guide, we are gonna use the default site structure provided when creating a new site, though it's completely optionnal. If you wish to create your own structure you can modify `entry-server.tsx`, `entry-client.tsx` or `app.tsx` to render you own component tree.
+ℹ️ In this guide, we are going to use the default site structure provided when creating a new site.\
+However, using the default site structure is optional If you wish to create your own structure you can modify `entry-server.tsx`, `entry-client.tsx` or `app.tsx` to render you own component tree.
 
 ### 📁 Folder Convensions
 

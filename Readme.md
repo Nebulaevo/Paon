@@ -57,5 +57,5 @@ Paon is made for you.
 - [Handling loading state with `<LoadingStateProvider>`](/documentation/ressources/loading-context.md)
 - [Hanlding errors with `<ErrorBoundary>` and `ErrorStatus`](/documentation/ressources/error-handling.md)
 - [Handling page head tags with `<MetaHat>`](/documentation/ressources/meta-hat.md)
-- [Misc. helpers](/documentation/ressources/helpers.md)
+- [Misc. helpers](/documentation/ressources/misc-helpers.md)
 

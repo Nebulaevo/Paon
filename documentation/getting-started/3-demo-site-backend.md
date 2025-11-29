@@ -7,7 +7,7 @@
 
 We are going to see how to interact with the Paon server from a backend application.
 
-For demonstration purposes, we are going to build a simple backend that serves the demo site UI scaffolded when we created the `martin-music` site in the [installation & setup guide](/documentation/getting-started/1-setup.md).
+For demonstration purposes, we are going to build a simple backend that serves the demo site UI which was scaffolded when we created the `martin-music` site in the [installation & setup guide](/documentation/getting-started/1-setup.md).
 
 ## Sending a Requests to the Paon Server
 
@@ -31,10 +31,10 @@ http://localhost:3000/martin-music/
 
 ## Serve the Demo Site Through a Backend App 
 
-Ok, let's create a web backend application, using the technologies of your choice.\
-(It should be on the same machine as the Paon server)
+Ok, let's create a web backend application, using the technologies of your choice\
+(It should be on the same machine as the Paon server).
 
-In that application, we are gonna need to define some routes/request handlers:
+In that application, we are going to need to define some routes/request handlers:
 
 ### Matching Page Routes
 
@@ -103,7 +103,7 @@ The value returned should be the same value as the one given to the home page co
 
 In `production` mode, the Paon server doesn't serve static assets (see [serving static assets in production](/documentation/references/production.md#serving-static-assets)).
 
-But for convenience reasons, it does serve them in `dev` or `preview` modes.
+But for convenience, it does serve them in `dev` or `preview` modes.
 
 For that reason, in dev mode, the backend server should accept all requests :
 - Starting with `/assets/`\
@@ -118,7 +118,7 @@ For that reason, in dev mode, the backend server should accept all requests :
 - `/@react-refresh` (exact match)\
 *\* used by DEV server for hot module reload*
 
-and simply forward them to the Paon server and return its response.
+And simply forward them to the Paon server and return its response.
 
 Example :\
 If our backend app receive a request for `/src/assets/js/script.ts`
@@ -133,9 +133,9 @@ There are some tests you can do to ensure everything is working as expected :
 
 1. Check that home page (`/`) is rendered server side on initial load, and that the props received by the page are the ones provided when sending the SSR request (you can display received props by clicking the "show props" button on the home page).
 
-2. Check that filling the input and clicking on the arrow triggeres a client side navigation to the hello page for the given name.
+2. Check that filling the input and clicking on the arrow triggers a client side navigation to the hello page for the given name.
 
-3. Check if client side navigation back to home page (`/`) page works, and uses the props provided by the API endpoint at `/api/`.
+3. Check if client side navigation back to home page (`/`) works, and uses the props provided by the API endpoint at `/api/`.
 
 4. Check that the hello page (`/hello/you/`) is rendered client side on initial load, and that the dynamic part of the path works.
 
