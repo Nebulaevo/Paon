@@ -60,7 +60,7 @@ Deletes the content of the sites outdir (root `dist/` dir)
 
 ## `server:` Starting a Server
 
-ℹ️ see [server config](/documentation/references/server-config.md)
+ℹ️ see [server config](/documentation/references/config-files.md#server-config)
 
 
 ### Dev Server

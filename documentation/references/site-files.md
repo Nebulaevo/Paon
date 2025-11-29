@@ -14,7 +14,7 @@ Script performing the rendering, or hydration of the app on the client side.
 
 It exports a `render( requestData )` function performing the server side rendering of the application.
 
-This function is called with a [`requestData`](/documentation/references/data-structures.md#requestdata) type argument.
+This function will be given as argument (`requestData`) the [POST data received with the SSR page request](/documentation/references/api-endpoint.md#ssr-post-data--format).
 
 ## `index.html`
 
@@ -67,7 +67,7 @@ Component to be displayed on navigation loading
 File defining all the Router settings.\
 (imported in `app.tsx` file to setup the router component.)
 
-see [Router documentation](/documentation/ressources/routing.md) for more details.
+ℹ️ See [Router documentation](/documentation/ressources/routing.md) for more details.
 
 ### pages
 

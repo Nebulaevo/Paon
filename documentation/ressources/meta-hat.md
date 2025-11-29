@@ -18,7 +18,7 @@ All tags set by the component are reset if the list of tags changes or if if the
 ## How To Use
 
 `<MetaHat />` takes a `"headTags"` prop expecting a list of key-value objects representing the desired head tags for the page.\
-ℹ️ informations about the supported head tags and expected specifications are detailed in the [tas specification section](#tags-specifications) below.
+ℹ️ informations about the supported head tags and expected specifications are detailed in the [tags specifications section](#tags-specifications) below.
 
 On the client side, it is recommanded to render a `MetaHat` component at the root of the `Page` component, so that it is mounted/unmonted at the same time as the page it depends on.
 

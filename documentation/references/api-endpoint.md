@@ -33,7 +33,7 @@ GET http://localhost:3000/my-site-name/
 
 By sending a **GET** request to `/my-site-name/` we get the document fragments for an empty application shell that will render any page of **my-site-name** on the client side.
 
-ℹ️ The application shell can than be used to render any page, it's usefull to have it in cache, as it can be used to display error pages (see [Error status tag](/documentation/references/special-meta-tags.md#error-status)), or as backup.
+ℹ️ The application shell can than be used to render any page, it's usefull to have it in cache, as it can be used to display error pages (see [Initial error status tag](/documentation/references/special-meta-tags.md#initial-error-status)), or as backup.
 
 ## Server Side Rendering Endpoint
 
@@ -70,7 +70,8 @@ It's a key-value pair object with 2 keys:
 
 It is possible to include page specific head tags in the rendered head fragment, thanks to the special `"meta"` key in the context object.
 
-The `"meta"` key is expected to contain an array of [head tag specifications](/documentation/ressources/meta-hat.md#tags-specifications).\
+The `"meta"` key is expected to contain an array of [head tag specifications](/documentation/ressources/meta-hat.md#tags-specifications).
+
 ⚙️ Under the hood we will use it as a prop and render a [`<MetaHat/>`](/documentation/ressources/meta-hat.md) component.
 
 SSR POST Data Example :
