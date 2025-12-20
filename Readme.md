@@ -1,4 +1,4 @@
-🏗️ v0.10 - Current version is a proof of concept that still needs to be refined.
+🏗️ v0.1.1 - Current version is a proof of concept that still needs to be refined.
 
 # 🦚 Paon Template Server
 **A Node.js Application for MVC Template Processing**
